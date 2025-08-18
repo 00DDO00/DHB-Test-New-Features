@@ -89,6 +89,7 @@ import ProtectedPage from "./pages/protected/ProtectedPage";
 import Default from "./pages/dashboards/Default";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Home from "./pages/home";
+import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
 
@@ -134,6 +135,16 @@ const routes = [
       {
         path: "saas",
         element: <SaaS />,
+      },
+    ],
+  },
+  {
+    path: "accounts",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "saveonline",
+        element: <SaveOnlineAccount />,
       },
     ],
   },

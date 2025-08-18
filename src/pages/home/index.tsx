@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Button, Typography, CircularProgress } from '@mui/material';
 import { Add, ArrowForward, Headset } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -97,9 +99,10 @@ const Home: React.FC = () => {
             interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
             primaryAction={{
               label: "Make Transfer",
-              onClick: () => console.log('Make Transfer'),
+              onClick: () => navigate('/accounts/saveonline'),
               color: 'orange'
             }}
+            onAccountTypeClick={() => navigate('/accounts/saveonline')}
           />
         </Box>
 
@@ -173,7 +176,7 @@ const Home: React.FC = () => {
                 <Button
                   variant="contained"
                   endIcon={<ArrowForward />}
-                  onClick={() => console.log('Make Transfer')}
+                  onClick={() => navigate('/saveonline')}
                   sx={{
                     background: '#FF6B35',
                     color: 'white',

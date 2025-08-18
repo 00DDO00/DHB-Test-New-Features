@@ -98,6 +98,7 @@ interface AccountWidgetProps {
     onClick: () => void;
     color: 'primary' | 'secondary' | 'orange';
   };
+  onAccountTypeClick?: () => void;
 }
 
 const ActionButton = styled(Button)<{ customColor?: string }>`
@@ -121,7 +122,8 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
   balance,
   iban,
   interestRate,
-  primaryAction
+  primaryAction,
+  onAccountTypeClick
 }) => {
   return (
     <Widget
@@ -143,7 +145,19 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
         {/* DHB SaveOnline section */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h3" color="#004996" fontWeight="bold">
+          <Typography 
+            variant="h3" 
+            color="#004996" 
+            fontWeight="bold"
+            sx={{
+              cursor: onAccountTypeClick ? 'pointer' : 'default',
+              '&:hover': onAccountTypeClick ? {
+                textDecoration: 'underline',
+                opacity: 0.8
+              } : {}
+            }}
+            onClick={onAccountTypeClick}
+          >
             {accountType}
           </Typography>
           <Typography variant="h3" fontWeight="bold" color="text.primary">
