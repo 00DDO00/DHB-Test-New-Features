@@ -117,24 +117,8 @@ const VectorMaps = async(() => import("./pages/maps/VectorMaps"));
 const routes = [
   {
     path: "/",
-    element: <DefaultLayout />,
-    children: [
-      {
-        path: "",
-        element: <Home />,
-      },
-    ],
+    element: <Navigate to="/private" replace />,
   },
-  // {
-  //   path: "/",
-  //   element: <PresentationLayout />,
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: <Landing />,
-  //     },
-  //   ],
-  // },
   {
     path: "dashboard",
     element: <DashboardLayout />,
@@ -497,15 +481,11 @@ const routes = [
   },
   {
     path: "private",
-    element: (
-      <AuthGuard>
-        <DashboardLayout />
-      </AuthGuard>
-    ),
+    element: <DashboardLayout />,
     children: [
       {
         path: "",
-        element: <ProtectedPage />,
+        element: <Home />,
       },
     ],
   },
