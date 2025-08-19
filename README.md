@@ -1,10 +1,16 @@
 # Mira Pro - React Admin & Dashboard Template
 
-Thanks for purchasing! Please navigate to our [documentation](https://mira.bootlab.io/documentation/getting-started) to learn more on how to install Mira, or follow the steps below.
+Thanks for purchasing! Please navigate to our [documentation](https://mira.bootlab.io/documentation/getting-
+started) to learn more on how to install Mira, or follow the steps below.
+
 
 ## Prerequisites
 
-For the required Node.js version, please check the `.nvmrc` file. You can download NodeJS at [https://nodejs.org/](https://nodejs.org/). You can also use [nvm](https://github.com/creationix/nvm#installation) (macOS/Linux) or [nvm-windows](https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows) to switch Node versions between different projects.
+For the required Node.js version, please check the `.nvmrc` file. You can download NodeJS at [https://nodejs
+.org/](https://nodejs.org/). You can also use [nvm](https://github.com/creationix/nvm#installation) (macOS/L
+inux) or [nvm-windows](https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows) to s
+witch Node versions between different projects.
+
 
 ## Quick Start
 

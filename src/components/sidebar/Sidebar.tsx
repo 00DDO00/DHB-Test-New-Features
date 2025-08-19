@@ -4,20 +4,13 @@ import { NavLink } from "react-router-dom";
 
 import { green } from "@mui/material/colors";
 
-import { Box, Chip, Drawer as MuiDrawer, ListItemButton } from "@mui/material";
+import { Box, Chip, ListItemButton, IconButton } from "@mui/material";
+import { ChevronLeft } from "@mui/icons-material";
 
 import { ReactComponent as Logo } from "../../vendor/logo.svg";
 import { SidebarItemsType } from "../../types/sidebar";
 import Footer from "./SidebarFooter";
 import SidebarNav from "./SidebarNav";
-
-const Drawer = styled(MuiDrawer)`
-  border-right: 0;
-
-  > div {
-    border-right: 0;
-  }
-`;
 
 const Brand = styled(ListItemButton)<{
   component?: React.ReactNode;
@@ -34,6 +27,7 @@ const Brand = styled(ListItemButton)<{
   justify-content: center;
   cursor: pointer;
   flex-grow: 0;
+  position: relative;
 
   ${(props) => props.theme.breakpoints.up("sm")} {
     min-height: 64px;
@@ -68,6 +62,27 @@ const BrandChip = styled(Chip)`
   }
 `;
 
+const CollapseButton = styled(IconButton)`
+  position: absolute;
+  top: 16px;
+  right: -12px;
+  background: #004996;
+  color: white;
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1200;
+  
+  &:hover {
+    background: #003d7a;
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
 export type SidebarProps = {
   PaperProps: {
     style: {
@@ -77,6 +92,7 @@ export type SidebarProps = {
   variant?: "permanent" | "persistent" | "temporary";
   open?: boolean;
   onClose?: () => void;
+  onToggle?: () => void;
   items: {
     title: string;
     pages: SidebarItemsType[];
@@ -87,19 +103,28 @@ export type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({
   items,
   showFooter = true,
+  onToggle,
   ...rest
 }) => {
   return (
-    <Drawer variant="permanent" {...rest}>
+    <Box>
       <Brand component={NavLink as any} to="/">
         <BrandIcon />{" "}
         <Box ml={1}>
           Mira <BrandChip label="PRO" />
         </Box>
+        {onToggle && (
+          <CollapseButton
+            onClick={onToggle}
+            aria-label="collapse sidebar"
+          >
+            <ChevronLeft />
+          </CollapseButton>
+        )}
       </Brand>
       <SidebarNav items={items} />
       {!!showFooter && <Footer />}
-    </Drawer>
+    </Box>
   );
 };
 

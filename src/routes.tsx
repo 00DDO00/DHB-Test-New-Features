@@ -89,6 +89,7 @@ import ProtectedPage from "./pages/protected/ProtectedPage";
 import Default from "./pages/dashboards/Default";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Home from "./pages/home";
+import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
 
@@ -117,24 +118,8 @@ const VectorMaps = async(() => import("./pages/maps/VectorMaps"));
 const routes = [
   {
     path: "/",
-    element: <DefaultLayout />,
-    children: [
-      {
-        path: "",
-        element: <Home />,
-      },
-    ],
+    element: <Navigate to="/private" replace />,
   },
-  // {
-  //   path: "/",
-  //   element: <PresentationLayout />,
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: <Landing />,
-  //     },
-  //   ],
-  // },
   {
     path: "dashboard",
     element: <DashboardLayout />,
@@ -150,6 +135,16 @@ const routes = [
       {
         path: "saas",
         element: <SaaS />,
+      },
+    ],
+  },
+  {
+    path: "accounts",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "saveonline",
+        element: <SaveOnlineAccount />,
       },
     ],
   },
@@ -497,15 +492,11 @@ const routes = [
   },
   {
     path: "private",
-    element: (
-      <AuthGuard>
-        <DashboardLayout />
-      </AuthGuard>
-    ),
+    element: <DashboardLayout />,
     children: [
       {
         path: "",
-        element: <ProtectedPage />,
+        element: <Home />,
       },
     ],
   },
