@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 app = Flask(__name__)
@@ -97,7 +97,83 @@ def generate_mock_data():
                 "iban": "NL24DHBN2018470582",
                 "interest_rate": 1.1,
                 "holder_name": "Lucy Lavender"
+            }
+        ],
+        "combispaar_page_data": {
+            "page_title": "DHB CombiSpaarrekening",
+            "breadcrumbs": {
+                "home": "Home",
+                "accounts": "Accounts", 
+                "open_account": "Open account"
             },
+            "main_account": {
+                "name": "DHB Account",
+                "balance": "€ 15.750,00",
+                "iban": "NL24DHBN2018470578",
+                "interest_rate": "1.1%",
+                "holder_name": "A DERWISH"
+            },
+            "description": {
+                "title": "Save and still be able to withdraw money",
+                "content": "The DHB CombiSpaarrekening offers a higher interest rate than the DHB SaveOnline because withdrawals are planned in advance. Depending on the chosen account, you can give 33, 66, or 99 days' notice for withdrawals. A longer notice period results in a higher interest rate."
+            },
+            "account_options": [
+                {
+                    "id": "33-days",
+                    "balanceClass": "€ 500 to € 500,000",
+                    "noticePeriod": "33 days",
+                    "interest": "1.60%",
+                    "validFrom": date.today().strftime("%d.%m.%Y"),
+                    "days": 33,
+                    "code": "5242"
+                },
+                {
+                    "id": "66-days",
+                    "balanceClass": "€ 500 to € 500,000",
+                    "noticePeriod": "66 days",
+                    "interest": "1.65%",
+                    "validFrom": date.today().strftime("%d.%m.%Y"),
+                    "days": 66,
+                    "code": "5244"
+                },
+                {
+                    "id": "99-days",
+                    "balanceClass": "€ 500 to € 500,000",
+                    "noticePeriod": "99 days",
+                    "interest": "1.70%",
+                    "validFrom": date.today().strftime("%d.%m.%Y"),
+                    "days": 99,
+                    "code": "5246"
+                }
+            ],
+            "iban_options": [
+                {
+                    "iban": "NL28DHBN026326642",
+                    "balance": "€ 12.012,00",
+                    "accountType": "DHB CombiSpaar",
+                    "accountHolder": "A DERWISH"
+                },
+                {
+                    "iban": "NL28DHBN026326643",
+                    "balance": "€ 8.450,75",
+                    "accountType": "DHB SaveOnline",
+                    "accountHolder": "A DERWISH"
+                },
+                {
+                    "iban": "NL28DHBN026326644",
+                    "balance": "€ 25.300,00",
+                    "accountType": "DHB MaxiSpaar",
+                    "accountHolder": "A DERWISH"
+                },
+                {
+                    "iban": "NL28DHBN026326645",
+                    "balance": "€ 3.125,50",
+                    "accountType": "DHB Current Account",
+                    "accountHolder": "A DERWISH"
+                }
+            ]
+        },
+        "combispaar_accounts": [
             {
                 "id": "combispaar_003",
                 "name": "DHB Combispaar Account 3",
@@ -221,6 +297,33 @@ def get_combispaar_accounts():
         "data": data["combispaar_accounts"],
         "total_balance": sum(acc["balance"] for acc in data["combispaar_accounts"]),
         "count": len(data["combispaar_accounts"]),
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/combispaar/page-data', methods=['GET'])
+def get_combispaar_page_data():
+    data = generate_mock_data()
+    return jsonify({
+        "success": True,
+        "data": data["combispaar_page_data"],
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/combispaar/account-options', methods=['GET'])
+def get_combispaar_account_options():
+    data = generate_mock_data()
+    return jsonify({
+        "success": True,
+        "data": data["combispaar_page_data"]["account_options"],
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/combispaar/iban-options', methods=['GET'])
+def get_combispaar_iban_options():
+    data = generate_mock_data()
+    return jsonify({
+        "success": True,
+        "data": data["combispaar_page_data"]["iban_options"],
         "timestamp": datetime.now().isoformat()
     })
 

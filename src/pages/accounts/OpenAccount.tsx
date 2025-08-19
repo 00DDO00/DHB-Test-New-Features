@@ -1,0 +1,220 @@
+import React from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  Breadcrumbs,
+  Link as MuiLink,
+} from '@mui/material';
+import {
+  AccountBalance,
+  Euro,
+  TrendingUp,
+  CheckCircle,
+  Add,
+  ArrowForward,
+} from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
+
+const OpenAccount: React.FC = () => {
+  const navigate = useNavigate();
+  const accountTypes = [
+    {
+      id: 'combispaar',
+      title: 'DHB CombiSpaarrekening',
+      subtitle: 'Your term deposits',
+      icon: <AccountBalance sx={{ color: '#4CAF50', fontSize: 32 }} />,
+      interestRate: '2.10%',
+      term: '1 year fixed',
+      basis: '(Annual basis)',
+      description: 'Lock in your savings for a term that you choose yourself. You decide when you think you will need it. At a guaranteed fixed interest rate. For a secure future, that new car or kitchen or sustainable renovation. Nice, right!',
+      features: [
+        'No deposit account required',
+        'Deposit when you want',
+        'Investment € 500 to € 500,000'
+      ]
+    },
+    {
+      id: 'maxispaar',
+      title: 'DHB MaxiSpaarrekening',
+      subtitle: 'Your term deposits',
+      icon: <Euro sx={{ color: '#4CAF50', fontSize: 32 }} />,
+      interestRate: '2.10%',
+      term: '1 year fixed',
+      basis: '(Annual basis)',
+      description: 'Lock in your savings for a term that you choose yourself. You decide when you think you will need it. At a guaranteed fixed interest rate. For a secure future, that new car or kitchen or sustainable renovation. Nice, right!',
+      features: [
+        'Terms from 3 months up to 5 years',
+        'One-time investment € 500 to € 500,000',
+        'Fixed interest rate'
+      ]
+    },
+    {
+      id: 'solidextra',
+      title: 'Solidextra Deposit Account',
+      subtitle: 'Your term deposits',
+      icon: <TrendingUp sx={{ color: '#4CAF50', fontSize: 32 }} />,
+      interestRate: '2.10%',
+      term: '1 year fixed',
+      basis: '(Annual basis)',
+      description: 'Lock in your savings for a term that you choose yourself. You decide when you think you will need it. At a guaranteed fixed interest rate. For a secure future, that new car or kitchen or sustainable renovation. Nice, right!',
+      features: [
+        'Terms from 2 up to 5 years',
+        'One-time investment € 500 to € 500,000',
+        'Annual interest payment to DHB S@veOnline account'
+      ]
+    }
+  ];
+
+  const handleOpenAccount = (accountType: string) => {
+    if (accountType === 'combispaar') {
+      navigate('/accounts/combispaar');
+    } else {
+      console.log(`Opening ${accountType} account`);
+      // TODO: Implement account opening logic for other account types
+    }
+  };
+
+  const handleMoreDetails = (accountType: string) => {
+    console.log(`More details for ${accountType}`);
+    // TODO: Implement more details logic
+  };
+
+  return (
+    <Box sx={{ p: 3 }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 3 }}>
+        <MuiLink 
+          component={Link}
+          to="/private" 
+          color="inherit" 
+          underline="hover"
+          sx={{ cursor: 'pointer' }}
+        >
+          Home
+        </MuiLink>
+        <MuiLink color="inherit" underline="hover" sx={{ cursor: 'pointer' }}>
+          Accounts
+        </MuiLink>
+        <Typography color="text.primary" fontWeight="bold">
+          Open account
+        </Typography>
+      </Breadcrumbs>
+
+      {/* Page Title */}
+      <Typography variant="h4" fontWeight="bold" sx={{ mb: 3, color: '#333' }}>
+        Open account
+      </Typography>
+
+      {/* Account Cards Grid */}
+      <Grid container spacing={3} sx={{ maxWidth: 1200, mx: 'auto' }}>
+        {accountTypes.map((account, index) => (
+          <Grid item xs={12} md={6} lg={4} key={account.id}>
+            <Card sx={{ 
+              borderRadius: 3, 
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {/* Header with icon and interest rate */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    {account.icon}
+                  </Box>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h4" fontWeight="bold" color="#4CAF50">
+                      {account.interestRate}
+                    </Typography>
+                    <Typography variant="body2" color="#666">
+                      {account.term}
+                    </Typography>
+                    <Typography variant="caption" color="#666">
+                      {account.basis}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Title and subtitle */}
+                <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5, color: '#333' }}>
+                  {account.title}
+                </Typography>
+                <Typography variant="body2" color="#666" sx={{ mb: 2 }}>
+                  {account.subtitle}
+                </Typography>
+
+                {/* Description */}
+                <Typography variant="body2" color="#666" sx={{ mb: 3, flex: 1 }}>
+                  {account.description}
+                </Typography>
+
+                {/* Features */}
+                <Box sx={{ mb: 3 }}>
+                  {account.features.map((feature, featureIndex) => (
+                    <Box key={featureIndex} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <CheckCircle sx={{ color: '#4CAF50', fontSize: 20, mr: 1 }} />
+                      <Typography variant="body2" color="#666">
+                        {feature}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* Buttons */}
+                <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => handleOpenAccount(account.id)}
+                    sx={{
+                      backgroundColor: '#FC9F15',
+                      color: 'white',
+                      textTransform: 'none',
+                      borderRadius: 2,
+                      px: 3,
+                      py: 1.5,
+                      flex: 1,
+                      fontWeight: 500,
+                      '&:hover': {
+                        backgroundColor: '#e58a0d'
+                      }
+                    }}
+                  >
+                    Open account +
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    endIcon={<ArrowForward />}
+                    onClick={() => handleMoreDetails(account.id)}
+                    sx={{
+                      borderColor: '#004996',
+                      color: '#004996',
+                      textTransform: 'none',
+                      borderRadius: 2,
+                      px: 3,
+                      py: 1.5,
+                      flex: 1,
+                      fontWeight: 500,
+                      '&:hover': {
+                        borderColor: '#004996',
+                        backgroundColor: 'rgba(0, 73, 150, 0.1)'
+                      }
+                    }}
+                  >
+                    More details →
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
+export default OpenAccount;

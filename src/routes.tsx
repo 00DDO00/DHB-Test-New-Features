@@ -90,6 +90,8 @@ import Default from "./pages/dashboards/Default";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Home from "./pages/home";
 import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount";
+import OpenAccount from "./pages/accounts/OpenAccount";
+import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
 
@@ -145,6 +147,24 @@ const routes = [
       {
         path: "saveonline",
         element: <SaveOnlineAccount />,
+      },
+    ],
+  },
+  {
+    path: "accounts",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "saveonline",
+        element: <SaveOnlineAccount />,
+      },
+      {
+        path: "open",
+        element: <OpenAccount />,
+      },
+      {
+        path: "combispaar",
+        element: <CombiSpaarAccount />,
       },
     ],
   },

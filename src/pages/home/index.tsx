@@ -115,10 +115,11 @@ const Home: React.FC = () => {
             iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
             interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
             primaryAction={{
-              label: "Open account +",
-              onClick: () => console.log('Open account'),
+              label: "Open account",
+              onClick: () => navigate('/accounts/open'),
               color: 'primary'
             }}
+            onAccountTypeClick={() => console.log('DHB MaxiSpaar clicked')}
           />
         </Box>
 
@@ -126,13 +127,13 @@ const Home: React.FC = () => {
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <Widget
             title="Account opening"
-            subtitle="DHB MaxiSpaar Account"
+            /*subtitle="DHB Accounts"*/
             onMenuClick={() => console.log('Menu clicked')}
             actions={
               <Button
                 variant="outlined"
                 endIcon={<Add />}
-                onClick={() => console.log('Open account')}
+                onClick={() => navigate('/accounts/open')}
                 sx={{
                   background: 'transparent',
                   color: '#004996',
@@ -148,19 +149,31 @@ const Home: React.FC = () => {
                   }
                 }}
               >
-                Open account +
+                Open account
               </Button>
             }
           >
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Savings deposit with fixed maturity and fixed high interest rate
-            </Typography>
-            <Box sx={{ width: 80, height: 80, ml: 'auto', mt: 2 }}>
-              <img 
-                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI0Y4RjlGQSIvPgo8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI4IiBmaWxsPSIjRkY2QjM1Ii8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzAiIHI9IjgiIGZpbGw9IiMwMDQ5OTYiLz4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0NSIgcj0iNiIgZmlsbD0iIzI4QTE0NSIvPgo8L3N2Zz4K" 
-                alt="Family illustration"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-              />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography 
+                variant="h3" 
+                color="#004996" 
+                fontWeight="bold"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '1.5rem',
+                  lineHeight: 1.2,
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    opacity: 0.8
+                  }
+                }}
+                onClick={() => console.log('DHB MaxiSpaar Account clicked')}
+              >
+                DHB Accounts
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Savings deposit with fixed maturity and fixed high interest rate
+              </Typography>
             </Box>
           </Widget>
         </Box>
@@ -193,7 +206,7 @@ const Home: React.FC = () => {
                 <Button
                   variant="outlined"
                   endIcon={<Add />}
-                  onClick={() => console.log('Open account')}
+                  onClick={() => navigate('/accounts/open')}
                   sx={{
                     background: 'transparent',
                     color: '#004996',
@@ -209,7 +222,7 @@ const Home: React.FC = () => {
                     }
                   }}
                 >
-                  Open account +
+                  Open account
                 </Button>
               </Box>
             }
