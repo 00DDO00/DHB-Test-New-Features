@@ -26,6 +26,8 @@ import NavbarNotificationsDropdown from "./NavbarNotificationsDropdown";
 import NavbarMessagesDropdown from "./NavbarMessagesDropdown";
 import NavbarLanguagesDropdown from "./NavbarLanguagesDropdown";
 import NavbarUserDropdown from "./NavbarUserDropdown";
+import MessagesPopup from "../MessagesPopup";
+import { apiService } from "../../services/api";
 
 // Import the logo image
 import dhbLogo from "../../assets/dhb-white.png";
@@ -97,6 +99,119 @@ type NavbarProps = {
 const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const [messagesOpen, setMessagesOpen] = React.useState(false);
+  const [totalMessageCount, setTotalMessageCount] = React.useState(9);
+  const [messagesSeen, setMessagesSeen] = React.useState(false);
+  const [lastSeenCount, setLastSeenCount] = React.useState(9);
+  
+  // Load saved state from localStorage on component mount
+  React.useEffect(() => {
+    try {
+      const savedState = localStorage.getItem('dhb-notification-state');
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        setTotalMessageCount(parsed.totalMessageCount || 9);
+        setMessagesSeen(parsed.messagesSeen || false);
+        setLastSeenCount(parsed.lastSeenCount || 9);
+      }
+    } catch (error) {
+      console.error('Failed to load notification state from localStorage:', error);
+    }
+  }, []);
+  
+  // Save state to localStorage whenever it changes
+  const saveStateToStorage = React.useCallback(() => {
+    try {
+      const stateToSave = {
+        totalMessageCount,
+        messagesSeen,
+        lastSeenCount,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('dhb-notification-state', JSON.stringify(stateToSave));
+    } catch (error) {
+      console.error('Failed to save notification state to localStorage:', error);
+    }
+  }, [totalMessageCount, messagesSeen, lastSeenCount]);
+  
+  // Save state whenever relevant values change
+  React.useEffect(() => {
+    saveStateToStorage();
+  }, [saveStateToStorage]);
+  
+  // Calculate unread count (new messages since last seen)
+  const unreadCount = totalMessageCount - lastSeenCount;
+  
+  // Function to update notification count
+  const updateNotificationCount = React.useCallback(async () => {
+    try {
+      const response = await apiService.getMessages();
+      setTotalMessageCount(response.new_count);
+    } catch (error) {
+      console.error('Failed to update notification count:', error);
+    }
+  }, []);
+  
+  // Function to handle messages popup refresh
+  const handleMessagesRefresh = () => {
+    updateNotificationCount();
+  };
+  
+  // Function to handle envelope click
+  const handleEnvelopeClick = () => {
+    setMessagesOpen(true);
+    setMessagesSeen(true); // Mark messages as seen
+    setLastSeenCount(totalMessageCount); // Store the current count when seen
+  };
+  
+  // Update notification count on component mount and when messages popup opens
+  React.useEffect(() => {
+    updateNotificationCount();
+  }, [updateNotificationCount]);
+  
+  // Update notification count when messages popup opens
+  React.useEffect(() => {
+    if (messagesOpen) {
+      updateNotificationCount();
+    }
+  }, [messagesOpen, updateNotificationCount]);
+  
+  // Reset seen status when new messages arrive (count increases)
+  React.useEffect(() => {
+    if (totalMessageCount > lastSeenCount) { // If we have more messages than when last seen
+      setMessagesSeen(false); // Mark as unseen again
+    }
+  }, [totalMessageCount, lastSeenCount]);
+  
+  // Expose functions globally for console testing
+  React.useEffect(() => {
+    (window as any).refreshNotificationCount = updateNotificationCount;
+    (window as any).clearNotificationState = () => {
+      localStorage.removeItem('dhb-notification-state');
+      setTotalMessageCount(9);
+      setMessagesSeen(false);
+      setLastSeenCount(9);
+    };
+    (window as any).getNotificationState = () => {
+      const saved = localStorage.getItem('dhb-notification-state');
+      return saved ? JSON.parse(saved) : null;
+    };
+    
+    return () => {
+      delete (window as any).refreshNotificationCount;
+      delete (window as any).clearNotificationState;
+      delete (window as any).getNotificationState;
+    };
+  }, [updateNotificationCount]);
+  
+  // Add polling to automatically update count every 5 seconds
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      updateNotificationCount();
+    }, 5000); // Check every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, [updateNotificationCount]);
   
   const isActive = (path: string) => {
     if (path === '/private') {
@@ -107,6 +222,11 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
 
   return (
     <React.Fragment>
+      <MessagesPopup 
+        open={messagesOpen} 
+        onClose={() => setMessagesOpen(false)}
+        onRefresh={handleMessagesRefresh}
+      />
       <AppBar position="sticky" elevation={0}>
         <Toolbar sx={{ backgroundColor: "#004996", color: "#FFFFFF", minHeight: "102px", height: "102px", py: "20px", px: "108px" }} disableGutters>
           <Grid container alignItems="center" justifyContent="space-between" wrap="nowrap">
@@ -185,13 +305,21 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                     <SearchIcon />
                   </IconButton>
                 </Grid>
-                <Grid item>
-                  <IconButton color="inherit" size="large">
-                    <Badge badgeContent="9+" color="error">
-                      <MailIcon />
-                    </Badge>
-                  </IconButton>
-                </Grid>
+                                 <Grid item>
+                   <IconButton 
+                     color="inherit" 
+                     size="large"
+                     onClick={handleEnvelopeClick}
+                   >
+                                           <Badge 
+                        badgeContent={messagesSeen ? null : unreadCount} 
+                        color="error"
+                      >
+                       <MailIcon />
+                     </Badge>
+                   </IconButton>
+                 </Grid>
+
                 <Grid item>
                   <UserSection>
                     <PersonIcon />

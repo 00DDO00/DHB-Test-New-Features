@@ -34,6 +34,20 @@ export interface UserInfo {
   last_login: string;
 }
 
+export interface Message {
+  id: string;
+  date: string;
+  time: string;
+  type: 'Push' | 'Email';
+  content: string;
+}
+
+export interface MessagesResponse {
+  data: Message[];
+  count: number;
+  new_count: number;
+}
+
 export interface DashboardData {
   accounts: Account[];
   combispaar: {
@@ -103,6 +117,32 @@ export class ApiService {
   async getDashboardData(): Promise<DashboardData> {
     const response = await this.fetchApi<{ success: boolean; data: DashboardData; timestamp: string }>('/dashboard');
     return response.data;
+  }
+
+  async getMessages(): Promise<MessagesResponse> {
+    const response = await this.fetchApi<{ success: boolean; data: Message[]; count: number; new_count: number; timestamp: string }>('/messages');
+    return {
+      data: response.data,
+      count: response.count,
+      new_count: response.new_count
+    };
+  }
+
+  async sendMessage(content: string, type: 'Push' | 'Email' = 'Email'): Promise<Message> {
+    const response = await fetch(`${API_BASE_URL}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content, type }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
   }
 
   

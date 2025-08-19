@@ -17,6 +17,7 @@ import { store } from "./redux/store";
 import createEmotionCache from "./utils/createEmotionCache";
 
 import { AuthProvider } from "./contexts/AuthPkceContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 // import { AuthProvider } from "./contexts/FirebaseAuthContext";
 // import { AuthProvider } from "./contexts/Auth0Context";
 // import { AuthProvider } from "./contexts/CognitoContext";
@@ -29,21 +30,24 @@ function App({ emotionCache = clientSideEmotionCache }) {
   const { theme } = useTheme();
 
   return (
-    <CacheProvider value={emotionCache}>
-      <HelmetProvider>
-        <Helmet
-          titleTemplate="%s | Mira"
-          defaultTitle="Mira - React Material Admin Dashboard"
-        />
-        <Provider store={store}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <MuiThemeProvider theme={createTheme(theme)}>
-              <AuthProvider>{content}</AuthProvider>
+    <ErrorBoundary>
+      <CacheProvider value={emotionCache}>
+        <HelmetProvider>
+          <Helmet
+            titleTemplate="%s | Mira"
+            defaultTitle="Mira - React Material Admin Dashboard"
+          />
+          <Provider store={store}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <MuiThemeProvider theme={createTheme(theme)}>
+              {/* <AuthProvider>{content}</AuthProvider> */}
+              {content}
             </MuiThemeProvider>
-          </LocalizationProvider>
-        </Provider>
-      </HelmetProvider>
-    </CacheProvider>
+            </LocalizationProvider>
+          </Provider>
+        </HelmetProvider>
+      </CacheProvider>
+    </ErrorBoundary>
   );
 }
 

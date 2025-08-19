@@ -201,18 +201,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
       handleOAuthRedirect();
     } else {
       const accessToken = getToken("accessToken", env);
+      
       if (accessToken) {
         const user = getUserFromStorage();
+        
         if (user && !state.isAuthenticated) {
           dispatch({
             type: INITIALIZE,
             payload: { isAuthenticated: true, user },
           });
           dispatch({ type: SIGN_IN, payload: { user: user || null } });
-          //   const customer = getCustomerFromStorage();
-          // if (customer) {
-          //   dispatch({ type: UPDATE, payload: { customer } });
-          // }
         }
       } else {
         // Check if we're on the logout page to prevent automatic redirect
