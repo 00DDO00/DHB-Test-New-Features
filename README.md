@@ -1,37 +1,45 @@
 # Mira Pro - React Admin & Dashboard Template
 
-Thanks for purchasing! Please navigate to our [documentation](https://mira.bootlab.io/documentation/getting-
-started) to learn more on how to install Mira, or follow the steps below.
-
-
-## Prerequisites
-
-For the required Node.js version, please check the `.nvmrc` file. You can download NodeJS at [https://nodejs
-.org/](https://nodejs.org/). You can also use [nvm](https://github.com/creationix/nvm#installation) (macOS/L
-inux) or [nvm-windows](https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows) to s
-witch Node versions between different projects.
-
+Thanks for purchasing! Please navigate to our [documentation](https://mira.bootlab.io/documentation/getting-started) to learn more on how to install Mira, or follow the steps below.
 
 ## Quick Start
 
-### `npm start`
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Runs the app in the development mode.
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+2. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-The page will reload if you make edits.
-You will also see any lint errors in the console.
+3. **Build for production**
+   ```bash
+   npm run build
+   ```
 
-### `npm run build`
+## Features
 
-Builds the app for production to the `dist` folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **React 18** with TypeScript
+- **Material-UI v5** components
+- **Vite** for fast development
+- **Redux Toolkit** for state management
+- **React Router v6** for routing
+- **Multiple authentication methods** (JWT, Auth0, Firebase, Cognito)
+- **Responsive design** with mobile-first approach
+- **Dark/Light theme** support
+- **Internationalization** (i18n) ready
+- **ESLint & Prettier** for code quality
 
-The build is minified and the filenames include the hashes.
-Your app is ready to be deployed!
+## Documentation
 
-## Learn More
+For detailed documentation, visit [https://mira.bootlab.io/documentation](https://mira.bootlab.io/documentation)
 
-You can learn more in the [Mira documentation](https://mira.bootlab.io/documentation/getting-started).
+## Support
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+If you need help, please contact our support team or check our documentation.
+
+## License
+
+This template is licensed under the terms of the license included in the purchase.
