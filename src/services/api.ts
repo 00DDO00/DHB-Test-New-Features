@@ -34,6 +34,16 @@ export interface UserInfo {
   last_login: string;
 }
 
+export interface UserProfile {
+  holder_name: string;
+  email: string;
+  institution_name: string;
+  bic: string;
+  customer_number: string;
+  support_reg_number: string;
+  last_login: string;
+}
+
 export interface Message {
   id: string;
   date: string;
@@ -111,6 +121,11 @@ export class ApiService {
 
   async getUserInfo(): Promise<UserInfo> {
     const response = await this.fetchApi<{ success: boolean; data: UserInfo; timestamp: string }>('/user');
+    return response.data;
+  }
+
+  async getUserProfile(): Promise<UserProfile> {
+    const response = await this.fetchApi<{ success: boolean; data: UserProfile; timestamp: string }>('/user/profile');
     return response.data;
   }
 

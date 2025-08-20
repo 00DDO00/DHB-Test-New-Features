@@ -12,6 +12,9 @@ import {
   Typography,
   Badge,
   Box,
+  Card,
+  Divider,
+  Backdrop,
 } from "@mui/material";
 
 import { 
@@ -19,7 +22,9 @@ import {
   Search as SearchIcon,
   Mail as MailIcon,
   Person as PersonIcon,
-  KeyboardArrowDown as ArrowDownIcon
+  KeyboardArrowDown as ArrowDownIcon,
+  Edit as EditIcon,
+  Logout as LogoutIcon
 } from "@mui/icons-material";
 
 import NavbarNotificationsDropdown from "./NavbarNotificationsDropdown";
@@ -27,7 +32,7 @@ import NavbarMessagesDropdown from "./NavbarMessagesDropdown";
 import NavbarLanguagesDropdown from "./NavbarLanguagesDropdown";
 import NavbarUserDropdown from "./NavbarUserDropdown";
 import MessagesPopup from "../MessagesPopup";
-import { apiService } from "../../services/api";
+import { apiService, UserProfile } from "../../services/api";
 
 // Import the logo image
 import dhbLogo from "../../assets/dhb-white.png";
@@ -92,6 +97,71 @@ const UserSection = styled.div`
   }
 `;
 
+const UserPopup = styled(Card)`
+  position: fixed;
+  top: 75px;
+  right: 108px;
+  min-width: 320px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  background: white;
+`;
+
+const PopupHeader = styled.div`
+  padding: 16px 20px 12px 20px;
+`;
+
+const PopupContent = styled.div`
+  padding: 16px 20px;
+`;
+
+const PopupFooter = styled.div`
+  padding: 12px 20px 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const DetailLabel = styled(Typography)`
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+`;
+
+const DetailValue = styled(Typography)`
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+`;
+
+const ActionLink = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #004996;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #003366;
+  }
+`;
+
 type NavbarProps = {
   onDrawerToggle: React.MouseEventHandler<HTMLElement>;
 };
@@ -103,6 +173,10 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const [totalMessageCount, setTotalMessageCount] = React.useState(9);
   const [messagesSeen, setMessagesSeen] = React.useState(false);
   const [lastSeenCount, setLastSeenCount] = React.useState(9);
+  const [userPopupOpen, setUserPopupOpen] = React.useState(false);
+  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+  
+
   
   // Load saved state from localStorage on component mount
   React.useEffect(() => {
@@ -117,6 +191,20 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     } catch (error) {
       console.error('Failed to load notification state from localStorage:', error);
     }
+  }, []);
+
+  // Fetch user profile data on component mount
+  React.useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const profile = await apiService.getUserProfile();
+        setUserProfile(profile);
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
   
   // Save state to localStorage whenever it changes
@@ -212,6 +300,8 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     
     return () => clearInterval(interval);
   }, [updateNotificationCount]);
+
+
   
   const isActive = (path: string) => {
     if (path === '/private') {
@@ -220,13 +310,78 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     return location.pathname.startsWith(path);
   };
 
-  return (
+    return (
     <React.Fragment>
       <MessagesPopup 
         open={messagesOpen} 
         onClose={() => setMessagesOpen(false)}
         onRefresh={handleMessagesRefresh}
       />
+      
+      {/* Backdrop for user popup */}
+      <Backdrop
+        open={userPopupOpen}
+        onClick={() => setUserPopupOpen(false)}
+        sx={{
+          zIndex: 9998,
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          backdropFilter: 'blur(4px)',
+          top: '102px', // Start below the navbar
+          height: 'calc(100vh - 102px)', // Exclude navbar height
+        }}
+      />
+      
+             {/* User Account Details Popup */}
+       {userPopupOpen && userProfile && (
+         <UserPopup>
+           <PopupHeader>
+             <Typography variant="h6" sx={{ fontWeight: 600, color: '#333', mb: 1 }}>
+               {userProfile.holder_name}
+             </Typography>
+             <Typography variant="body2" sx={{ color: '#666' }}>
+               {userProfile.email}
+             </Typography>
+           </PopupHeader>
+           
+           <Divider />
+           
+           <PopupContent>
+             <DetailRow>
+               <DetailLabel>Institution Name</DetailLabel>
+               <DetailValue>{userProfile.institution_name}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>BIC</DetailLabel>
+               <DetailValue>{userProfile.bic}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>Customer Number</DetailLabel>
+               <DetailValue>{userProfile.customer_number}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>Support Reg. Number</DetailLabel>
+               <DetailValue>{userProfile.support_reg_number}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>Last login on</DetailLabel>
+               <DetailValue>{userProfile.last_login}</DetailValue>
+             </DetailRow>
+           </PopupContent>
+           
+           <Divider />
+           
+           <PopupFooter>
+             <ActionLink>
+               <EditIcon sx={{ fontSize: 16 }} />
+               Edit profile
+             </ActionLink>
+             <ActionLink>
+               <LogoutIcon sx={{ fontSize: 16 }} />
+               Logout
+             </ActionLink>
+           </PopupFooter>
+         </UserPopup>
+       )}
       <AppBar position="sticky" elevation={0}>
         <Toolbar sx={{ backgroundColor: "#004996", color: "#FFFFFF", minHeight: "102px", height: "102px", py: "20px", px: "108px" }} disableGutters>
           <Grid container alignItems="center" justifyContent="space-between" wrap="nowrap">
@@ -320,12 +475,15 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                    </IconButton>
                  </Grid>
 
-                <Grid item>
-                  <UserSection>
+                <Grid item sx={{ position: 'relative' }}>
+                  <UserSection 
+                    className="user-section"
+                    onClick={() => setUserPopupOpen(!userPopupOpen)}
+                  >
                     <PersonIcon />
-                    <Typography variant="body2" sx={{ color: "#FFFFFF" }}>
-                      Lucy Lavender
-                    </Typography>
+                                         <Typography variant="body2" sx={{ color: "#FFFFFF" }}>
+                       {userProfile?.holder_name || "Lucy Lavender"}
+                     </Typography>
                     <ArrowDownIcon />
                   </UserSection>
                 </Grid>

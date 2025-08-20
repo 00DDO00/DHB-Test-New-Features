@@ -277,6 +277,15 @@ def generate_mock_data():
             "customer_id": "CUST001",
             "last_login": datetime.now().isoformat()
         },
+        "user_profile": {
+            "holder_name": "Lucy Lavender",
+            "email": "lucy.lavender@dhbbank.com",
+            "institution_name": "DHB BANK N/V",
+            "bic": "DHBNNL2R",
+            "customer_number": "123456",
+            "support_reg_number": "123456789",
+            "last_login": "10.07.2025 15:26:16"
+        },
         "messages": messages_store
     }
 
@@ -342,6 +351,15 @@ def get_user_info():
     return jsonify({
         "success": True,
         "data": data["user_info"],
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/user/profile', methods=['GET'])
+def get_user_profile():
+    data = generate_mock_data()
+    return jsonify({
+        "success": True,
+        "data": data["user_profile"],
         "timestamp": datetime.now().isoformat()
     })
 
