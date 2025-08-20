@@ -25,6 +25,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import {
   ArrowForward as ArrowForwardIcon,
@@ -36,6 +38,7 @@ import {
   TrackChanges as TrackChangesIcon,
   Tune as TuneIcon,
   Close as CloseIcon,
+  CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -75,6 +78,50 @@ const SaveOnlineAccount: React.FC = () => {
   const [amount, setAmount] = useState({ whole: '', decimal: '' });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [showFinalConfirmation, setShowFinalConfirmation] = useState(false);
+  
+  // Filter popup states
+  const [filterPopupOpen, setFilterPopupOpen] = useState(false);
+  const [periodFilter, setPeriodFilter] = useState('today');
+  const [periodFilterEnabled, setPeriodFilterEnabled] = useState(false);
+  const [amountFilter, setAmountFilter] = useState(false);
+  const [minAmount, setMinAmount] = useState({ whole: '', decimal: '' });
+  const [maxAmount, setMaxAmount] = useState({ whole: '', decimal: '' });
+  const [transactionsCount, setTransactionsCount] = useState('5');
+  const [debitTransactions, setDebitTransactions] = useState(true);
+  const [creditTransactions, setCreditTransactions] = useState(true);
+  const [filteredTransactions, setFilteredTransactions] = useState<any[]>([]);
+  const [savingsGoalModalOpen, setSavingsGoalModalOpen] = useState(false);
+  const [savingsTargetModalOpen, setSavingsTargetModalOpen] = useState(false);
+  const [congratulationsModalOpen, setCongratulationsModalOpen] = useState(false);
+  const [showSavingsGoals, setShowSavingsGoals] = useState(false);
+  const [savedGoals, setSavedGoals] = useState<Array<{
+    id: string;
+    name: string;
+    targetAmount: number;
+    currentAmount: number;
+    percentage: number;
+  }>>([]);
+  
+  const [scheduledTransfers, setScheduledTransfers] = useState<Array<{
+    id: string;
+    description: string;
+    amount: string;
+    period: string;
+    startDate: string;
+    endDate?: string;
+    status: 'scheduled' | 'completed';
+    completedPayments: number;
+    totalPayments: number;
+    isExpanded?: boolean;
+  }>>([]);
+  const [selectedGoal, setSelectedGoal] = useState('');
+  const [savingsTargetName, setSavingsTargetName] = useState('');
+  const [amountWhole, setAmountWhole] = useState('');
+  const [amountDecimal, setAmountDecimal] = useState('');
+  const [amountError, setAmountError] = useState('');
+  const [mockTransactions, setMockTransactions] = useState<any[]>([]);
+
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -88,9 +135,172 @@ const SaveOnlineAccount: React.FC = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setShowTransactionStatus(false);
-    setShowFinalConfirmation(false);
-    setErrors({});
   };
+
+  const applyFilters = () => {
+    let filtered = [...mockTransactions];
+
+    // Filter by transaction type
+    if (!debitTransactions && !creditTransactions) {
+      filtered = [];
+    } else if (!debitTransactions) {
+      filtered = filtered.filter(t => t.type === 'credit');
+    } else if (!creditTransactions) {
+      filtered = filtered.filter(t => t.type === 'debit');
+    }
+
+    // Filter by amount if amount filter is enabled
+    if (amountFilter) {
+      // Only apply min filter if min amount is entered
+      const hasMinAmount = minAmount.whole && minAmount.whole.trim() !== '';
+      const hasMaxAmount = maxAmount.whole && maxAmount.whole.trim() !== '';
+      
+      const minAmountValue = hasMinAmount ? parseFloat(`${minAmount.whole}.${minAmount.decimal || '00'}`) : 0;
+      const maxAmountValue = hasMaxAmount ? parseFloat(`${maxAmount.whole}.${maxAmount.decimal || '00'}`) : Number.MAX_SAFE_INTEGER;
+
+      filtered = filtered.filter(transaction => {
+        // Extract numeric value from balance string
+        let balanceStr = transaction.balance;
+        console.log(`Original balance: "${balanceStr}"`);
+        
+        // Remove €, spaces, and handle European number format (1.250,00 -> 1250.00)
+        balanceStr = balanceStr.replace(/[€\s]/g, '');
+        console.log(`After removing € and spaces: "${balanceStr}"`);
+        
+        // Handle European number format (1.250,00 -> 1250.00) or standard format (900.00 -> 900.00)
+        if (balanceStr.includes(',')) {
+          // European format: remove dots (thousand separators) and replace comma with dot
+          balanceStr = balanceStr.replace(/\./g, '').replace(',', '.');
+        }
+        // If no comma, keep the dot as decimal separator
+        console.log(`After formatting: "${balanceStr}"`);
+        
+        const balanceValue = parseFloat(balanceStr);
+        console.log(`Parsed balanceValue: ${balanceValue}`);
+        
+        // Use absolute value for filtering (ignore positive/negative sign)
+        const absoluteValue = Math.abs(balanceValue);
+        console.log(`Absolute value: ${absoluteValue}`);
+        
+        console.log(`Transaction: "${transaction.balance}", Final Absolute: ${absoluteValue}, Min: ${minAmountValue}, Max: ${maxAmountValue}, HasMin: ${hasMinAmount}, HasMax: ${hasMaxAmount}`);
+        
+        // Apply filters based on what's entered
+        const passesMinFilter = !hasMinAmount || absoluteValue >= minAmountValue;
+        const passesMaxFilter = !hasMaxAmount || absoluteValue <= maxAmountValue;
+        
+        console.log(`Passes min filter: ${passesMinFilter}, Passes max filter: ${passesMaxFilter}`);
+        
+        return passesMinFilter && passesMaxFilter;
+      });
+    }
+
+    // Filter by transaction count
+    const count = parseInt(transactionsCount);
+    filtered = filtered.slice(0, count);
+
+    setFilteredTransactions(filtered);
+    setFilterPopupOpen(false);
+  };
+
+  const downloadAccountStatement = () => {
+    // Get the current data to download (filtered or all)
+    const dataToDownload = filteredTransactions.length > 0 ? filteredTransactions : mockTransactions.slice(0, 5);
+    
+    // Create CSV content
+    const csvHeaders = ['Date', 'Description', 'Account Number', 'Balance', 'Type'];
+    const csvRows = dataToDownload.map(transaction => [
+      transaction.date,
+      transaction.description,
+      transaction.account,
+      transaction.balance,
+      transaction.type
+    ]);
+    
+    // Combine headers and rows
+    const csvContent = [csvHeaders, ...csvRows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+    
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `account_statement_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const savingsGoalOptions = [
+    'Vacation', 'Car', 'Savings',
+    'House', 'Buffer', 'Study',
+    'Driving License', 'Future', 'Pension',
+    'Scooter', 'Future', 'Pension'
+  ];
+
+  const handleSavingsGoalClick = (goal: string) => {
+    setSelectedGoal(goal);
+    setSavingsTargetName(goal);
+    setSavingsGoalModalOpen(false);
+    setSavingsTargetModalOpen(true);
+  };
+
+  const handleCustomGoalClick = () => {
+    setSelectedGoal('');
+    setSavingsTargetName('');
+    setSavingsGoalModalOpen(false);
+    setSavingsTargetModalOpen(true);
+  };
+
+  const handleConfirmSavingsTarget = () => {
+    // Validate amount
+    if (!amountWhole || amountWhole.trim() === '') {
+      setAmountError('Please enter an amount');
+      return;
+    }
+    
+    // Validate that amount is numeric
+    if (!/^\d+$/.test(amountWhole) || !/^\d*$/.test(amountDecimal)) {
+      setAmountError('Please enter valid numbers only');
+      return;
+    }
+    
+    // Clear any previous errors
+    setAmountError('');
+    
+    // Calculate target amount
+    const targetAmount = parseFloat(`${amountWhole}.${amountDecimal || '00'}`);
+    
+    // Create new goal
+    const newGoal = {
+      id: Date.now().toString(),
+      name: savingsTargetName || selectedGoal,
+      targetAmount: targetAmount,
+      currentAmount: 0, // Start with 0 progress
+      percentage: 0 // Start with 0%
+    };
+    
+    // Add to saved goals
+    setSavedGoals(prev => [...prev, newGoal]);
+    
+    setSavingsTargetModalOpen(false);
+    setCongratulationsModalOpen(true);
+  };
+
+  const handleCloseCongratulations = () => {
+    setCongratulationsModalOpen(false);
+    setShowSavingsGoals(true);
+    
+    // Reset form
+    setSelectedGoal('');
+    setSavingsTargetName('');
+    setAmountWhole('');
+    setAmountDecimal('');
+  };
+
+
 
   const handleAccountChange = (accountId: string) => {
     setSelectedAccount(accountId);
@@ -206,10 +416,205 @@ const SaveOnlineAccount: React.FC = () => {
   };
 
   const handleDone = () => {
+    console.log('Transfer completed - adding to table');
+    
+    // Check if this transfer should be completed (start date has passed)
+    const transferStartDate = new Date(parseInt(startDate.year), parseInt(startDate.month) - 1, parseInt(startDate.day));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const shouldBeCompleted = transferStartDate <= today;
+    
+    // Only add to completed transfers if the start date has passed
+    if (shouldBeCompleted) {
+      // Create transfer record from the form data
+      const newTransfer = {
+        id: Date.now().toString(),
+        date: new Date().toLocaleDateString('en-GB'),
+        description: explanation || 'Transfer',
+        account: 'NL24DHBN2018470578',
+        balance: `-€ ${amount.whole || '0'}.${amount.decimal || '00'}`,
+        type: 'debit'
+      };
+      
+      console.log('New transfer to be added:', newTransfer);
+      
+      // Add to the beginning of the transactions list
+      setMockTransactions(prev => {
+        console.log('Previous transactions:', prev);
+        const newList = [newTransfer, ...prev];
+        console.log('New transactions list:', newList);
+        return newList;
+      });
+    }
+    
+    // Add to scheduled transfers if it's recurring OR if it's one-time with future date
+    if (period !== 'one-time' || !shouldBeCompleted) {
+      const transferEndDate = endDate.day ? new Date(parseInt(endDate.year), parseInt(endDate.month) - 1, parseInt(endDate.day)) : undefined;
+      
+      const newScheduledTransfer = {
+        id: Date.now().toString(),
+        description: explanation || (period === 'one-time' ? 'One-time Transfer' : 'Recurring Transfer'),
+        amount: `€ ${amount.whole || '0'}.${amount.decimal || '00'}`,
+        period: period,
+        startDate: transferStartDate.toLocaleDateString('en-GB'),
+        endDate: transferEndDate?.toLocaleDateString('en-GB'),
+        status: 'scheduled' as const,
+        completedPayments: shouldBeCompleted ? 1 : 0, // If start date has passed, mark as 1 completed payment
+        totalPayments: period === 'one-time' ? 1 : calculateTotalPayments(transferStartDate, transferEndDate, period),
+        isExpanded: false
+      };
+      
+      setScheduledTransfers(prev => [...prev, newScheduledTransfer]);
+    }
+    
+    // Clear any filtered transactions so the new transfer shows up
+    setFilteredTransactions([]);
+    
     setModalOpen(false);
     setShowTransactionStatus(false);
     setShowFinalConfirmation(false);
     setErrors({});
+  };
+
+  // Calculate total payments for recurring transfers
+  const calculateTotalPayments = (startDate: Date, endDate: Date | undefined, period: string): number => {
+    if (!endDate) return 1; // No end date means ongoing
+    
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    switch (period) {
+      case 'daily':
+        return Math.floor(daysDiff) + 1;
+      case 'weekly':
+        return Math.floor(daysDiff / 7) + 1;
+      case 'monthly':
+        return Math.floor(daysDiff / 30) + 1;
+      case 'yearly':
+        return Math.floor(daysDiff / 365) + 1;
+      default:
+        return 1;
+    }
+  };
+
+  // Calculate completed payments based on start date and today
+  const calculateCompletedPayments = (startDate: string, period: string): number => {
+    const start = new Date(startDate.split('/').reverse().join('-'));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (start > today) return 0;
+    
+    const timeDiff = today.getTime() - start.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    switch (period) {
+      case 'daily':
+        return Math.min(Math.floor(daysDiff) + 1, 999); // Cap at reasonable number
+      case 'weekly':
+        return Math.min(Math.floor(daysDiff / 7) + 1, 999);
+      case 'monthly':
+        return Math.min(Math.floor(daysDiff / 30) + 1, 999);
+      case 'yearly':
+        return Math.min(Math.floor(daysDiff / 365) + 1, 999);
+      default:
+        return 0;
+    }
+  };
+
+  // Toggle scheduled transfer expansion
+  const toggleScheduledTransfer = (id: string) => {
+    setScheduledTransfers(prev => prev.map(transfer => 
+      transfer.id === id ? { ...transfer, isExpanded: !transfer.isExpanded } : transfer
+    ));
+  };
+
+  // Calculate next payment date
+  const getNextPaymentDate = (startDate: string, period: string, completedPayments: number): string => {
+    const start = new Date(startDate.split('/').reverse().join('-'));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (start > today) {
+      return start.toLocaleDateString('en-GB');
+    }
+    
+    let nextDate = new Date(start);
+    
+    // Calculate next payment based on period and completed payments
+    switch (period) {
+      case 'daily':
+        nextDate.setDate(start.getDate() + completedPayments);
+        break;
+      case 'weekly':
+        nextDate.setDate(start.getDate() + (completedPayments * 7));
+        break;
+      case 'monthly':
+        nextDate.setMonth(start.getMonth() + completedPayments);
+        break;
+      case 'yearly':
+        nextDate.setFullYear(start.getFullYear() + completedPayments);
+        break;
+      default:
+        return 'N/A';
+    }
+    
+    return nextDate.toLocaleDateString('en-GB');
+  };
+
+  // Get payment status text
+  const getPaymentStatus = (transfer: any): { previous: string; next: string } => {
+    const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startDate = new Date(transfer.startDate.split('/').reverse().join('-'));
+    const endDate = transfer.endDate ? new Date(transfer.endDate.split('/').reverse().join('-')) : null;
+    
+    console.log('Transfer:', transfer.description);
+    console.log('Start date:', transfer.startDate, 'Parsed:', startDate);
+    console.log('Today:', today);
+    console.log('Completed payments:', completedPayments);
+    console.log('Start === Today:', startDate.getTime() === today.getTime());
+    console.log('Start > Today:', startDate > today);
+    
+    // Check if transfer is completed
+    if (endDate && endDate <= today) {
+      return {
+        previous: 'Completed',
+        next: 'Transfer completed'
+      };
+    }
+    
+    // Check if start date is today (payment has been made)
+    if (startDate.toDateString() === today.toDateString()) {
+      return {
+        previous: 'Completed',
+        next: 'Pending'
+      };
+    }
+    
+    // Check if any payments have been completed (for past start dates)
+    if (completedPayments > 0) {
+      return {
+        previous: 'Completed',
+        next: 'Pending'
+      };
+    }
+    
+    // Check if transfer hasn't started yet
+    if (startDate.toDateString() > today.toDateString()) {
+      return {
+        previous: 'None',
+        next: 'Scheduled'
+      };
+    }
+    
+    return {
+      previous: 'None',
+      next: 'Scheduled'
+    };
   };
 
   // Generate date options
@@ -272,12 +677,12 @@ const SaveOnlineAccount: React.FC = () => {
   ];
 
   const quickActions = [
-    { icon: <SettingsIcon />, label: 'Savings Goal Setting', href: '#' },
-    { icon: <PeopleIcon />, label: 'Counteraccount change', href: '#' },
-    { icon: <FileUploadIcon />, label: 'Transcript download', href: '#' },
-    { icon: <TrackChangesIcon />, label: 'Set savings target', href: '#' },
-    { icon: <TuneIcon />, label: 'Adjustment', href: '#' },
-    { icon: <CloseIcon />, label: 'Account Closure', href: '#' },
+    { icon: <SettingsIcon />, label: 'Savings Goal Setting', href: '#', onClick: () => setSavingsGoalModalOpen(true) },
+    { icon: <PeopleIcon />, label: 'Counteraccount change', href: '#', onClick: () => {} },
+    { icon: <FileUploadIcon />, label: 'Transcript download', href: '#', onClick: () => {} },
+    { icon: <TrackChangesIcon />, label: 'Set savings target', href: '#', onClick: () => {} },
+    { icon: <TuneIcon />, label: 'Adjustment', href: '#', onClick: () => {} },
+    { icon: <CloseIcon />, label: 'Account Closure', href: '#', onClick: () => {} },
   ];
 
   return (
@@ -293,11 +698,83 @@ const SaveOnlineAccount: React.FC = () => {
         <Typography color="text.primary">DHB SaveOnline</Typography>
       </Breadcrumbs>
 
+      {/* Savings Goals Section */}
+      {showSavingsGoals && savedGoals.length > 0 && (
+        <Card sx={{ mb: 3, p: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
+              Savings Goals
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 3 }}>
+              {savedGoals.map((goal) => (
+                <Box key={goal.id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ position: 'relative', width: 60, height: 60 }}>
+                    <Box
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        border: '4px solid #E0E0E0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative'
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '50%',
+                          border: '4px solid transparent',
+                          borderTop: '4px solid #4CAF50',
+                          transform: `rotate(${-90 + (goal.percentage * 3.6)}deg)`,
+                          clipPath: goal.percentage >= 50 ? 'none' : 'polygon(50% 0%, 50% 50%, 100% 50%, 100% 100%, 0% 100%, 0% 0%)'
+                        }}
+                      />
+                      {goal.percentage >= 50 && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            border: '4px solid #4CAF50',
+                            borderRight: '4px solid transparent',
+                            borderBottom: '4px solid transparent',
+                            transform: 'rotate(-90deg)'
+                          }}
+                        />
+                      )}
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>
+                        {goal.percentage}%
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
+                    {goal.name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    € {goal.currentAmount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / {goal.targetAmount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Card>
+      )}
+
       {/* Account Summary - Full Width Blue Card */}
-      <Card sx={{ mb: 0, backgroundColor: '#004996', color: 'white' }}>
+      <Card sx={{ mb: 0, backgroundColor: '#004996', color: 'white', borderRadius: '12px 12px 0 0' }}>
         <CardContent>
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={12} md={8}>
+          <Grid container alignItems="center">
+            {/* Left Side - Holder Name and IBAN */}
+            <Grid item xs={12} md={4}>
               <Typography variant="h6" sx={{ mb: 1 }}>
                 Holder name
               </Typography>
@@ -305,23 +782,48 @@ const SaveOnlineAccount: React.FC = () => {
                 NL24DHBN2018470578
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+            
+            {/* Center - Balance */}
+            <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                 € 2.000,00
               </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Balance class:</strong> EUR 0,00 t/m EUR 100.000,00
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Rente:</strong> 1.7%
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Balance class:</strong> EUR 100.000,01 t/m EUR 500.000,00
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Rente:</strong> 1.7%
-                </Typography>
+            </Grid>
+            
+            {/* Right Side - Balance Classes and Rates Table */}
+            <Grid item xs={12} md={4}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                <Box sx={{ width: '100%', maxWidth: '400px' }}>
+                  {/* Header Row */}
+                  <Box sx={{ display: 'flex', mb: 1, justifyContent: 'space-between' }}>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', flex: 1, mr: 0.5 }}>
+                      Balance class
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', minWidth: '60px', textAlign: 'right' }}>
+                      Rente
+                    </Typography>
+                  </Box>
+                  
+                  {/* Data Row 1 */}
+                  <Box sx={{ display: 'flex', mb: 1, justifyContent: 'space-between' }}>
+                    <Typography variant="body2" sx={{ flex: 1, mr: 0.5, whiteSpace: 'nowrap' }}>
+                      EUR 0,00 t/m EUR 100.000,00
+                    </Typography>
+                    <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right' }}>
+                      1.7 %
+                    </Typography>
+                  </Box>
+                  
+                  {/* Data Row 2 */}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" sx={{ flex: 1, mr: 0.5, whiteSpace: 'nowrap' }}>
+                      EUR 100.000,01 t/m EUR 500.000,00
+                    </Typography>
+                    <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right' }}>
+                      1.7 %
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
             </Grid>
           </Grid>
@@ -334,7 +836,7 @@ const SaveOnlineAccount: React.FC = () => {
         backgroundColor: 'white',
         border: '1px solid #e0e0e0',
         borderTop: 'none',
-        borderRadius: '0 0 8px 8px'
+        borderRadius: '0 0 16px 16px'
       }}>
         {/* Transfer Section - Left Side */}
         <Box sx={{ flex: 1, p: 3, borderRight: '1px solid #e0e0e0' }}>
@@ -386,22 +888,101 @@ const SaveOnlineAccount: React.FC = () => {
           </TabPanel>
 
           <TabPanel value={tabValue} index={1}>
-            <Typography variant="body2" color="text.secondary">
-              No scheduled transfers found.
-            </Typography>
+            {scheduledTransfers.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No scheduled transfers found.
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {scheduledTransfers.map((transfer) => {
+                  const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+                  const isCompleted = transfer.endDate && new Date(transfer.endDate) <= new Date();
+                  const paymentStatus = getPaymentStatus(transfer);
+                  
+                  return (
+                    <Box
+                      key={transfer.id}
+                      onClick={() => toggleScheduledTransfer(transfer.id)}
+                      sx={{
+                        border: '1px solid #e0e0e0',
+                        borderRadius: 1,
+                        p: 2,
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#f5f5f5'
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            {transfer.description}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {transfer.amount} • {transfer.period} • {transfer.startDate}
+                            {transfer.endDate && ` - ${transfer.endDate}`}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ textAlign: 'right' }}>
+                          <Typography variant="body2" color={isCompleted ? 'success.main' : 'text.secondary'}>
+                            {isCompleted ? 'Completed' : 'Active'}
+                          </Typography>
+
+                        </Box>
+                      </Box>
+                      
+                      {transfer.isExpanded && (
+                        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Payment Schedule:</strong> {transfer.period}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Start Date:</strong> {transfer.startDate}
+                          </Typography>
+                          {transfer.endDate && (
+                            <Typography variant="body2" sx={{ mb: 1 }}>
+                              <strong>End Date:</strong> {transfer.endDate}
+                            </Typography>
+                          )}
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Amount per payment:</strong> {transfer.amount}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Previous payment:</strong> {paymentStatus.previous}
+                          </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            <strong>Next payment:</strong> {paymentStatus.next}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+            )}
           </TabPanel>
 
           {/* Account Transfers Table - Inside the same frame */}
           <Box sx={{ mt: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6">Account transfers</Typography>
-              <Box>
-                <IconButton size="small" sx={{ mr: 1 }}>
-                  <DownloadIcon />
-                </IconButton>
-                <IconButton size="small">
-                  <FilterIcon />
-                </IconButton>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={downloadAccountStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={() => setFilterPopupOpen(true)}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
               </Box>
             </Box>
 
@@ -415,10 +996,16 @@ const SaveOnlineAccount: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {transactions.map((transaction, index) => (
-                    <TableRow key={index}>
+                  {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
+                    <TableRow key={transaction.id || index}>
                       <TableCell>{transaction.date}</TableCell>
-                      <TableCell>{transaction.description}</TableCell>
+                      <TableCell>
+                        {transaction.description}
+                        <br />
+                        <Typography variant="caption" color="text.secondary">
+                          {transaction.account}
+                        </Typography>
+                      </TableCell>
                       <TableCell 
                         align="right"
                         sx={{ 
@@ -437,7 +1024,7 @@ const SaveOnlineAccount: React.FC = () => {
             <Box sx={{ textAlign: 'center', mt: 2 }}>
               <MuiLink
                 component={Link}
-                to="#"
+                to="/accounts/saveonline/statement"
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -455,12 +1042,12 @@ const SaveOnlineAccount: React.FC = () => {
         </Box>
 
         {/* Quick Actions - Right Side */}
-        <Box sx={{ width: '300px', p: 3, backgroundColor: '#E6EDF5' }}>
+        <Box sx={{ width: '300px', p: 3, backgroundColor: '#E6EDF5', borderRadius: '0 0 16px 0' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, pt: 4, alignItems: 'center' }}>
             {quickActions.map((action, index) => (
-              <MuiLink
+              <Box
                 key={index}
-                href={action.href}
+                onClick={action.onClick}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -473,6 +1060,7 @@ const SaveOnlineAccount: React.FC = () => {
                   border: 'none',
                   transition: 'all 0.2s',
                   width: '240px',
+                  cursor: 'pointer',
                   '&:hover': {
                     backgroundColor: 'rgba(0, 0, 0, 0.05)',
                     textDecoration: 'none'
@@ -486,7 +1074,7 @@ const SaveOnlineAccount: React.FC = () => {
                   <Typography variant="body2">{action.label}</Typography>
                 </Box>
                 <ArrowForwardIcon sx={{ fontSize: '1rem' }} />
-              </MuiLink>
+              </Box>
             ))}
           </Box>
         </Box>
@@ -1133,6 +1721,904 @@ const SaveOnlineAccount: React.FC = () => {
           </Box>
         </Box>
       </Modal>
+
+      {/* Filter Popup Modal */}
+      <Modal
+        open={filterPopupOpen}
+        onClose={() => setFilterPopupOpen(false)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)',
+          }
+        }}
+      >
+        <Box sx={{
+          width: '35%',
+          height: '100vh',
+          backgroundColor: '#F3F3F3',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: '8px 0 0 8px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+        }}>
+          {/* Modal Header */}
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            p: 3
+          }}>
+            <Typography variant="h5" fontWeight="bold" color="#333">
+              Filter
+            </Typography>
+            <IconButton onClick={() => setFilterPopupOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Modal Content */}
+          <Box sx={{ p: 8, flex: 1 }}>
+            {/* White Container for Filtering Options */}
+            <Card sx={{ 
+              backgroundColor: 'white', 
+              borderRadius: 2, 
+              p: 3,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+            {/* Period Section */}
+            <Box sx={{ mb: 6 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" fontWeight="bold" color="#333">
+                  Period
+                </Typography>
+                <Switch 
+                  checked={periodFilterEnabled} 
+                  onChange={(e) => setPeriodFilterEnabled(e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-track': {
+                      backgroundColor: periodFilterEnabled ? '#4CAF50' : '#E0E0E0',
+                      borderRadius: 22 / 2,
+                      opacity: 1,
+                      height: 22,
+                    },
+                    '& .MuiSwitch-thumb': {
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      width: 18,
+                      height: 18,
+                    },
+                    '& .MuiSwitch-switchBase': {
+                      color: '#FFFFFF',
+                      top: 4.2,
+                      left: 2,
+                    },
+                  }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {['today', 'week', 'month', '6 month'].map((period) => (
+                  <Button
+                    key={period}
+                    variant={periodFilter === period ? 'contained' : 'outlined'}
+                    onClick={() => setPeriodFilter(period)}
+                    sx={{
+                      flex: 1,
+                      height: 36,
+                      lineHeight: '36px',
+                      backgroundColor: periodFilter === period ? '#004996' : 'transparent',
+                      color: periodFilter === period ? 'white' : '#333',
+                      borderColor: '#004996',
+                      textTransform: 'none',
+                      '&:hover': {
+                        backgroundColor: periodFilter === period ? '#004996' : 'rgba(0, 73, 150, 0.1)',
+                      }
+                    }}
+                  >
+                    {period === '6 month' ? '6 month' : period.charAt(0).toUpperCase() + period.slice(1)}
+                  </Button>
+                ))}
+              </Box>
+              
+              {/* Value Date Section - Only show when periodFilterEnabled is enabled */}
+              {periodFilterEnabled && (
+                <Box sx={{ mt: 3, mb: 6 }}>
+                  {/* Value Date From */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body1" color="#333" sx={{ mb: 1 }}>
+                      Value Date: From
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Day</MenuItem>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                            <MenuItem key={day} value={day}>{day}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Month</MenuItem>
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                            <MenuItem key={month} value={month}>{month}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Year</MenuItem>
+                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => (
+                            <MenuItem key={year} value={year}>{year}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Box>
+                  
+                  {/* Value Date To */}
+                  <Box>
+                    <Typography variant="body1" color="#333" sx={{ mb: 1 }}>
+                      Value Date: To
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Day</MenuItem>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                            <MenuItem key={day} value={day}>{day}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Month</MenuItem>
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                            <MenuItem key={month} value={month}>{month}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl size="small" sx={{ flex: 1 }}>
+                        <Select
+                          displayEmpty
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderColor: '#004996',
+                              '& fieldset': {
+                                borderColor: '#004996',
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem value="">Year</MenuItem>
+                          {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i).map(year => (
+                            <MenuItem key={year} value={year}>{year}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </Box>
+
+            {/* Amount Section */}
+            <Box sx={{ mb: 6 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" fontWeight="bold" color="#333">
+                  Amount
+                </Typography>
+                <Switch 
+                  checked={amountFilter} 
+                  onChange={(e) => setAmountFilter(e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-track': {
+                      backgroundColor: amountFilter ? '#4CAF50' : '#E0E0E0',
+                      borderRadius: 22 / 2,
+                      opacity: 1,
+                      height: 22,
+                    },
+                    '& .MuiSwitch-thumb': {
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      width: 18,
+                      height: 18,
+                    },
+                    '& .MuiSwitch-switchBase': {
+                      color: '#FFFFFF',
+                      top: 4,
+                      left: 2,
+                    },
+                  }}
+                />
+              </Box>
+              
+              {/* Amount Input Fields - Only show when amountFilter is enabled */}
+              {amountFilter && (
+                <Box sx={{ mt: 3 }}>
+                  {/* Minimal Amount */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body1" color="#333" sx={{ mb: 1 }}>
+                      Minimal Amount
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <TextField
+                        placeholder="000"
+                        size="small"
+                        value={minAmount.whole}
+                        onChange={(e) => setMinAmount(prev => ({ ...prev, whole: e.target.value }))}
+                        sx={{
+                          flex: 1,
+                          '& .MuiOutlinedInput-root': {
+                            borderColor: '#004996',
+                            '& fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        placeholder="00"
+                        size="small"
+                        value={minAmount.decimal}
+                        onChange={(e) => setMinAmount(prev => ({ ...prev, decimal: e.target.value }))}
+                        sx={{
+                          width: '80px',
+                          '& .MuiOutlinedInput-root': {
+                            borderColor: '#004996',
+                            '& fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                        }}
+                      />
+                      <Typography variant="body1" color="#333">
+                        €
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  {/* Maximum Amount */}
+                  <Box>
+                    <Typography variant="body1" color="#333" sx={{ mb: 1 }}>
+                      Maximum Amount
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <TextField
+                        placeholder="000"
+                        size="small"
+                        value={maxAmount.whole}
+                        onChange={(e) => setMaxAmount(prev => ({ ...prev, whole: e.target.value }))}
+                        sx={{
+                          flex: 1,
+                          '& .MuiOutlinedInput-root': {
+                            borderColor: '#004996',
+                            '& fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                        }}
+                      />
+                      <TextField
+                        placeholder="00"
+                        size="small"
+                        value={maxAmount.decimal}
+                        onChange={(e) => setMaxAmount(prev => ({ ...prev, decimal: e.target.value }))}
+                        sx={{
+                          width: '80px',
+                          '& .MuiOutlinedInput-root': {
+                            borderColor: '#004996',
+                            '& fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                        }}
+                      />
+                      <Typography variant="body1" color="#333">
+                        €
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </Box>
+
+            {/* Show transactions Section */}
+            <Box sx={{ mb: 6 }}>
+              <Typography variant="h6" fontWeight="bold" color="#333" sx={{ mb: 2 }}>
+                Show transactions
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {['5', '10', '20', '30'].map((count) => (
+                  <Button
+                    key={count}
+                    variant={transactionsCount === count ? 'contained' : 'outlined'}
+                    onClick={() => setTransactionsCount(count)}
+                    sx={{
+                      flex: 1,
+                      height: 36,
+                      lineHeight: '36px',
+                      backgroundColor: transactionsCount === count ? '#004996' : 'transparent',
+                      color: transactionsCount === count ? 'white' : '#333',
+                      borderColor: '#004996',
+                      textTransform: 'none',
+                      fontSize: '0.75rem',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      '&:hover': {
+                        backgroundColor: transactionsCount === count ? '#004996' : 'rgba(0, 73, 150, 0.1)',
+                      }
+                    }}
+                  >
+                    {count} Transfers
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Type of transaction Section */}
+            <Box sx={{ mb: 6 }}>
+              <Typography variant="h6" fontWeight="bold" color="#333" sx={{ mb: 2 }}>
+                Type of transaction
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body1" color="#333">
+                    Debit transactions
+                  </Typography>
+                  <Switch 
+                    checked={debitTransactions} 
+                    onChange={(e) => setDebitTransactions(e.target.checked)}
+                    sx={{
+                      '& .MuiSwitch-track': {
+                        backgroundColor: '#E0E0E0',
+                        borderRadius: 22 / 2,
+                        opacity: 1,
+                        height: 22,
+                      },
+                      '& .MuiSwitch-thumb': {
+                        backgroundColor: '#FFFFFF',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        width: 18,
+                        height: 18,
+                      },
+                      '& .MuiSwitch-switchBase': {
+                        color: '#FFFFFF',
+                        top: 4.2,
+                        left: 2,
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#4CAF50',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#4CAF50',
+                      },
+                    }}
+                  />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body1" color="#333">
+                    Credit transactions
+                  </Typography>
+                  <Switch 
+                    checked={creditTransactions} 
+                    onChange={(e) => setCreditTransactions(e.target.checked)}
+                    sx={{
+                      '& .MuiSwitch-track': {
+                        backgroundColor: '#E0E0E0',
+                        borderRadius: 22 / 2,
+                        opacity: 1,
+                        height: 22,
+                      },
+                      '& .MuiSwitch-thumb': {
+                        backgroundColor: '#FFFFFF',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        width: 18,
+                        height: 18,
+                      },
+                      '& .MuiSwitch-switchBase': {
+                        color: '#FFFFFF',
+                        top: 4,
+                        left: 2,
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#4CAF50',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#4CAF50',
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Box>
+            </Card>
+          </Box>
+
+          {/* Apply Button */}
+          <Box sx={{ p: 3, borderTop: '1px solid #E0E0E0' }}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={applyFilters}
+              sx={{
+                background: 'linear-gradient(45deg, #FC9F15, #FFB74D)',
+                color: 'white',
+                textTransform: 'none',
+                borderRadius: 2,
+                py: 1.5,
+                fontWeight: 500,
+                fontSize: '1.1rem',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #e58a0d, #FFA726)',
+                }
+              }}
+            >
+              Apply
+              <ArrowForwardIcon sx={{ ml: 1 }} />
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Savings Goal Modal */}
+      <Modal
+        open={savingsGoalModalOpen}
+        onClose={() => setSavingsGoalModalOpen(false)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)'
+          }
+        }}
+      >
+        <Box
+          sx={{
+            width: '35%',
+            height: '100vh',
+            bgcolor: '#F3F3F3',
+            borderRadius: '8px 0 0 8px',
+            boxShadow: 24,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {/* Modal Header */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            p: 3
+          }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
+              Savings Goal Setting
+            </Typography>
+            <IconButton onClick={() => setSavingsGoalModalOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Modal Content - White Container */}
+          <Box sx={{ p: 8, flex: 1 }}>
+            <Card sx={{
+              backgroundColor: 'white',
+              borderRadius: 2,
+              p: 3,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
+                What are you saving for?
+              </Typography>
+
+              {/* Savings Goal Options Grid */}
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(3, 1fr)', 
+                gap: 2, 
+                mb: 4 
+              }}>
+                {savingsGoalOptions.map((goal, index) => (
+                  <Button
+                    key={index}
+                    variant="outlined"
+                    onClick={() => handleSavingsGoalClick(goal)}
+                    sx={{
+                      py: 2,
+                      px: 2,
+                      borderColor: '#E0E0E0',
+                      color: '#333',
+                      backgroundColor: '#F5F5F5',
+                      textTransform: 'none',
+                      fontWeight: 'normal',
+                      '&:hover': {
+                        backgroundColor: '#E8E8E8',
+                        borderColor: '#BDBDBD'
+                      }
+                    }}
+                  >
+                    {goal}
+                  </Button>
+                ))}
+              </Box>
+
+              {/* Custom Goal Button */}
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleCustomGoalClick}
+                sx={{
+                  py: 2,
+                  borderColor: '#2196F3',
+                  color: '#2196F3',
+                  backgroundColor: '#E3F2FD',
+                  textTransform: 'none',
+                  fontWeight: 'normal',
+                  '&:hover': {
+                    backgroundColor: '#BBDEFB',
+                    borderColor: '#1976D2'
+                  }
+                }}
+              >
+                Or define your own goal
+              </Button>
+            </Card>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Savings Target Modal */}
+      <Modal
+        open={savingsTargetModalOpen}
+        onClose={() => setSavingsTargetModalOpen(false)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)'
+          }
+        }}
+      >
+        <Box
+          sx={{
+            width: '35%',
+            height: '100vh',
+            bgcolor: '#F3F3F3',
+            borderRadius: '8px 0 0 8px',
+            boxShadow: 24,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {/* Modal Header */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            p: 3
+          }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
+              Savings Goal Setting
+            </Typography>
+            <IconButton onClick={() => setSavingsTargetModalOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Modal Content - White Container */}
+          <Box sx={{ p: 8, flex: 1 }}>
+            <Card sx={{
+              backgroundColor: 'white',
+              borderRadius: 2,
+              p: 3,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              {/* What are you saving for? Section */}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  What are you saving for?
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Savings target name"
+                  value={savingsTargetName}
+                  onChange={(e) => setSavingsTargetName(e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#2196F3',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#1976D2',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#2196F3',
+                    },
+                  }}
+                />
+              </Box>
+
+              {/* Amount Section */}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  Amount
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TextField
+                    sx={{
+                      flex: 1,
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: amountError ? '#d32f2f' : '#2196F3',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: amountError ? '#d32f2f' : '#1976D2',
+                        },
+                      },
+                      '& .MuiInputBase-input::placeholder': {
+                        color: '#999 !important',
+                        opacity: '1 !important',
+                      },
+                    }}
+                    value={amountWhole}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, ''); // Only allow numbers
+                      setAmountWhole(value);
+                      if (amountError) setAmountError(''); // Clear error when user starts typing
+                    }}
+                    placeholder="000"
+                    error={!!amountError}
+                  />
+                  <TextField
+                    sx={{
+                      width: '80px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#2196F3',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#1976D2',
+                        },
+                      },
+                      '& .MuiInputBase-input::placeholder': {
+                        color: '#999 !important',
+                        opacity: '1 !important',
+                      },
+                    }}
+                    value={amountDecimal}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, ''); // Only allow numbers
+                      setAmountDecimal(value);
+                    }}
+                    placeholder="00"
+                    error={!!amountError}
+                  />
+                  <Typography variant="h6" sx={{ color: '#2196F3', fontWeight: 'bold' }}>
+                    €
+                  </Typography>
+                </Box>
+                {amountError && (
+                  <Typography variant="caption" sx={{ color: '#d32f2f', mt: 1, display: 'block' }}>
+                    {amountError}
+                  </Typography>
+                )}
+                
+              </Box>
+            </Card>
+          </Box>
+
+          {/* Confirm Button */}
+          <Box sx={{ p: 3, borderTop: '1px solid #E0E0E0' }}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleConfirmSavingsTarget}
+              sx={{
+                background: 'linear-gradient(45deg, #FC9F15, #FFB74D)',
+                color: 'white',
+                textTransform: 'none',
+                borderRadius: 2,
+                py: 1.5,
+                fontWeight: 500,
+                fontSize: '1.1rem',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #e58a0d, #FFA726)',
+                }
+              }}
+            >
+              Confirm
+              <ArrowForwardIcon sx={{ ml: 1 }} />
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Congratulations Modal */}
+      <Modal
+        open={congratulationsModalOpen}
+        onClose={handleCloseCongratulations}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)'
+          }
+        }}
+      >
+        <Box
+          sx={{
+            width: '35%',
+            height: '100vh',
+            bgcolor: '#F3F3F3',
+            borderRadius: '8px 0 0 8px',
+            boxShadow: 24,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {/* Modal Header */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            p: 3
+          }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
+              Savings Goal Setting
+            </Typography>
+            <IconButton onClick={handleCloseCongratulations}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Modal Content - White Container */}
+          <Box sx={{ p: 8, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Card sx={{
+              backgroundColor: 'white',
+              borderRadius: 2,
+              p: 4,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              width: '100%'
+            }}>
+              {/* Checkmark Icon */}
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  backgroundColor: '#4CAF50',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 3
+                }}
+              >
+                <CheckCircleIcon 
+                  sx={{ 
+                    fontSize: 50, 
+                    color: 'white' 
+                  }} 
+                />
+              </Box>
+
+              {/* Congratulations Heading */}
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  color: '#4CAF50', 
+                  mb: 2 
+                }}
+              >
+                Congratulations!
+              </Typography>
+
+              {/* Success Message */}
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: '#333', 
+                  mb: 4,
+                  lineHeight: 1.5
+                }}
+              >
+                You have successfully opened Savings Goal
+              </Typography>
+
+              {/* Done Button */}
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleCloseCongratulations}
+                sx={{
+                  background: 'linear-gradient(45deg, #FC9F15, #FFB74D)',
+                  color: 'white',
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  py: 1.5,
+                  fontWeight: 500,
+                  fontSize: '1.1rem',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #e58a0d, #FFA726)',
+                  }
+                }}
+              >
+                Done
+              </Button>
+            </Card>
+          </Box>
+        </Box>
+      </Modal>
+
     </Box>
   );
 };
