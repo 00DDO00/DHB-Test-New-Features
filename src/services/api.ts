@@ -129,6 +129,11 @@ export class ApiService {
     return response.data;
   }
 
+  async getMaxiSpaarPageData(): Promise<any> {
+    const response = await this.fetchApi<{ success: boolean; data: any; timestamp: string }>('/maxispaar/page-data');
+    return response.data;
+  }
+
   async getDashboardData(): Promise<DashboardData> {
     const response = await this.fetchApi<{ success: boolean; data: DashboardData; timestamp: string }>('/dashboard');
     return response.data;

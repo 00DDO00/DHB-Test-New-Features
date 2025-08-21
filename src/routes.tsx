@@ -52,7 +52,7 @@ import InvoiceDetails from "./pages/pages/InvoiceDetails";
 import InvoiceList from "./pages/pages/InvoiceList";
 import Orders from "./pages/pages/Orders";
 import Pricing from "./pages/pages/Pricing";
-import Settings from "./pages/pages/Settings";
+import Settings from "./pages/Settings";
 import Projects from "./pages/pages/Projects";
 import Chat from "./pages/pages/Chat";
 
@@ -92,6 +92,7 @@ import Home from "./pages/home";
 import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount";
 import OpenAccount from "./pages/accounts/OpenAccount";
 import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount";
+import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount";
 import AccountStatement from "./pages/accounts/AccountStatement";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
@@ -146,15 +147,9 @@ const routes = [
     element: <DashboardLayout />,
     children: [
       {
-        path: "saveonline",
+        path: "",
         element: <SaveOnlineAccount />,
       },
-    ],
-  },
-  {
-    path: "accounts",
-    element: <DashboardLayout />,
-    children: [
       {
         path: "saveonline",
         element: <SaveOnlineAccount />,
@@ -163,14 +158,28 @@ const routes = [
         path: "open",
         element: <OpenAccount />,
       },
-              {
-          path: "combispaar",
-          element: <CombiSpaarAccount />,
-        },
-        {
-          path: "saveonline/statement",
-          element: <AccountStatement />,
-        },
+      {
+        path: "combispaar",
+        element: <CombiSpaarAccount />,
+      },
+      {
+        path: "maxispaar",
+        element: <MaxiSpaarAccount />,
+      },
+      {
+        path: "saveonline/statement",
+        element: <AccountStatement />,
+      },
+    ],
+  },
+  {
+    path: "settings",
+    element: <DashboardLayout />,
+    children: [
+      {
+        path: "",
+        element: <Settings />,
+      },
     ],
   },
   {

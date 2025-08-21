@@ -440,11 +440,11 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                 <NavLink to="/private" active={isActive('/private')}>
                   <NavText active={isActive('/private')}>Home</NavText>
                 </NavLink>
-                <NavLink to="/dashboard/analytics" active={isActive('/dashboard')}>
-                  <NavText active={isActive('/dashboard')}>Accounts</NavText>
+                <NavLink to="/accounts" active={isActive('/accounts')}>
+                  <NavText active={isActive('/accounts')}>Accounts</NavText>
                 </NavLink>
-                <NavLink to="/pages/settings" active={isActive('/pages/settings')}>
-                  <NavText active={isActive('/pages/settings')}>Settings</NavText>
+                <NavLink to="/settings" active={isActive('/settings')}>
+                  <NavText active={isActive('/settings')}>Settings</NavText>
                 </NavLink>
                 <NavLink to="/pages/profile" active={isActive('/pages/profile')}>
                   <NavText active={isActive('/pages/profile')}>Contact</NavText>

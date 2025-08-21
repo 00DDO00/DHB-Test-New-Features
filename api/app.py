@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime, date
 import uuid
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -286,6 +287,85 @@ def generate_mock_data():
             "support_reg_number": "123456789",
             "last_login": "10.07.2025 15:26:16"
         },
+        "maxispaar_page_data": {
+            "page_title": "DHB MaxiSpaar Account",
+            "breadcrumbs": {
+                "home": "Home",
+                "accounts": "Accounts", 
+                "open_account": "Open account",
+                "maxispaar": "DHB MaxiSpaar Account"
+            },
+            "main_account": {
+                "name": "DHB SaveOnline",
+                "balance": "€ 12.012,00",
+                "iban": "NL24DHBN2018470578",
+                "interest_rate": "1.1%",
+                "holder_name": "Lucy Lavender"
+            },
+            "description": {
+                "title": "Many choices of different terms",
+                "content": "Do you want to benefit from a higher interest rate by fixing your savings for a certain period? With a DHB MaxiSpaar account, you can easily choose from different terms, from three months up to 5 years.",
+                "additional": "If you already have a DHB SaveOnline account, you can immediately open a DHB MaxiSpaar account online. That is free."
+            },
+            "account_options": [
+                {
+                    "id": "3-months",
+                    "term": "3 months",
+                    "interest": "1,85%",
+                    "validFrom": "11.06.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "6-months",
+                    "term": "6 months",
+                    "interest": "1,90%",
+                    "validFrom": "18.07.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "9-months",
+                    "term": "9 months",
+                    "interest": "1,95%",
+                    "validFrom": "18.07.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "12-months",
+                    "term": "12 months",
+                    "interest": "2,05%",
+                    "validFrom": "11.06.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "2-years",
+                    "term": "2 years",
+                    "interest": "2,10%",
+                    "validFrom": "11.06.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "3-years",
+                    "term": "3 years",
+                    "interest": "2,20%",
+                    "validFrom": "18.07.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "4-years",
+                    "term": "4 years",
+                    "interest": "2,25%",
+                    "validFrom": "11.06.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                },
+                {
+                    "id": "5-years",
+                    "term": "5 years",
+                    "interest": "2,30%",
+                    "validFrom": "11.06.2025",
+                    "balanceClass": "€ 500 to € 500,000"
+                }
+            ]
+        },
         "messages": messages_store
     }
 
@@ -363,6 +443,15 @@ def get_user_profile():
         "timestamp": datetime.now().isoformat()
     })
 
+@app.route('/api/maxispaar/page-data', methods=['GET'])
+def get_maxispaar_page_data():
+    data = generate_mock_data()
+    return jsonify({
+        "success": True,
+        "data": data["maxispaar_page_data"],
+        "timestamp": datetime.now().isoformat()
+    })
+
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
     data = generate_mock_data()
@@ -423,6 +512,18 @@ def get_dashboard_data():
             "chart_data": data["chart_data"],
             "user_info": data["user_info"]
         },
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/verification/send-code', methods=['GET'])
+def send_verification_code():
+    # Generate a random 6-digit code
+    verification_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    return jsonify({
+        "success": True,
+        "code": verification_code,
+        "message": "Verification code sent successfully",
         "timestamp": datetime.now().isoformat()
     })
 

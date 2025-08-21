@@ -64,7 +64,7 @@ const OpenAccount: React.FC = () => {
       features: [
         'Terms from 2 up to 5 years',
         'One-time investment € 500 to € 500,000',
-        'Annual interest payment to DHB S@veOnline account'
+        'Annual interest payment to DHB SaveOnline account'
       ]
     }
   ];
@@ -72,6 +72,8 @@ const OpenAccount: React.FC = () => {
   const handleOpenAccount = (accountType: string) => {
     if (accountType === 'combispaar') {
       navigate('/accounts/combispaar');
+    } else if (accountType === 'maxispaar') {
+      navigate('/accounts/maxispaar');
     } else {
       console.log(`Opening ${accountType} account`);
       // TODO: Implement account opening logic for other account types
