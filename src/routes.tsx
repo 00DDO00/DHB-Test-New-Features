@@ -94,6 +94,14 @@ import OpenAccount from "./pages/accounts/OpenAccount";
 import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount";
 import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount";
 import AccountStatement from "./pages/accounts/AccountStatement";
+import ChangeCounterAccount from "./pages/ChangeCounterAccount";
+import Documents from "./pages/Documents";
+import PersonalDetails from "./pages/PersonalDetails";
+import ChangePassword from "./pages/ChangePassword";
+import OnlineIdentification from "./pages/OnlineIdentification";
+import RegisteredDevices from "./pages/RegisteredDevices";
+import DailyLimit from "./pages/DailyLimit";
+import SOFQuestions from "./pages/SOFQuestions";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
 
@@ -180,6 +188,38 @@ const routes = [
         path: "",
         element: <Settings />,
       },
+      {
+        path: "change-counter-account",
+        element: <ChangeCounterAccount />,
+      },
+      {
+        path: "documents",
+        element: <Documents />,
+      },
+                      {
+                  path: "personal-details",
+                  element: <PersonalDetails />,
+                },
+                {
+                  path: "change-password",
+                  element: <ChangePassword />,
+                },
+                {
+                  path: "online-identification",
+                  element: <OnlineIdentification />,
+                },
+                {
+                  path: "devices/registered",
+                  element: <RegisteredDevices />,
+                },
+                {
+                  path: "daily-limit",
+                  element: <DailyLimit />,
+                },
+                {
+                  path: "sof-questions",
+                  element: <SOFQuestions />,
+                },
     ],
   },
   {

@@ -44,6 +44,39 @@ export interface UserProfile {
   last_login: string;
 }
 
+export interface AccountByIban {
+  holder_name: string;
+  institution_name: string;
+  bic: string;
+  customer_number: string;
+  support_reg_number: string;
+  support_packages: string;
+  email: string;
+}
+
+export interface PersonalDetails {
+  updateId: string;
+  mobilePhone: string;
+  password: string;
+  email: string;
+  telephone: string;
+  address: string;
+}
+
+export interface SOFQuestion {
+  question: string;
+  answer: string;
+}
+
+export interface VerificationCodeResponse {
+  success: boolean;
+  data: {
+    code: string;
+  };
+  message: string;
+  timestamp: string;
+}
+
 export interface Message {
   id: string;
   date: string;
@@ -155,6 +188,99 @@ export class ApiService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ content, type }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  }
+
+  async getAccountByIban(iban: string): Promise<AccountByIban> {
+    const response = await this.fetchApi<{ success: boolean; data: AccountByIban; timestamp: string }>(`/account/by-iban?iban=${iban}`);
+    return response.data;
+  }
+
+  async getPersonalDetails(): Promise<PersonalDetails> {
+    const response = await this.fetchApi<{ success: boolean; data: PersonalDetails; timestamp: string }>('/personal-details');
+    return response.data;
+  }
+
+  async updatePersonalDetails(details: Partial<PersonalDetails>): Promise<PersonalDetails> {
+    const response = await fetch(`${API_BASE_URL}/personal-details`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(details),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  }
+
+  async getPhoneNumber(): Promise<{ phone: string }> {
+    const response = await this.fetchApi<{ success: boolean; data: { phone: string }; timestamp: string }>('/personal-details/phone');
+    return response.data;
+  }
+
+  async sendVerificationCode(): Promise<VerificationCodeResponse> {
+    const response = await this.fetchApi<VerificationCodeResponse>('/verification/send-code');
+    return response;
+  }
+
+  async updatePassword(password: string): Promise<PersonalDetails> {
+    const response = await fetch(`${API_BASE_URL}/personal-details/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  }
+
+  async validatePassword(password: string): Promise<{ valid: boolean; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/personal-details/validate-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return { valid: data.valid, message: data.message };
+  }
+
+  async getSOFQuestions(): Promise<SOFQuestion[]> {
+    const response = await this.fetchApi<{ success: boolean; data: SOFQuestion[]; timestamp: string }>('/sof-questions');
+    return response.data;
+  }
+
+  async updateSOFQuestions(questions: SOFQuestion[]): Promise<SOFQuestion[]> {
+    const response = await fetch(`${API_BASE_URL}/sof-questions`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ questions }),
     });
     
     if (!response.ok) {
