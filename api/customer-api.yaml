@@ -1,0 +1,2252 @@
+---
+openapi: 3.0.1
+info:
+  title: CoreBanking_Customer
+  description: All operations and informations concerned to customer in Core Banking
+    System.
+  termsOfService: ''
+  contact:
+    email: 'nurmila@gmail.com'
+  license:
+    name: ''
+    url: http://unlicense.org
+  version: v1.0.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Messages
+  description: Messages
+- name: Downloads
+  description: Downloads
+- name: Profile
+  description: Profile
+- name: Campaigns
+  description: Campaigns
+paths:
+  "/customer/profile/phone/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Get phone number
+      operationId: getPhoneNumber
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/UpdatePhone"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    put:
+      tags:
+      - Profile
+      summary: Update phone number
+      operationId: updatePhoneNumber
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/Phone"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '470':
+          description: Data updates cannot be made within a month after opening the
+            account
+        '471':
+          description: Data updates cannot be made within a month after modify the
+            account
+        '472':
+          description: Сannot be changed more than once within 24 hours
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/identification/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Get identification
+      operationId: getIdentifiers
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Identification"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    put:
+      tags:
+      - Profile
+      summary: Update identification
+      operationId: updateIdentifiers
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateIdentificationRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '460':
+          description: Identification file must be photo type
+        '470':
+          description: Data updates cannot be made within a month after opening the
+            account
+        '471':
+          description: Data updates cannot be made within a month after modify the
+            account
+        '472':
+          description: Сannot be changed more than once within 24 hours
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/email/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Get email
+      operationId: getEmail
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/UpdateEmail"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    put:
+      tags:
+      - Profile
+      summary: Update email
+      operationId: updateEmail
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/Email"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '470':
+          description: Data updates cannot be made within a month after opening the
+            account
+        '471':
+          description: Data updates cannot be made within a month after modify the
+            account
+        '472':
+          description: Сannot be changed more than once within 24 hours
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/address/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Get address
+      operationId: getAddress
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/UpdateAddress"
+        '453':
+          description: Customer id invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    put:
+      tags:
+      - Profile
+      summary: Update address
+      operationId: updateAddress
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateAddressRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '454':
+          description: Resolve address not found
+        '460':
+          description: Identification file must be photo type
+        '470':
+          description: Data updates cannot be made within a month after opening the
+            account
+        '471':
+          description: Data updates cannot be made within a month after modify the
+            account
+        '472':
+          description: Сannot be changed more than once within 24 hours
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/validateNetBankingUser":
+    post:
+      tags:
+      - Profile
+      summary: Checking credentials
+      operationId: validateNetBankingUser
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ValidateNetBankingUserRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidateNetBankingUserResponse"
+        '452':
+          description: Customer username is null
+        '460':
+          description: Contract self printed
+        '461':
+          description: Pending
+        '463':
+          description: Contract sent
+        '464':
+          description: Deleted
+        '465':
+          description: Blocked
+        '466':
+          description: Incomplete application
+        '467':
+          description: E-identification initiated
+        '468':
+          description: E-identification pending
+        '469':
+          description: Wrong IBAN
+        '470':
+          description: Wrong username Or password
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/login":
+    post:
+      tags:
+      - Profile
+      summary: Insert user login
+      operationId: insertUserLogin
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserLoginRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                - success
+                - fail
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/appStatus":
+    post:
+      tags:
+      - Profile
+      summary: Update matrix customer app stats
+      operationId: updateAppStatus
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AppStatusRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                - success
+                - fail
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/messages/{customerId}":
+    post:
+      tags:
+      - Messages
+      summary: Create messages
+      operationId: createMessages
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateMessagesRequest"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/resolveAddress/{customerId}/{postCode}":
+    get:
+      tags:
+      - Profile
+      summary: Get Germany Address
+      operationId: getFederalStateCity
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: postCode
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/FederalStateCity"
+        '453':
+          description: Customer id is null
+        '454':
+          description: Resolve address not found
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/resolveAddress/{customerId}/{postCode}/{houseNo}":
+    get:
+      tags:
+      - Profile
+      summary: Get Holland Address
+      operationId: getHollandAddress
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: postCode
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: houseNo
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HollandAddress"
+        '453':
+          description: Customer id is null
+        '454':
+          description: Resolve address not found
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/isNetBankingUserActive/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Checking customer activity
+      operationId: isNetBankingUserActive
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '452':
+          description: Customer username is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/profile/fullProfile/{customerId}":
+    get:
+      tags:
+      - Profile
+      summary: Uploads customer detailed information
+      operationId: getCustomerFullProfile
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomerIndividual"
+        '453':
+          description: Customer id is null
+        '454':
+          description: Mobile phone number is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/messages/{customerId}/{reference}":
+    get:
+      tags:
+      - Messages
+      summary: Read messages
+      operationId: readMessages
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reference
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          default: inbox
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Messages"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    delete:
+      tags:
+      - Messages
+      summary: Delete messages
+      operationId: deleteMessages
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reference
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          default: inbox
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/messages/unread/{customerId}":
+    get:
+      tags:
+      - Messages
+      summary: Unread messages
+      operationId: unreadMessages
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UnreadMessages"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/messages/list/{customerId}":
+    get:
+      tags:
+      - Messages
+      summary: Get messages
+      operationId: getMessages
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pageIndex
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: pageSize
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Messages"
+        '453':
+          description: Customer id is null
+        '454':
+          description: Notification not found
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/downloads/financialAnnualOverview/{customerId}":
+    get:
+      tags:
+      - Downloads
+      summary: Download customer financial annual overview
+      operationId: getFinancialAnnualOverview
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: documentType
+        in: query
+        required: false
+        schema:
+          type: string
+          default: financial
+          enum:
+          - financial
+          - tax
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/FinancialAnnualOverview"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/downloads/financialAnnualOverview/print/{customerId}/{id}":
+    get:
+      tags:
+      - Downloads
+      summary: Print customer financial annual overview
+      operationId: getFinancialAnnualOverviewPrint
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mimeType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - pdf
+          - csv
+          - image
+      - name: documentType
+        in: query
+        required: false
+        schema:
+          type: string
+          default: financial
+          enum:
+          - financial
+          - tax
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Base64Model"
+        '452':
+          description: File content is null
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/downloads/contracts/{customerId}":
+    get:
+      tags:
+      - Downloads
+      summary: Download customer contracts
+      operationId: getCustomerContracts
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/CustomerContracts"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/downloads/contracts/print/{customerId}/{id}":
+    get:
+      tags:
+      - Downloads
+      summary: Print customer contracts
+      operationId: getCustomerContractPrint
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mimeType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - pdf
+          - csv
+          - image
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Base64Model"
+        '452':
+          description: File content is null
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/customer/campaigns/list/{customerId}":
+    get:
+      tags:
+      - Campaigns
+      summary: Get campaigns
+      operationId: getCampaigns
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Campaigns"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+components:
+  schemas:
+    Phone:
+      type: object
+      properties:
+        phoneType:
+          type: string
+          enum:
+          - home
+          - mobile
+        sorting:
+          type: integer
+          format: int32
+        countryCode:
+          type: string
+        prefix:
+          type: string
+        phoneNumber:
+          type: string
+    TransactionResponse:
+      type: object
+      properties:
+        transactionNumber:
+          type: string
+    IdentificationFile:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+          - idCardFront
+          - idCardBack
+          - address
+        content:
+          type: string
+    UpdateIdentificationRequest:
+      type: object
+      properties:
+        identificationType:
+          type: string
+          enum:
+          - passport
+          - idCard
+        identificationNumber:
+          type: string
+        issuePlace:
+          type: string
+        validityDate:
+          type: string
+        countryCode:
+          type: string
+        description:
+          type: string
+        file:
+          type: array
+          items:
+            "$ref": "#/components/schemas/IdentificationFile"
+    Email:
+      type: object
+      properties:
+        address:
+          type: string
+    UpdateAddressRequest:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        cityCode:
+          type: string
+        cityName:
+          type: string
+        zipCode:
+          type: string
+        federalState:
+          type: string
+        street:
+          type: string
+        houseNumber:
+          type: string
+        houseNumberEx:
+          type: string
+        transactionDate:
+          type: string
+        file:
+          type: array
+          items:
+            "$ref": "#/components/schemas/IdentificationFile"
+    ValidateNetBankingUserRequest:
+      type: object
+      properties:
+        customerUsername:
+          type: string
+        password:
+          type: string
+        returnIBAN:
+          type: string
+    ValidateNetBankingUserResponse:
+      type: object
+      properties:
+        customerId:
+          type: string
+        customerNumber:
+          type: string
+        countryCode:
+          type: string
+    UserLoginRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+        sessionId:
+          type: string
+    AppStatusRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+        status:
+          type: string
+        model:
+          type: string
+    CreateMessagesRequest:
+      type: object
+      properties:
+        subject:
+          type: string
+        body:
+          type: string
+    FederalStateCity:
+      type: object
+      properties:
+        federalState:
+          type: string
+        city:
+          type: string
+    HollandAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+    UpdatePhone:
+      type: object
+      properties:
+        phoneType:
+          type: string
+          enum:
+          - home
+          - mobile
+        sorting:
+          type: integer
+          format: int32
+        countryCode:
+          type: string
+        prefix:
+          type: string
+        phoneNumber:
+          type: string
+        editable:
+          type: boolean
+        editableFlag:
+          type: string
+    Identification:
+      type: object
+      properties:
+        identificationType:
+          type: string
+          enum:
+          - passport
+          - idCard
+        identificationNumber:
+          type: string
+        issuePlace:
+          type: string
+        validityDate:
+          type: string
+          format: date-time
+        countryCode:
+          type: string
+        editable:
+          type: boolean
+        editableFlag:
+          type: string
+    Address:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        cityCode:
+          type: string
+        cityName:
+          type: string
+        zipCode:
+          type: string
+        addressType:
+          type: string
+        addressTypeName:
+          type: string
+        fullAddressInfo:
+          type: string
+        companyAddressInfo:
+          type: string
+        street:
+          type: string
+        houseNumber:
+          type: string
+        houseNumberEx:
+          type: string
+    CustomerIndividual:
+      type: object
+      properties:
+        customerNumber:
+          type: string
+        customerId:
+          type: string
+        residentType:
+          type: string
+        citizenshipCode:
+          type: string
+        passport:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        surName:
+          type: string
+        firstNameLatin:
+          type: string
+        middleNameLatin:
+          type: string
+        surNameLatin:
+          type: string
+        firstNameCyrillic:
+          type: string
+        middleNameCyrillic:
+          type: string
+        surNameCyrillic:
+          type: string
+        bankPersonel:
+          type: boolean
+        retiredCustomer:
+          type: boolean
+        fatherName:
+          type: string
+        motherName:
+          type: string
+        educationCode:
+          type: string
+        educationStatus:
+          type: string
+        customerStatus:
+          type: string
+        customerCode:
+          type: string
+        customerType:
+          type: string
+        customerTypeName:
+          type: string
+        identitySeries:
+          type: string
+        identitySerialNo:
+          type: string
+        identityType:
+          type: string
+        taxNumber:
+          type: string
+        taxOfficeCode:
+          type: string
+        taxOfficeName:
+          type: string
+        birthDate:
+          type: string
+          format: date-time
+        birthPlace:
+          type: string
+        genderCode:
+          type: string
+        genderName:
+          type: string
+        maritalStatusCode:
+          type: string
+        maritalStatusName:
+          type: string
+        hasDrivingLicence:
+          type: boolean
+        drivingLicenceNo:
+          type: string
+        emails:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Email"
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Address"
+        phones:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Phone"
+        workState:
+          type: array
+          items:
+            "$ref": "#/components/schemas/WorkState"
+        prefferedLang:
+          type: string
+        operationProfile:
+          "$ref": "#/components/schemas/CustomerOperationProfile"
+    CustomerOperationProfile:
+      type: object
+      properties:
+        allowIdentification:
+          type: boolean
+        identificationFlag:
+          type: string
+        allowEmail:
+          type: boolean
+        emailFlag:
+          type: string
+        allowPhone:
+          type: boolean
+        phoneFlag:
+          type: string
+        allowAddress:
+          type: boolean
+        addressFlag:
+          type: string
+    WorkState:
+      type: object
+      properties:
+        titleCode:
+          type: string
+        titleName:
+          type: string
+        sectorCode:
+          type: string
+        sectorName:
+          type: string
+    UpdateEmail:
+      type: object
+      properties:
+        address:
+          type: string
+        editable:
+          type: boolean
+        editableFlag:
+          type: string
+    UpdateAddress:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        cityCode:
+          type: string
+        cityName:
+          type: string
+        zipCode:
+          type: string
+        addressType:
+          type: string
+        addressTypeName:
+          type: string
+        fullAddressInfo:
+          type: string
+        companyAddressInfo:
+          type: string
+        street:
+          type: string
+        houseNumber:
+          type: string
+        houseNumberEx:
+          type: string
+        editable:
+          type: boolean
+        editableFlag:
+          type: string
+    Messages:
+      type: object
+      properties:
+        reference:
+          type: string
+        entryDate:
+          type: string
+          format: date-time
+        type:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        isRead:
+          type: boolean
+    UnreadMessages:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+    FinancialAnnualOverview:
+      type: object
+      properties:
+        documentType:
+          type: string
+          enum:
+          - financial
+          - tax
+        name:
+          type: string
+        year:
+          type: string
+        id:
+          type: string
+    Base64Model:
+      type: object
+      properties:
+        content:
+          type: string
+    CustomerContracts:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+    Campaigns:
+      type: object
+      properties:
+        subject:
+          type: string
+        content:
+          type: string
+        reference:
+          type: string
+        bannerLink:
+          type: string

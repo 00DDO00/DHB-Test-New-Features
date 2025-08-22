@@ -3,50 +3,9 @@ from flask_cors import CORS
 from datetime import datetime, date
 import uuid
 import random
-import yaml
-import os
 
 app = Flask(__name__)
 CORS(app)
-
-# Load YAML schemas for reference
-def load_yaml_schemas():
-    schemas = {}
-    yaml_files = ['customer-api.yaml', 'account-api.yaml', 'transfer-api.yaml']
-    
-    for yaml_file in yaml_files:
-        file_path = os.path.join(os.path.dirname(__file__), yaml_file)
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                yaml_content = yaml.safe_load(file)
-                if 'components' in yaml_content and 'schemas' in yaml_content['components']:
-                    schemas[yaml_file] = yaml_content['components']['schemas']
-    
-    return schemas
-
-# Load schemas for reference
-yaml_schemas = load_yaml_schemas()
-
-# Helper function to get required headers from request
-def get_required_headers():
-    """Extract required headers from request or use defaults for development"""
-    return {
-        'channelCode': request.headers.get('channelCode', 'WEB'),
-        'username': request.headers.get('username', 'testuser'),
-        'lang': request.headers.get('lang', 'en'),
-        'countryCode': request.headers.get('countryCode', 'NL'),
-        'sessionId': request.headers.get('sessionId', str(uuid.uuid4()))
-    }
-
-# Helper function to create mock customer ID (in real app, this would come from authentication)
-def get_customer_id():
-    """Get customer ID from request or use default for development"""
-    return request.headers.get('customerId', 'CUST001')
-
-# Helper function to create mock account number (in real app, this would come from request)
-def get_account_number():
-    """Get account number from request or use default for development"""
-    return request.args.get('accountNumber', 'NL24DHBN2018470578')
 
 # Global storage for messages (in a real app, this would be a database)
 messages_store = [
@@ -412,108 +371,10 @@ def generate_mock_data():
 
 @app.route('/api/accounts', methods=['GET'])
 def get_accounts():
-    """Get accounts - maps to /accounts/list/{customerId}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    account_type = request.args.get('accountType', 'saving')
-    
-    # Mock response based on AccountList schema from account-api.yaml
+    data = generate_mock_data()
     return jsonify({
         "success": True,
-        "data": {
-            "saving": [
-                {
-                    "customerName": "Lucy Lavender",
-                    "accountName": "DHB SaveOnline",
-                    "IBAN": "NL24DHBN2018470578",
-                    "accountNumber": "2018470578",
-                    "accountNumberLabel": "SaveOnline Account",
-                    "BIC": "DHBNNL2R",
-                    "minPaymentDate": "2025-01-15T00:00:00Z",
-                    "status": "active",
-                    "branch": {
-                        "code": "AMS",
-                        "name": "Amsterdam Branch"
-                    },
-                    "address": "GRONINGEN, STR. VONDELLAAN 172",
-                    "productGroup": {
-                        "code": "saveOnline",
-                        "name": "SaveOnline"
-                    },
-                    "moduleType": {
-                        "code": "SAV",
-                        "name": "Savings"
-                    },
-                    "productType": {
-                        "code": "SAV_ONLINE",
-                        "name": "Online Savings"
-                    },
-                    "productClass": {
-                        "code": "SAVINGS",
-                        "name": "Savings Account"
-                    },
-                    "currencyCode": "EUR",
-                    "operationProfile": {
-                        "allowModification": True,
-                        "allowClosing": True,
-                        "allowSourceForOpening": True,
-                        "allowPaymentOrderOut": True,
-                        "allowOwnTransferOut": True,
-                        "allowPrintStatement": True
-                    },
-                    "detail": {
-                        "balance": 10566.55,
-                        "interestRate": 1.1,
-                        "holderName": "Lucy Lavender"
-                    }
-                },
-                {
-                    "customerName": "Lucy Lavender",
-                    "accountName": "DHB MaxiSpaar",
-                    "IBAN": "NL24DHBN2018470579",
-                    "accountNumber": "2018470579",
-                    "accountNumberLabel": "MaxiSpaar Account",
-                    "BIC": "DHBNNL2R",
-                    "minPaymentDate": "2025-01-15T00:00:00Z",
-                    "status": "active",
-                    "branch": {
-                        "code": "AMS",
-                        "name": "Amsterdam Branch"
-                    },
-                    "address": "GRONINGEN, STR. VONDELLAAN 172",
-                    "productGroup": {
-                        "code": "maxiSpaar",
-                        "name": "MaxiSpaar"
-                    },
-                    "moduleType": {
-                        "code": "SAV",
-                        "name": "Savings"
-                    },
-                    "productType": {
-                        "code": "SAV_MAXI",
-                        "name": "Maxi Savings"
-                    },
-                    "productClass": {
-                        "code": "SAVINGS",
-                        "name": "Savings Account"
-                    },
-                    "currencyCode": "EUR",
-                    "operationProfile": {
-                        "allowModification": True,
-                        "allowClosing": True,
-                        "allowSourceForOpening": True,
-                        "allowPaymentOrderOut": True,
-                        "allowOwnTransferOut": True,
-                        "allowPrintStatement": True
-                    },
-                    "detail": {
-                        "balance": 31960.23,
-                        "interestRate": 1.1,
-                        "holderName": "Lucy Lavender"
-                    }
-                }
-            ]
-        },
+        "data": data["accounts"],
         "timestamp": datetime.now().isoformat()
     })
 
@@ -575,76 +436,10 @@ def get_user_info():
 
 @app.route('/api/user/profile', methods=['GET'])
 def get_user_profile():
-    """Get user profile information - maps to /customer/profile/fullProfile/{customerId}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    
-    # Mock response based on CustomerIndividual schema from customer-api.yaml
+    data = generate_mock_data()
     return jsonify({
         "success": True,
-        "data": {
-            "customerNumber": "123456789",
-            "customerId": customer_id,
-            "firstName": "Lucy",
-            "middleName": "",
-            "surName": "Lavender",
-            "firstNameLatin": "Lucy",
-            "surNameLatin": "Lavender",
-            "birthDate": "1985-06-15T00:00:00Z",
-            "birthPlace": "Amsterdam",
-            "genderCode": "F",
-            "genderName": "Female",
-            "maritalStatusCode": "S",
-            "maritalStatusName": "Single",
-            "identityType": "PASSPORT",
-            "identitySeries": "AB",
-            "identitySerialNo": "1234567",
-            "taxNumber": "12345678901",
-            "taxOfficeCode": "001",
-            "taxOfficeName": "Amsterdam Tax Office",
-            "emails": [
-                {
-                    "address": "lucy.lavender@example.com",
-                    "editable": True,
-                    "editableFlag": "Y"
-                }
-            ],
-            "addresses": [
-                {
-                    "countryCode": "NL",
-                    "cityCode": "AMS",
-                    "cityName": "Amsterdam",
-                    "zipCode": "1011AA",
-                    "addressType": "HOME",
-                    "addressTypeName": "Home Address",
-                    "fullAddressInfo": "GRONINGEN, STR. VONDELLAAN 172",
-                    "street": "Vondellaan",
-                    "houseNumber": "172",
-                    "editable": True,
-                    "editableFlag": "Y"
-                }
-            ],
-            "phones": [
-                {
-                    "phoneNumber": "+31 123 456 789",
-                    "phoneType": "MOBILE",
-                    "phoneTypeName": "Mobile",
-                    "editable": True,
-                    "editableFlag": "Y"
-                },
-                {
-                    "phoneNumber": "+31 987 654 321",
-                    "phoneType": "HOME",
-                    "phoneTypeName": "Home",
-                    "editable": True,
-                    "editableFlag": "Y"
-                }
-            ],
-            "prefferedLang": "en",
-            "customerStatus": "ACTIVE",
-            "customerType": "INDIVIDUAL",
-            "customerTypeName": "Individual"
-        },
+        "data": data["user_profile"],
         "timestamp": datetime.now().isoformat()
     })
 
@@ -659,65 +454,12 @@ def get_maxispaar_page_data():
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
-    """Get messages - maps to /customer/messages/list/{customerId}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    
-    # Mock response based on Messages schema from customer-api.yaml
+    data = generate_mock_data()
     return jsonify({
         "success": True,
-        "data": [
-            {
-                "reference": "MSG001",
-                "entryDate": "2025-01-19T11:05:00Z",
-                "type": "Email",
-                "subject": "€25 Bonus to Our New Customers!",
-                "body": "€25 Bonus to Our New Customers! DHB Bank gives away €25 bonus to new customers who complete their identification process digitally via Verimi instead of Postident identification. The only condition of this campaign is transferring a minimum amount of €2.500 to newly opened DHB Netspar account within 14 days after the account opening. Once the new DHB Netspar account balance reaches €2.500 or more, the bonus amount is credited to this Netspar account on the same day evening (or on the first working day evening if account opening day is holiday). This campaign is only valid in Germany.",
-                "isRead": False
-            },
-            {
-                "reference": "MSG002",
-                "entryDate": "2025-01-18T11:05:00Z",
-                "type": "Email",
-                "subject": "Device Pairing Removed",
-                "body": "The iPhone model device and Mobile Banking Application pairing have been removed. If the transaction does not belong to you, please contact our support team immediately.",
-                "isRead": False
-            },
-            {
-                "reference": "MSG003",
-                "entryDate": "2025-01-18T10:15:00Z",
-                "type": "Push",
-                "subject": "Device Pairing Removed",
-                "body": "The iPhone model device and Mobile Banking Application pairing have been removed. If the transaction does not belong to you, please contact our support team immediately.",
-                "isRead": True
-            },
-            {
-                "reference": "MSG004",
-                "entryDate": "2025-01-16T14:30:00Z",
-                "type": "Email",
-                "subject": "Device Pairing Removed",
-                "body": "The iPhone model device and Mobile Banking Application pairing have been removed. If the transaction does not belong to you, please contact our support team immediately.",
-                "isRead": True
-            },
-            {
-                "reference": "MSG005",
-                "entryDate": "2025-01-15T09:45:00Z",
-                "type": "Push",
-                "subject": "Device Pairing Removed",
-                "body": "The iPhone model device and Mobile Banking Application pairing have been removed. If the transaction does not belong to you, please contact our support team immediately.",
-                "isRead": True
-            },
-            {
-                "reference": "MSG006",
-                "entryDate": "2025-01-14T16:20:00Z",
-                "type": "Email",
-                "subject": "Device Pairing Removed",
-                "body": "The iPhone model device and Mobile Banking Application pairing have been removed. If the transaction does not belong to you, please contact our support team immediately.",
-                "isRead": True
-            }
-        ],
-        "count": 6,
-        "new_count": 6,  # Dynamic count based on actual messages
+        "data": data["messages"],
+        "count": len(data["messages"]),
+        "new_count": len(data["messages"]),  # Dynamic count based on actual messages
         "timestamp": datetime.now().isoformat()
     })
 
@@ -787,9 +529,6 @@ def send_verification_code():
 
 @app.route('/api/account/by-iban', methods=['GET'])
 def get_account_by_iban():
-    """Get account by IBAN - maps to /accounts/utilities/customerMatchByAccount/{customerId}/{accountNumber}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
     iban = request.args.get('iban', '').upper()
     
     # Mock account data for different IBANs
@@ -1079,11 +818,6 @@ current_password = "password123"
 
 @app.route('/api/personal-details', methods=['GET'])
 def get_personal_details():
-    """Get personal details - maps to /customer/profile/fullProfile/{customerId}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    
-    # Mock response based on CustomerIndividual schema from customer-api.yaml
     return jsonify({
         "success": True,
         "data": personal_details_store,
@@ -1115,11 +849,6 @@ def update_personal_details():
 
 @app.route('/api/personal-details/phone', methods=['GET'])
 def get_phone_number():
-    """Get phone number - maps to /customer/profile/phone/{customerId}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    
-    # Mock response based on UpdatePhone schema from customer-api.yaml
     return jsonify({
         "success": True,
         "data": {
@@ -1246,96 +975,6 @@ def update_sof_questions():
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 400
-
-@app.route('/api/accounts/statement/<account_number>', methods=['GET'])
-def get_account_statement():
-    """Get account statement - maps to /accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize}"""
-    customer_id = get_customer_id()
-    headers = get_required_headers()
-    account_number = request.view_args.get('account_number')
-    page_index = request.args.get('pageIndex', 0, type=int)
-    page_size = request.args.get('pageSize', 10, type=int)
-    
-    # Mock response based on AccountStatement schema from account-api.yaml
-    return jsonify({
-        "success": True,
-        "data": {
-            "accountNumber": account_number,
-            "accountName": "DHB SaveOnline",
-            "currencyCode": "EUR",
-            "transactions": [
-                {
-                    "transactionDate": "2025-01-19T10:30:00Z",
-                    "valueDate": "2025-01-19T00:00:00Z",
-                    "description": "Salary Payment",
-                    "amount": 2500.00,
-                    "balance": 10566.55,
-                    "type": "credit",
-                    "reference": "REF001"
-                },
-                {
-                    "transactionDate": "2025-01-18T14:15:00Z",
-                    "valueDate": "2025-01-18T00:00:00Z",
-                    "description": "Online Purchase",
-                    "amount": -125.50,
-                    "balance": 8066.55,
-                    "type": "debit",
-                    "reference": "REF002"
-                },
-                {
-                    "transactionDate": "2025-01-17T09:45:00Z",
-                    "valueDate": "2025-01-17T00:00:00Z",
-                    "description": "Interest Credit",
-                    "amount": 12.50,
-                    "balance": 8192.05,
-                    "type": "credit",
-                    "reference": "REF003"
-                }
-            ],
-            "pagination": {
-                "pageIndex": page_index,
-                "pageSize": page_size,
-                "totalRecords": 3,
-                "totalPages": 1
-            }
-        },
-        "timestamp": datetime.now().isoformat()
-    })
-
-@app.route('/api/transfers/payment/<customer_id>/<source_account>', methods=['GET'])
-def get_transfer_simulation():
-    """Get transfer simulation - maps to /transfers/payment/{customerId}/{sourceAccountNumber}"""
-    customer_id = request.view_args.get('customer_id')
-    source_account = request.view_args.get('source_account')
-    headers = get_required_headers()
-    
-    # Get query parameters
-    target_iban = request.args.get('targetIBAN', '')
-    currency_code = request.args.get('currencyCode', 'EUR')
-    amount = request.args.get('amount', 0, type=float)
-    description = request.args.get('description', '')
-    payment_type = request.args.get('paymentType', 'normal')
-    period = request.args.get('period', 'oneOff')
-    
-    # Mock response based on transfer-api.yaml structure
-    return jsonify({
-        "success": True,
-        "data": {
-            "simulationId": str(uuid.uuid4()),
-            "sourceAccount": source_account,
-            "targetIBAN": target_iban,
-            "amount": amount,
-            "currencyCode": currency_code,
-            "description": description,
-            "paymentType": payment_type,
-            "period": period,
-            "fees": 0.00,
-            "totalAmount": amount,
-            "estimatedDelivery": "2025-01-20T00:00:00Z",
-            "status": "simulated"
-        },
-        "timestamp": datetime.now().isoformat()
-    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5002)

@@ -216,17 +216,17 @@ const CombiSpaarAccount: React.FC = () => {
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h4" color="#004996" fontWeight="bold">
-              {pageData?.main_account?.name || 'DHB SaveOnline'}
+              {pageData?.accountName || 'DHB SaveOnline'}
             </Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
-                {pageData?.main_account?.balance || '€ 0,00'}
+                {pageData?.balance || '€ 0,00'}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                IBAN Number: {pageData?.main_account?.iban || 'NL24DHBN2018470578'}
+                IBAN Number: {pageData?.iban || 'NL24DHBN2018470578'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Cumulative Interest Amount: {pageData?.main_account?.interest_rate || '1.1%'}
+                Cumulative Interest Amount: {pageData?.interestRate || '1.1%'}
               </Typography>
             </Box>
           </Box>
@@ -237,10 +237,10 @@ const CombiSpaarAccount: React.FC = () => {
       <Card sx={{ mb: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color: '#333' }}>
-            {pageData?.description?.title || 'Save and still be able to withdraw money'}
+            {pageData?.title || 'Save and still be able to withdraw money'}
           </Typography>
           <Typography variant="body1" color="#666" sx={{ lineHeight: 1.6 }}>
-            {pageData?.description?.content || 'The DHB CombiSpaarrekening offers a higher interest rate than the DHB SaveOnline because withdrawals are planned in advance. Depending on the chosen account, you can give 33, 66, or 99 days\' notice for withdrawals. A longer notice period results in a higher interest rate.'}
+            {pageData?.description || 'The DHB CombiSpaarrekening offers a higher interest rate than the DHB SaveOnline because withdrawals are planned in advance. Depending on the chosen account, you can give 33, 66, or 99 days\' notice for withdrawals. A longer notice period results in a higher interest rate.'}
           </Typography>
         </CardContent>
       </Card>

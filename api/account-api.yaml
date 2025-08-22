@@ -1,0 +1,1691 @@
+---
+openapi: 3.0.1
+info:
+  title: CoreBanking_account
+  description: All operations and informations concerned to account in Core Banking
+    System.
+  termsOfService: ''
+  contact:
+    email: 'nurmila@gmail.com'
+  license:
+    name: ''
+    url: http://unlicense.org
+  version: v1.0.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Saving accounts
+  description: Saving accounts
+- name: Accounts
+  description: Accounts
+- name: Utilities
+  description: Utilities
+paths:
+  "/accounts/saving/modification/{customerId}/{accountNumber}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Saving account modification simulate
+      operationId: modificationSavingAccount
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: closeOption
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - principalAmount
+          - principalAndAccruedInterestAmount
+          - differentAmount
+      - name: amount
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: productClass
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ModificationSavingAccountResponse"
+        '453':
+          description: Customer id is null
+        '456':
+          description: Account number invalid
+        '460':
+          description: Saving account modification new amount cannot be bigger then
+            old
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    put:
+      tags:
+      - Saving accounts
+      summary: Saving account modification execute
+      operationId: executeSavingAccountModification
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SavingAccountModification"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '456':
+          description: Account number invalid
+        '460':
+          description: Saving account modification new amount cannot be bigger then
+            old
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/new/{customerId}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Saving account account simulate
+      operationId: newSavingAccount
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceAccountNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: amount
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: productClass
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/NewSavingAccountResponse"
+        '452':
+          description: Product class is null
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Invalid account opening amount
+        '457':
+          description: Not approved counter account
+        '458':
+          description: Source account is not allowed for account opening
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    post:
+      tags:
+      - Saving accounts
+      summary: Saving account account execute
+      operationId: executeNewSavingAccount
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NewSavingAccount"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResponse"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '452':
+          description: Product class is null
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Invalid account opening amount
+        '457':
+          description: Not approved counter account
+        '458':
+          description: Source account is not allowed for account opening
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/utilities/customerMatchByAccount/{customerId}/{accountNumber}":
+    get:
+      tags:
+      - Utilities
+      summary: Customer match by account
+      operationId: getCustomerMatchByAccount
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountOwner"
+        '453':
+          description: Customer id is null
+        '456':
+          description: Account number invalid
+        '457':
+          description: Customer does not match by account
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/targetAccounts/{customerId}/{accountNumber}/{transactionType}":
+    get:
+      tags:
+      - Accounts
+      summary: Target account list
+      operationId: getTargetAccountList
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionType
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - payment
+          - ownTransfer
+          - account
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/TargetAccount"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/transactions/receipt/{accountNumber}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get account history print
+      operationId: getTransactionPrint
+      parameters:
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: transactionNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: mimeType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - pdf
+          - csv
+          - image
+      - name: transactionType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - payment
+          - ownTransfer
+          - account
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Base64Model"
+        '456':
+          description: Account number invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get account statement
+      operationId: getAccountStatement
+      parameters:
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pageIndex
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: pageSize
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: fromDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: toDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/AccountStatement"
+        '452':
+          description: Statement generation pending error
+        '456':
+          description: Account number invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/statement/print/{accountNumber}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get statement print
+      operationId: getAccountStatementPrint
+      parameters:
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mimeType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - pdf
+          - csv
+          - image
+      - name: statementDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Base64Model"
+        '452':
+          description: Statement generation pending error
+        '456':
+          description: Account number invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/rates/{customerId}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get saving account rates
+      operationId: getSavingAccountRates
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/SavingRateProductGroup"
+        '453':
+          description: Customer id invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/history/{accountNumber}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get account history
+      operationId: getAccountHistory
+      parameters:
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pageIndex
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: pageSize
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: fromDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: toDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: minAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: maxAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: description
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: direction
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - in
+          - out
+          - inAndOut
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/AccountHistory"
+        '452':
+          description: Statement generation pending error
+        '456':
+          description: Account number invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/history/print/{accountNumber}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Get account history print
+      operationId: getAccountHistoryPrint
+      parameters:
+      - name: accountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mimeType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - pdf
+          - csv
+          - image
+      - name: fromDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: toDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: minAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: maxAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: description
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: direction
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - in
+          - out
+          - inAndOut
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Base64Model"
+        '452':
+          description: Statement generation pending error
+        '456':
+          description: Account number invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/saving/calculate/{customerId}":
+    get:
+      tags:
+      - Saving accounts
+      summary: Calculate saving account
+      operationId: calculatedSavingAccount
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: amount
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: productClass
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CalculatedSavingAccount"
+        '453':
+          description: Customer id invalid
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/accounts/list/{customerId}":
+    get:
+      tags:
+      - Accounts
+      summary: Account list
+      operationId: getAccountList
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: accountType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - checking
+          - saving
+      - name: currencyCodes
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountList"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+components:
+  schemas:
+    SavingAccountModification:
+      type: object
+      properties:
+        amount:
+          type: number
+        currencyCode:
+          type: string
+        productClass:
+          type: string
+        closeOption:
+          type: string
+          enum:
+          - principalAmount
+          - principalAndAccruedInterestAmount
+          - differentAmount
+    TransactionResponse:
+      type: object
+      properties:
+        transactionNumber:
+          type: string
+        reference:
+          type: string
+    NewSavingAccount:
+      type: object
+      properties:
+        sourceAccountNumber:
+          type: string
+        amount:
+          type: number
+        currencyCode:
+          type: string
+        productClass:
+          type: string
+    AccountOwner:
+      type: object
+      properties:
+        customerId:
+          type: string
+        customerNumber:
+          type: string
+        customerType:
+          type: string
+    TargetAccount:
+      type: object
+      properties:
+        accountName:
+          type: string
+        IBAN:
+          type: string
+        accountNumber:
+          type: string
+        accountNumberLabel:
+          type: string
+        BIC:
+          type: string
+        isApprove:
+          type: boolean
+        balance:
+          type: number
+        availableBalance:
+          type: number
+        currencyCode:
+          type: string
+    Base64Model:
+      type: object
+      properties:
+        content:
+          type: string
+    AccountStatement:
+      type: object
+      properties:
+        statementDate:
+          type: string
+          format: date-time
+        statementNumber:
+          type: number
+    SavingRate:
+      type: object
+      properties:
+        productClass:
+          type: string
+        description:
+          type: string
+        term:
+          "$ref": "#/components/schemas/SavingRateTerms"
+        rate:
+          type: number
+        floorSpread:
+          type: number
+        floorSpreadDescription:
+          type: string
+        specialRate:
+          type: number
+        specialRateDescription:
+          type: string
+    SavingRateProductGroup:
+      type: object
+      properties:
+        productGroup:
+          type: string
+          enum:
+          - combiSpaar
+          - maxiSpaar
+          - solidExtra
+          - saveOnline
+        valueDate:
+          type: string
+          format: date-time
+        minAmount:
+          type: number
+        maxAmount:
+          type: number
+        savingRate:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SavingRate"
+    SavingRateTerms:
+      type: object
+      properties:
+        termType:
+          type: string
+        termValue:
+          type: integer
+          format: int32
+        maturityDate:
+          type: string
+          format: date-time
+    NewSavingAccountResponse:
+      type: object
+      properties:
+        sourceIBAN:
+          type: string
+        sourceAccountNumber:
+          type: string
+        balance:
+          type: number
+        customerName:
+          type: string
+        amount:
+          type: number
+        interestRate:
+          type: number
+        valueDate:
+          type: string
+          format: date-time
+        term:
+          "$ref": "#/components/schemas/SavingRateTerms"
+    ModificationSavingAccountResponse:
+      type: object
+      properties:
+        sourceIBAN:
+          type: string
+        balance:
+          type: number
+        customerName:
+          type: string
+        amount:
+          type: number
+        interestRate:
+          type: number
+        valueDate:
+          type: string
+          format: date-time
+        closeOption:
+          type: string
+          enum:
+          - principalAmount
+          - principalAndAccruedInterestAmount
+          - differentAmount
+        term:
+          "$ref": "#/components/schemas/SavingRateTerms"
+    AccountHistory:
+      type: object
+      properties:
+        transactionNumber:
+          type: string
+        transactionDate:
+          type: string
+          format: date-time
+        executionDate:
+          type: string
+          format: date-time
+        amount:
+          type: number
+        currencyCode:
+          type: string
+        balanceAfter:
+          type: number
+        description:
+          type: string
+        direction:
+          type: string
+          enum:
+          - in
+          - out
+          - inAndOut
+    CalculatedSavingAccount:
+      type: object
+      properties:
+        interestRate:
+          type: number
+        maturityDate:
+          type: string
+          format: date-time
+        totalIntest:
+          type: number
+        interestPayments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CalculatedSavingAccountInterest"
+    CalculatedSavingAccountInterest:
+      type: object
+      properties:
+        orderNumber:
+          type: integer
+          format: int32
+        paymentDate:
+          type: string
+          format: date-time
+        interestAmount:
+          type: number
+    AccountBlockageTotal:
+      type: object
+      properties:
+        amount:
+          type: number
+    AccountCreditTotal:
+      type: object
+      properties:
+        totalAmount:
+          type: number
+        usedAmount:
+          type: number
+        remainedAmount:
+          type: number
+    AccountList:
+      type: object
+      properties:
+        checking:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CheckingAccount"
+        saving:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SavingAccount"
+    AccountOperationProfile:
+      type: object
+      properties:
+        allowToBeSourceForSavingAccount:
+          type: boolean
+        allowInternalMoneyTransfer:
+          type: boolean
+        allowClearing:
+          type: boolean
+        allowSwift:
+          type: boolean
+        allowInstantPayment:
+          type: boolean
+        allowFxOperation:
+          type: boolean
+        allowAtmQr:
+          type: boolean
+        allowClosing:
+          type: boolean
+        allowQrMoneyTransfer:
+          type: boolean
+        allowCardPayment:
+          type: boolean
+        allowCreateVirtualDebitCard:
+          type: boolean
+    Branch:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    CheckingAccount:
+      type: object
+      properties:
+        name:
+          type: string
+        IBAN:
+          type: string
+        accountNumber:
+          type: string
+        accountType:
+          type: string
+          enum:
+          - checking
+          - saving
+        ownerType:
+          type: string
+          enum:
+          - individual
+          - company
+          - partner
+        openingDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - active
+          - close
+        currencyCode:
+          type: string
+        branch:
+          "$ref": "#/components/schemas/Branch"
+        bicCode:
+          type: string
+        balance:
+          "$ref": "#/components/schemas/CheckingAccountBalance"
+        moduleType:
+          "$ref": "#/components/schemas/ModuleType"
+        productType:
+          "$ref": "#/components/schemas/ProductType"
+        productClass:
+          "$ref": "#/components/schemas/ProductClass"
+        operationProfile:
+          "$ref": "#/components/schemas/AccountOperationProfile"
+        partners:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Partner"
+        extraFields:
+          type: object
+          additionalProperties:
+            type: object
+    CheckingAccountBalance:
+      type: object
+      properties:
+        balance:
+          type: number
+        availableBalance:
+          type: number
+        currencyCode:
+          type: string
+        credits:
+          "$ref": "#/components/schemas/AccountCreditTotal"
+        blockage:
+          "$ref": "#/components/schemas/AccountBlockageTotal"
+    ModuleType:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    Partner:
+      type: object
+      properties:
+        customerId:
+          type: string
+        fullName:
+          type: string
+        customerNumber:
+          type: string
+        partnershipType:
+          type: string
+          enum:
+          - fullAccess
+          - viewOnly
+    ProductClass:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    ProductType:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    SavingAccount:
+      type: object
+      properties:
+        customerName:
+          type: string
+        accountName:
+          type: string
+        IBAN:
+          type: string
+        accountNumber:
+          type: string
+        accountNumberLabel:
+          type: string
+        BIC:
+          type: string
+        minPaymentDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - active
+          - close
+        branch:
+          "$ref": "#/components/schemas/Branch"
+        address:
+          type: string
+        productGroup:
+          "$ref": "#/components/schemas/SavingAccountProductGroup"
+        moduleType:
+          "$ref": "#/components/schemas/ModuleType"
+        productType:
+          "$ref": "#/components/schemas/ProductType"
+        productClass:
+          "$ref": "#/components/schemas/ProductClass"
+        currencyCode:
+          type: string
+        operationProfile:
+          "$ref": "#/components/schemas/SavingAccountOperationProfile"
+        detail:
+          "$ref": "#/components/schemas/SavingAccountDetail"
+    SavingAccountDetail:
+      type: object
+    SavingAccountOperationProfile:
+      type: object
+      properties:
+        allowModification:
+          type: boolean
+        allowClosing:
+          type: boolean
+        allowSourceForOpening:
+          type: boolean
+        allowPaymentOrderOut:
+          type: boolean
+        allowOwnTransferOut:
+          type: boolean
+        allowPrintStatement:
+          type: boolean
+    SavingAccountProductGroup:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - combiSpaar
+          - maxiSpaar
+          - solidExtra
+          - saveOnline
+        name:
+          type: string

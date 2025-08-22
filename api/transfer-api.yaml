@@ -1,0 +1,1062 @@
+---
+openapi: 3.0.1
+info:
+  title: CoreBanking_Transfer
+  description: All operations and informations concerned to transfer in Core Banking
+    System.
+  termsOfService: ''
+  contact:
+    email: 'nurmila@gmail.com'
+  license:
+    name: ''
+    url: http://unlicense.org
+  version: v1.0.0.0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Transfers
+  description: Transfers
+- name: Utilities
+  description: Utilities
+- name: Payment
+  description: Payment
+- name: VOP
+  description: Value of Payment
+paths:
+  "/vop/requestPayeeVerification":
+    post:
+      tags:
+      - VOP
+      summary: Request payee verification
+      operationId: requestPayeeVerification
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/VopRequestDto"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/VopResponseDto"
+        '470':
+          description: Invalid request
+        '471':
+          description: Unauthorized
+        '473':
+          description: Invalid party name
+        '474':
+          description: Invalid party account IBAN
+        '475':
+          description: Invalid party agent BICFI
+        '476':
+          description: Invalid requesting agent BICFI
+        '477':
+          description: Not found
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/payment/{customerId}/{sourceAccountNumber}":
+    get:
+      tags:
+      - Payment
+      summary: New payment simulation
+      operationId: getSimulation
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceAccountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: targetIBAN
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: amount
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: description
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: paymentType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - normal
+          - future
+          - periodic
+          - urgent
+      - name: period
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - oneOff
+          - everyWeek
+          - everyMonth
+      - name: paymentDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: endDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: benName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: suggestedName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: vopResult
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: vopGuid
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SepaSimulationResDto"
+        '452':
+          description: No data found
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Source account number is null
+        '457':
+          description: Target iban is null
+        '458':
+          description: Check payment date
+        '459':
+          description: Start date is less than sysdate
+        '460':
+          description: End date is less than start date
+        '461':
+          description: Combispaar account will be closed
+        '462':
+          description: Transaction amount exceeds daily transaction amount
+        '463':
+          description: Transaction amount is larger than transaction limit
+        '464':
+          description: Unauthorized transaction access
+        '470':
+          description: Source account is not allowed for payment
+        '490':
+          description: Unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    post:
+      tags:
+      - Payment
+      summary: New payment
+      operationId: post
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceAccountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SepaCreateReqDto"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResDto"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Source account number is null
+        '457':
+          description: Target iban is null
+        '458':
+          description: Check payment date
+        '459':
+          description: Start date is less than sysdate
+        '460':
+          description: End date is less than start date
+        '461':
+          description: Combispaar account will be closed
+        '462':
+          description: Transaction amount exceeds daily transaction amount
+        '463':
+          description: Transaction amount is larger than transaction limit
+        '464':
+          description: Unauthorized transaction access
+        '470':
+          description: Source account is not allowed for payment
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/ownAccountTransfer/{customerId}/{sourceAccountNumber}":
+    get:
+      tags:
+      - Transfers
+      summary: Own account simulation
+      operationId: getSimulation_1
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceAccountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: targetAccountNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: amount
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: currencyCode
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: description
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: paymentDate
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/WithinOwnAccSimulationResDto"
+        '452':
+          description: No data found
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Source account number is null
+        '457':
+          description: Target account number is null
+        '459':
+          description: Payment date is less than sysdate
+        '460':
+          description: Source account number and target account number cannot be same
+        '461':
+          description: Combispaar account will be closed
+        '462':
+          description: Transaction amount exceeds daily transaction amount
+        '463':
+          description: Transaction amount is larger than transaction limit
+        '464':
+          description: Unauthorized transaction access
+        '470':
+          description: Source account is not allowed for own transfer
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+    post:
+      tags:
+      - Transfers
+      summary: Own account transfer
+      operationId: postOwnAccountTransfer
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: sourceAccountNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/WithinOwnAccCreateReqDto"
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResDto"
+        '201':
+          description: Pending transaction
+        '202':
+          description: Transaction is pending approval
+        '453':
+          description: Customer id is null
+        '455':
+          description: Account balance is not enough
+        '456':
+          description: Source account number is null
+        '457':
+          description: Target account number is null
+        '459':
+          description: Payment date is less than sysdate
+        '460':
+          description: Source account number and target account number cannot be same
+        '461':
+          description: Combispaar account will be closed
+        '462':
+          description: Transaction amount exceeds daily transaction amount
+        '463':
+          description: Transaction amount is larger than transaction limit
+        '464':
+          description: Unauthorized transaction access
+        '470':
+          description: Source account is not allowed for own transfer
+        '490':
+          description: unsuccessful
+        '491':
+          description: Transaction not created
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/utilities/holidays":
+    get:
+      tags:
+      - Utilities
+      summary: Get holidays
+      operationId: getHolidays
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/utilities/bankDate":
+    get:
+      tags:
+      - Utilities
+      summary: Get bank date
+      operationId: getBankDate
+      parameters:
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date-time
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/payment/futurePayment/list/{customerId}":
+    get:
+      tags:
+      - Payment
+      summary: Get future payment
+      operationId: getFuturePayments
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/FuturePaymentResDto"
+        '453':
+          description: Customer id is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+  "/transfers/payment/{customerId}/{reference}":
+    delete:
+      tags:
+      - Payment
+      summary: Delete future payment
+      operationId: delete
+      parameters:
+      - name: customerId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reference
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: channelCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: username
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: lang
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: countryCode
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: sessionId
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/TransactionResDto"
+        '453':
+          description: Customer id is null
+        '458':
+          description: Reference is null
+        '490':
+          description: unsuccessful
+        '495':
+          description: Session Id is required
+        '496':
+          description: Check channel code
+        '497':
+          description: County code is required
+        '498':
+          description: Check user code
+        '499':
+          description: Lang is required
+        '500':
+          description: System error occurred
+        '503':
+          description: Error occurred when making database call
+components:
+  schemas:
+    FinancialInstitutionId:
+      type: object
+      properties:
+        bicfi:
+          type: string
+    Party:
+      type: object
+      properties:
+        name:
+          type: string
+    PartyAccount:
+      type: object
+      properties:
+        iban:
+          type: string
+    PartyAgent:
+      type: object
+      properties:
+        financialInstitutionId:
+          "$ref": "#/components/schemas/FinancialInstitutionId"
+    RequestingAgent:
+      type: object
+      properties:
+        financialInstitutionId:
+          "$ref": "#/components/schemas/FinancialInstitutionId"
+    VopRequestDto:
+      type: object
+      properties:
+        party:
+          "$ref": "#/components/schemas/Party"
+        partyAccount:
+          "$ref": "#/components/schemas/PartyAccount"
+        partyAgent:
+          "$ref": "#/components/schemas/PartyAgent"
+        requestingAgent:
+          "$ref": "#/components/schemas/RequestingAgent"
+    VopResponseDto:
+      type: object
+      properties:
+        partyNameMatch:
+          type: string
+          enum:
+          - MTCH
+          - CMTC
+          - NMTC
+          - NOAP
+        requestGuid:
+          type: string
+        matchedName:
+          type: string
+        partyIdMatch:
+          type: string
+          enum:
+          - MTCH
+          - CMTC
+          - NMTC
+          - NOAP
+    SepaCreateReqDto:
+      type: object
+      properties:
+        targetIBAN:
+          type: string
+        currencyCode:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        paymentType:
+          type: string
+          enum:
+          - normal
+          - future
+          - periodic
+          - urgent
+        period:
+          type: string
+          enum:
+          - oneOff
+          - everyWeek
+          - everyMonth
+        paymentDate:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        reference:
+          type: string
+        benName:
+          type: string
+        suggestedName:
+          type: string
+        vopResult:
+          type: string
+        vopGuid:
+          type: string
+    TransactionResDto:
+      type: object
+      properties:
+        transactionNumber:
+          type: string
+        reference:
+          type: string
+        messageKey:
+          type: string
+    WithinOwnAccCreateReqDto:
+      type: object
+      properties:
+        targetAccountNumber:
+          type: string
+        amount:
+          type: number
+        currencyCode:
+          type: string
+        description:
+          type: string
+        paymentDate:
+          type: string
+        reference:
+          type: string
+    SepaSimulationResDto:
+      type: object
+      properties:
+        sourceAccountNumber:
+          type: string
+        sourceIBAN:
+          type: string
+        targetIBAN:
+          type: string
+        paymentDate:
+          type: string
+        currencyCode:
+          type: string
+        amount:
+          type: number
+        commissionAmount:
+          type: number
+        description:
+          type: string
+        messageKey:
+          type: string
+        targetName:
+          type: string
+        paymentType:
+          type: string
+          enum:
+          - normal
+          - future
+          - periodic
+          - urgent
+        period:
+          type: string
+          enum:
+          - oneOff
+          - everyWeek
+          - everyMonth
+        startDate:
+          type: string
+        endDate:
+          type: string
+        benName:
+          type: string
+        suggestedName:
+          type: string
+        vopResult:
+          type: string
+        vopGuid:
+          type: string
+    FuturePaymentResDto:
+      type: object
+      properties:
+        reference:
+          type: string
+        transactionType:
+          type: string
+          enum:
+          - payment
+          - ownTransfer
+        sourceIBAN:
+          type: string
+        sourceAccountNumber:
+          type: string
+        targetIBAN:
+          type: string
+        targetAccountNumber:
+          type: string
+        targetName:
+          type: string
+        paymentType:
+          type: string
+          enum:
+          - normal
+          - future
+          - periodic
+          - urgent
+        period:
+          type: string
+          enum:
+          - oneOff
+          - everyWeek
+          - everyMonth
+        entryDate:
+          type: string
+          format: date-time
+        nextPaymentDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        currencyCode:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+    WithinOwnAccSimulationResDto:
+      type: object
+      properties:
+        sourceAccountNumber:
+          type: string
+        sourceIBAN:
+          type: string
+        targetIBAN:
+          type: string
+        paymentDate:
+          type: string
+        currencyCode:
+          type: string
+        amount:
+          type: number
+        commissionAmount:
+          type: number
+        description:
+          type: string
+        messageKey:
+          type: string
