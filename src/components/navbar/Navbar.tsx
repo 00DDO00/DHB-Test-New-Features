@@ -15,6 +15,10 @@ import {
   Card,
   Divider,
   Backdrop,
+  TextField,
+  Popper,
+  Paper,
+  ClickAwayListener,
 } from "@mui/material";
 
 import { 
@@ -175,6 +179,10 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const [lastSeenCount, setLastSeenCount] = React.useState(9);
   const [userPopupOpen, setUserPopupOpen] = React.useState(false);
   const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [searchBarVisible, setSearchBarVisible] = React.useState(false);
+  const searchAnchorRef = React.useRef<HTMLDivElement>(null);
   
 
   
@@ -301,6 +309,53 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     return () => clearInterval(interval);
   }, [updateNotificationCount]);
 
+  // Search functionality
+  const searchData = [
+    { title: 'Accounts', path: '/accounts' },
+    { title: 'DHB MaxiSpaar Accounts', path: '/accounts' },
+    { title: 'DHB CombiSpaar Accounts', path: '/accounts' },
+    { title: 'DHB Solideextra Accounts', path: '/accounts' },
+    { title: 'Settings', path: '/settings' },
+    { title: 'Personal Details', path: '/settings/personal-details' },
+    { title: 'Change Password', path: '/settings/change-password' },
+    { title: 'Documents', path: '/settings/documents' },
+    { title: 'Daily Limit', path: '/settings/daily-limit' },
+    { title: 'SOF Questions', path: '/settings/sof-questions' },
+    { title: 'Online Identification', path: '/settings/online-identification' },
+    { title: 'Registered Devices', path: '/settings/devices/registered' },
+    { title: 'Change Counter Account', path: '/settings/change-counter-account' },
+    { title: 'Home', path: '/private' },
+    { title: 'Contact', path: '/pages/profile' },
+  ];
+
+  const filteredResults = searchData.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    setSearchOpen(query.length > 0);
+  };
+
+  const handleSearchClose = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  };
+
+  const handleSearchSelect = (path: string) => {
+    window.location.href = path;
+    handleSearchClose();
+  };
+
+  const handleSearchToggle = () => {
+    setSearchBarVisible(!searchBarVisible);
+    if (searchBarVisible) {
+      setSearchQuery('');
+      setSearchOpen(false);
+    }
+  };
+
 
   
   const isActive = (path: string) => {
@@ -425,38 +480,141 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
               </Grid>
             </Grid>
 
-            {/* CENTER: Menu items */}
+            {/* CENTER: Menu items or Search Bar */}
             <Grid item>
-              <Box 
-                sx={{ 
-                  width: '397px',
-                  height: '28px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '1px'
-                }}
-              >
-                <NavLink to="/private" active={isActive('/private')}>
-                  <NavText active={isActive('/private')}>Home</NavText>
-                </NavLink>
-                <NavLink to="/accounts" active={isActive('/accounts')}>
-                  <NavText active={isActive('/accounts')}>Accounts</NavText>
-                </NavLink>
-                <NavLink to="/settings" active={isActive('/settings')}>
-                  <NavText active={isActive('/settings')}>Settings</NavText>
-                </NavLink>
-                <NavLink to="/pages/profile" active={isActive('/pages/profile')}>
-                  <NavText active={isActive('/pages/profile')}>Contact</NavText>
-                </NavLink>
-              </Box>
+              {searchBarVisible ? (
+                                 <Box 
+                   ref={searchAnchorRef}
+                   sx={{ 
+                     width: '500px',
+                     height: '28px',
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'center'
+                   }}
+                 >
+                  <TextField
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    onFocus={() => setSearchOpen(searchQuery.length > 0)}
+                    autoFocus
+                    sx={{
+                      width: '100%',
+                                             '& .MuiOutlinedInput-root': {
+                         backgroundColor: 'white',
+                         borderRadius: '20px',
+                         '& fieldset': {
+                           borderColor: 'transparent',
+                         },
+                         '&:hover fieldset': {
+                           borderColor: 'transparent',
+                         },
+                         '&.Mui-focused fieldset': {
+                           borderColor: 'transparent',
+                         },
+                       },
+                      '& .MuiInputBase-input': {
+                        color: '#333',
+                        fontSize: '14px',
+                        padding: '8px 12px',
+                      },
+                      '& .MuiInputBase-input::placeholder': {
+                        color: '#999',
+                        opacity: 1,
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: <SearchIcon sx={{ color: '#666', fontSize: '20px', mr: 1 }} />,
+                    }}
+                  />
+                  <Popper
+                    open={searchOpen}
+                    anchorEl={searchAnchorRef.current}
+                    placement="bottom-start"
+                    sx={{ zIndex: 9999 }}
+                  >
+                    <ClickAwayListener onClickAway={handleSearchClose}>
+                      <Paper
+                                                 sx={{
+                           width: '500px',
+                           maxHeight: '300px',
+                           overflow: 'auto',
+                           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                           borderRadius: '8px',
+                         }}
+                      >
+                        {filteredResults.map((item, index) => (
+                          <Box
+                            key={index}
+                            onClick={() => handleSearchSelect(item.path)}
+                            sx={{
+                              padding: '12px 16px',
+                              cursor: 'pointer',
+                              borderBottom: index < filteredResults.length - 1 ? '1px solid #f0f0f0' : 'none',
+                              '&:hover': {
+                                backgroundColor: '#f5f5f5',
+                              },
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: '#333',
+                                fontSize: '14px',
+                                fontWeight: 400,
+                              }}
+                            >
+                              {item.title.split(new RegExp(`(${searchQuery})`, 'gi')).map((part, i) => 
+                                part.toLowerCase() === searchQuery.toLowerCase() ? (
+                                  <span key={i} style={{ fontWeight: 700 }}>{part}</span>
+                                ) : (
+                                  part
+                                )
+                              )}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Paper>
+                    </ClickAwayListener>
+                  </Popper>
+                </Box>
+              ) : (
+                <Box 
+                  sx={{ 
+                    width: '397px',
+                    height: '28px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1px'
+                  }}
+                >
+                  <NavLink to="/private" active={isActive('/private')}>
+                    <NavText active={isActive('/private')}>Home</NavText>
+                  </NavLink>
+                  <NavLink to="/accounts" active={isActive('/accounts')}>
+                    <NavText active={isActive('/accounts')}>Accounts</NavText>
+                  </NavLink>
+                  <NavLink to="/settings" active={isActive('/settings')}>
+                    <NavText active={isActive('/settings')}>Settings</NavText>
+                  </NavLink>
+                  <NavLink to="/pages/profile" active={isActive('/pages/profile')}>
+                    <NavText active={isActive('/pages/profile')}>Contact</NavText>
+                  </NavLink>
+                </Box>
+              )}
             </Grid>
 
             {/* RIGHT: Icons / Profile */}
             <Grid item>
               <Grid container alignItems="center" spacing={1}>
                 <Grid item>
-                  <IconButton color="inherit" size="large">
+                  <IconButton 
+                    color="inherit" 
+                    size="large"
+                    onClick={handleSearchToggle}
+                  >
                     <SearchIcon />
                   </IconButton>
                 </Grid>
