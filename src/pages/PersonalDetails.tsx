@@ -44,14 +44,38 @@ const PersonalDetails: React.FC = () => {
 
   const [editing, setEditing] = React.useState<string | null>(null);
 
-  // Load personal details from API
+  // Load personal details from YAML API endpoints
   React.useEffect(() => {
     const loadPersonalDetails = async () => {
       try {
-        const data = await apiService.getPersonalDetails();
-        setFormData(data);
+        // Use YAML endpoints to get customer data
+        const [phoneData, emailData, addressData, identificationData] = await Promise.all([
+          apiService.getCustomerPhone(),
+          apiService.getCustomerEmail(),
+          apiService.getCustomerAddress(),
+          apiService.getCustomerIdentification()
+        ]);
+
+        // Transform YAML data to match PersonalDetails interface
+        const transformedData: PersonalDetailsType = {
+          updateId: `${identificationData.identityType} - ${identificationData.identitySerialNo}`,
+          mobilePhone: phoneData[0]?.phoneNumber || '+31 123 456 789',
+          password: '**********', // Password not available in YAML endpoints
+          email: emailData[0]?.address || 'example@dhbbank.com',
+          telephone: phoneData[0]?.phoneNumber || '+31 987 654 321',
+          address: addressData[0]?.fullAddressInfo || 'GRONINGEN, STR. VONDELLAAN 172',
+        };
+
+        setFormData(transformedData);
       } catch (error) {
         console.error('Failed to load personal details:', error);
+        // Fallback to legacy endpoint if YAML endpoints fail
+        try {
+          const data = await apiService.getPersonalDetails();
+          setFormData(data);
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
+        }
       } finally {
         setLoading(false);
       }

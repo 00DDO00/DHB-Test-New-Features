@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5002';
+const API_BASE_URL = 'http://localhost:5003'; // Changed to yaml-api.py port
 
 export interface Account {
   id: string;
@@ -148,11 +148,14 @@ export class ApiService {
     }
   }
 
+  // ============================================================================
+  // YAML ENDPOINTS - IMPLEMENTED
+  // ============================================================================
+
   async getAccounts(): Promise<Account[]> {
-    // Use YAML-compliant endpoint
+    // YAML: /accounts/list/{customerId}
     const response = await this.fetchApi<{ saving: any[] }>('/accounts/list/CUST001?accountType=saving');
     
-    // Transform the YAML structure to the old format for backward compatibility
     if (response.saving) {
       return response.saving.map((account: any) => ({
         id: account.accountNumber || account.IBAN,
@@ -169,40 +172,10 @@ export class ApiService {
     return [];
   }
 
-  async getCombispaarAccounts(): Promise<{
-    accounts: CombispaarAccount[];
-    total_balance: number;
-    count: number;
-  }> {
-    const response = await this.fetchApi<{
-      success: boolean;
-      data: CombispaarAccount[];
-      total_balance: number;
-      count: number;
-      timestamp: string;
-    }>('/api/combispaar');
-    return {
-      accounts: response.data,
-      total_balance: response.total_balance,
-      count: response.count
-    };
-  }
-
-  async getChartData(): Promise<ChartData[]> {
-    const response = await this.fetchApi<{ success: boolean; data: ChartData[]; timestamp: string }>('/api/chart-data');
-    return response.data;
-  }
-
-  async getUserInfo(): Promise<UserInfo> {
-    const response = await this.fetchApi<{ success: boolean; data: UserInfo; timestamp: string }>('/api/user');
-    return response.data;
-  }
-
   async getUserProfile(): Promise<UserProfile> {
-    // Use YAML-compliant endpoint
+    // YAML: /customer/profile/fullProfile/{customerId}
     const response = await this.fetchApi<any>('/customer/profile/fullProfile/CUST001');
     
-    // Transform YAML response to match expected UserProfile interface
     return {
       holder_name: `${response.firstName} ${response.surName}`,
       email: response.emails?.[0]?.address || 'lucy.lavender@example.com',
@@ -214,22 +187,11 @@ export class ApiService {
     };
   }
 
-  async getMaxiSpaarPageData(): Promise<any> {
-    const response = await this.fetchApi<{ success: boolean; data: any; timestamp: string }>('/api/maxispaar/page-data');
-    return response.data;
-  }
-
-  async getDashboardData(): Promise<DashboardData> {
-    const response = await this.fetchApi<{ success: boolean; data: DashboardData; timestamp: string }>('/api/dashboard');
-    return response.data;
-  }
-
   async getMessages(): Promise<MessagesResponse> {
-    // Use YAML-compliant endpoint
+    // YAML: /customer/messages/list/{customerId} and /customer/messages/unread/{customerId}
     const response = await this.fetchApi<any[]>('/customer/messages/list/CUST001');
     const unreadResponse = await this.fetchApi<{ count: number }>('/customer/messages/unread/CUST001');
     
-    // Transform YAML response to match expected Message interface
     const transformedMessages: Message[] = response.map((msg, index) => {
       const entryDate = new Date(msg.entryDate);
       return {
@@ -249,7 +211,7 @@ export class ApiService {
   }
 
   async sendMessage(content: string, type: 'Push' | 'Email' = 'Email'): Promise<Message> {
-    // Use YAML-compliant endpoint
+    // YAML: /customer/messages/{customerId}
     const response = await fetch(`${API_BASE_URL}/customer/messages/CUST001`, {
       method: 'POST',
       headers: this.getDefaultHeaders(),
@@ -262,170 +224,6 @@ export class ApiService {
     
     const data = await response.json();
     return data;
-  }
-
-  async getAccountByIban(iban: string): Promise<AccountByIban> {
-    const response = await this.fetchApi<{ success: boolean; data: AccountByIban; timestamp: string }>(`/api/account/by-iban?iban=${iban}`);
-    return response.data;
-  }
-
-  async getPersonalDetails(): Promise<PersonalDetails> {
-    const response = await this.fetchApi<{ success: boolean; data: PersonalDetails; timestamp: string }>('/api/personal-details');
-    return response.data;
-  }
-
-  async updatePersonalDetails(details: Partial<PersonalDetails>): Promise<PersonalDetails> {
-    const response = await fetch(`${API_BASE_URL}/api/personal-details`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(details),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data.data;
-  }
-
-  async getPhoneNumber(): Promise<{ phone: string }> {
-    const response = await this.fetchApi<{ success: boolean; data: { phone: string }; timestamp: string }>('/api/personal-details/phone');
-    return response.data;
-  }
-
-  async sendVerificationCode(): Promise<VerificationCodeResponse> {
-    const response = await this.fetchApi<VerificationCodeResponse>('/api/verification/send-code');
-    return response;
-  }
-
-  async updatePassword(password: string): Promise<PersonalDetails> {
-    const response = await fetch(`${API_BASE_URL}/api/personal-details/password`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ password }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data.data;
-  }
-
-  async validatePassword(password: string): Promise<{ valid: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/personal-details/validate-password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ password }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { valid: data.valid, message: data.message };
-  }
-
-  async getSOFQuestions(): Promise<SOFQuestion[]> {
-    const response = await this.fetchApi<{ success: boolean; data: SOFQuestion[]; timestamp: string }>('/api/sof-questions');
-    return response.data;
-  }
-
-  async updateSOFQuestions(questions: SOFQuestion[]): Promise<SOFQuestion[]> {
-    const response = await fetch(`${API_BASE_URL}/api/sof-questions`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ questions }),
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data.data;
-  }
-
-  // ============================================================================
-  // NEW YAML-COMPLIANT ENDPOINTS
-  // ============================================================================
-
-  async getNewSavingAccountOptions(customerId: string = 'CUST001'): Promise<{
-    customerId: string;
-    availableProducts: Array<{
-      productCode: string;
-      productName: string;
-      interestRate: number;
-      minimumAmount: number;
-      maximumAmount: number;
-      currency: string;
-    }>;
-  }> {
-    return this.fetchApi(`/accounts/saving/new/${customerId}`);
-  }
-
-  async getSavingRates(customerId: string = 'CUST001'): Promise<{
-    customerId: string;
-    rates: Array<{
-      productCode: string;
-      productName: string;
-      interestRate: number;
-      effectiveDate: string;
-      currency: string;
-    }>;
-  }> {
-    return this.fetchApi(`/accounts/saving/rates/${customerId}`);
-  }
-
-  async requestPayeeVerification(targetIBAN: string, beneficiaryName: string): Promise<{
-    vopGuid: string;
-    verificationStatus: string;
-    beneficiaryName: string;
-    targetIBAN: string;
-    verificationDate: string;
-    confidence: string;
-  }> {
-    const response = await fetch(`${API_BASE_URL}/vop/requestPayeeVerification`, {
-      method: 'POST',
-      headers: this.getDefaultHeaders(),
-      body: JSON.stringify({ targetIBAN, beneficiaryName }),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
-    }
-    
-    return response.json();
-  }
-
-  async getFinancialAnnualOverview(customerId: string = 'CUST001'): Promise<Array<{
-    documentType: string;
-    name: string;
-    year: string;
-    id: string;
-  }>> {
-    return this.fetchApi(`/customer/downloads/financialAnnualOverview/${customerId}`);
-  }
-
-  async getCustomerCampaigns(customerId: string = 'CUST001'): Promise<Array<{
-    subject: string;
-    content: string;
-    reference: string;
-    bannerLink: string;
-  }>> {
-    return this.fetchApi(`/customer/campaigns/list/${customerId}`);
   }
 
   async getAccountStatement(
@@ -452,6 +250,7 @@ export class ApiService {
       totalPages: number;
     };
   }> {
+    // YAML: /accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize}
     return this.fetchApi(`/accounts/saving/statement/${accountNumber}/${pageIndex}/${pageSize}`);
   }
 
@@ -478,6 +277,7 @@ export class ApiService {
     estimatedDelivery: string;
     status: string;
   }> {
+    // YAML: /transfers/payment/{customerId}/{sourceAccountNumber}
     const params = new URLSearchParams({
       targetIBAN,
       currencyCode,
@@ -488,6 +288,391 @@ export class ApiService {
     });
 
     return this.fetchApi(`/transfers/payment/${customerId}/${sourceAccount}?${params}`);
+  }
+
+  async getSavingRates(customerId: string = 'CUST001'): Promise<{
+    customerId: string;
+    rates: Array<{
+      productCode: string;
+      productName: string;
+      interestRate: number;
+      effectiveDate: string;
+      currency: string;
+    }>;
+  }> {
+    // YAML: /accounts/saving/rates/{customerId}
+    return this.fetchApi(`/accounts/saving/rates/${customerId}`);
+  }
+
+  async getNewSavingAccountOptions(customerId: string = 'CUST001'): Promise<{
+    customerId: string;
+    availableProducts: Array<{
+      productCode: string;
+      productName: string;
+      interestRate: number;
+      minimumAmount: number;
+      maximumAmount: number;
+      currency: string;
+    }>;
+  }> {
+    // YAML: /accounts/saving/new/{customerId}
+    return this.fetchApi(`/accounts/saving/new/${customerId}`);
+  }
+
+  async requestPayeeVerification(targetIBAN: string, beneficiaryName: string): Promise<{
+    vopGuid: string;
+    verificationStatus: string;
+    beneficiaryName: string;
+    targetIBAN: string;
+    verificationDate: string;
+    confidence: string;
+  }> {
+    // YAML: /vop/requestPayeeVerification
+    const response = await fetch(`${API_BASE_URL}/vop/requestPayeeVerification`, {
+      method: 'POST',
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ targetIBAN, beneficiaryName }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+
+  async getFinancialAnnualOverview(customerId: string = 'CUST001'): Promise<Array<{
+    documentType: string;
+    name: string;
+    year: string;
+    id: string;
+  }>> {
+    // YAML: /customer/downloads/financialAnnualOverview/{customerId}
+    return this.fetchApi(`/customer/downloads/financialAnnualOverview/${customerId}`);
+  }
+
+  async getCustomerCampaigns(customerId: string = 'CUST001'): Promise<Array<{
+    subject: string;
+    content: string;
+    reference: string;
+    bannerLink: string;
+  }>> {
+    // YAML: /customer/campaigns/list/{customerId}
+    return this.fetchApi(`/customer/campaigns/list/${customerId}`);
+  }
+
+  async getCustomerPhone(customerId: string = 'CUST001'): Promise<Array<{
+    phoneNumber: string;
+    phoneType: string;
+    phoneTypeName: string;
+    editable: boolean;
+    editableFlag: string;
+  }>> {
+    // YAML: /customer/profile/phone/{customerId}
+    return this.fetchApi(`/customer/profile/phone/${customerId}`);
+  }
+
+  async updateCustomerPhone(customerId: string = 'CUST001', phoneNumber: string): Promise<any> {
+    // YAML: /customer/profile/phone/{customerId}
+    const response = await fetch(`${API_BASE_URL}/customer/profile/phone/${customerId}`, {
+      method: 'PUT',
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ phoneNumber }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+
+  async getCustomerEmail(customerId: string = 'CUST001'): Promise<Array<{
+    address: string;
+    editable: boolean;
+    editableFlag: string;
+  }>> {
+    // YAML: /customer/profile/email/{customerId}
+    return this.fetchApi(`/customer/profile/email/${customerId}`);
+  }
+
+  async updateCustomerEmail(customerId: string = 'CUST001', email: string): Promise<any> {
+    // YAML: /customer/profile/email/{customerId}
+    const response = await fetch(`${API_BASE_URL}/customer/profile/email/${customerId}`, {
+      method: 'PUT',
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify({ address: email }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+
+  async getCustomerAddress(customerId: string = 'CUST001'): Promise<Array<{
+    addressType: string;
+    addressTypeName: string;
+    cityCode: string;
+    cityName: string;
+    countryCode: string;
+    editable: boolean;
+    editableFlag: string;
+    fullAddressInfo: string;
+    houseNumber: string;
+    street: string;
+    zipCode: string;
+  }>> {
+    // YAML: /customer/profile/address/{customerId}
+    return this.fetchApi(`/customer/profile/address/${customerId}`);
+  }
+
+  async updateCustomerAddress(customerId: string = 'CUST001', addressData: any): Promise<any> {
+    // YAML: /customer/profile/address/{customerId}
+    const response = await fetch(`${API_BASE_URL}/customer/profile/address/${customerId}`, {
+      method: 'PUT',
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(addressData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+
+  async getCustomerIdentification(customerId: string = 'CUST001'): Promise<{
+    identityType: string;
+    identitySeries: string;
+    identitySerialNo: string;
+    issueDate: string;
+    expiryDate: string;
+    issueCountry: string;
+    issueCountryName: string;
+  }> {
+    // YAML: /customer/profile/identification/{customerId}
+    return this.fetchApi(`/customer/profile/identification/${customerId}`);
+  }
+
+  async updateCustomerIdentification(customerId: string = 'CUST001', identificationData: any): Promise<any> {
+    // YAML: /customer/profile/identification/{customerId}
+    const response = await fetch(`${API_BASE_URL}/customer/profile/identification/${customerId}`, {
+      method: 'PUT',
+      headers: this.getDefaultHeaders(),
+      body: JSON.stringify(identificationData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+
+  async getCustomerContracts(customerId: string = 'CUST001'): Promise<Array<{
+    contractType: string;
+    name: string;
+    date: string;
+    id: string;
+  }>> {
+    // YAML: /customer/downloads/contracts/{customerId}
+    return this.fetchApi(`/customer/downloads/contracts/${customerId}`);
+  }
+
+  async getSavingHistory(accountNumber: string): Promise<{
+    accountNumber: string;
+    history: Array<{
+      date: string;
+      action: string;
+      description: string;
+      amount: number;
+    }>;
+  }> {
+    // YAML: /accounts/saving/history/{accountNumber}
+    return this.fetchApi(`/accounts/saving/history/${accountNumber}`);
+  }
+
+  async getHolidays(): Promise<Array<{
+    date: string;
+    description: string;
+    isHoliday: boolean;
+  }>> {
+    // YAML: /transfers/utilities/holidays
+    return this.fetchApi('/transfers/utilities/holidays');
+  }
+
+  async getBankDate(): Promise<{
+    bankDate: string;
+    isBusinessDay: boolean;
+  }> {
+    // YAML: /transfers/utilities/bankDate
+    return this.fetchApi('/transfers/utilities/bankDate');
+  }
+
+  async getFuturePaymentList(customerId: string = 'CUST001'): Promise<Array<{
+    paymentId: string;
+    sourceAccount: string;
+    targetIBAN: string;
+    amount: number;
+    description: string;
+    scheduledDate: string;
+    status: string;
+  }>> {
+    // YAML: /transfers/payment/futurePayment/list/{customerId}
+    return this.fetchApi(`/transfers/payment/futurePayment/list/${customerId}`);
+  }
+
+  // ============================================================================
+  // LEGACY ENDPOINTS - KEPT FOR COMPATIBILITY
+  // ============================================================================
+
+  async getCombispaarAccounts(): Promise<{
+    accounts: CombispaarAccount[];
+    total_balance: number;
+    count: number;
+  }> {
+    // LEGACY: /api/combispaar - No YAML equivalent
+    const response = await this.fetchApi<{
+      success: boolean;
+      data: CombispaarAccount[];
+      total_balance: number;
+      count: number;
+      timestamp: string;
+    }>('/api/combispaar');
+    return {
+      accounts: response.data,
+      total_balance: response.total_balance,
+      count: response.count
+    };
+  }
+
+  async getChartData(): Promise<ChartData[]> {
+    // LEGACY: /api/chart-data - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: ChartData[]; timestamp: string }>('/api/chart-data');
+    return response.data;
+  }
+
+  async getUserInfo(): Promise<UserInfo> {
+    // LEGACY: /api/user - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: UserInfo; timestamp: string }>('/api/user');
+    return response.data;
+  }
+
+  async getMaxiSpaarPageData(): Promise<any> {
+    // LEGACY: /api/maxispaar/page-data - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: any; timestamp: string }>('/api/maxispaar/page-data');
+    return response.data;
+  }
+
+  async getDashboardData(): Promise<DashboardData> {
+    // LEGACY: /api/dashboard - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: DashboardData; timestamp: string }>('/api/dashboard');
+    return response.data;
+  }
+
+  async getAccountByIban(iban: string): Promise<AccountByIban> {
+    // LEGACY: /api/account/by-iban - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: AccountByIban; timestamp: string }>(`/api/account/by-iban?iban=${iban}`);
+    return response.data;
+  }
+
+  async getPersonalDetails(): Promise<PersonalDetails> {
+    // LEGACY: /api/personal-details - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: PersonalDetails; timestamp: string }>('/api/personal-details');
+    return response.data;
+  }
+
+  async updatePersonalDetails(details: Partial<PersonalDetails>): Promise<PersonalDetails> {
+    // LEGACY: /api/personal-details - No YAML equivalent
+    const response = await fetch(`${API_BASE_URL}/api/personal-details`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(details),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  }
+
+  async getPhoneNumber(): Promise<{ phone: string }> {
+    // LEGACY: /api/personal-details/phone - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: { phone: string }; timestamp: string }>('/api/personal-details/phone');
+    return response.data;
+  }
+
+  async sendVerificationCode(): Promise<VerificationCodeResponse> {
+    // LEGACY: /api/verification/send-code - No YAML equivalent
+    const response = await this.fetchApi<VerificationCodeResponse>('/api/verification/send-code');
+    return response;
+  }
+
+  async updatePassword(password: string): Promise<PersonalDetails> {
+    // LEGACY: /api/personal-details/password - No YAML equivalent
+    const response = await fetch(`${API_BASE_URL}/api/personal-details/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  }
+
+  async validatePassword(password: string): Promise<{ valid: boolean; message: string }> {
+    // LEGACY: /api/personal-details/validate-password - No YAML equivalent
+    const response = await fetch(`${API_BASE_URL}/api/personal-details/validate-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return { valid: data.valid, message: data.message };
+  }
+
+  async getSOFQuestions(): Promise<SOFQuestion[]> {
+    // LEGACY: /api/sof-questions - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: SOFQuestion[]; timestamp: string }>('/api/sof-questions');
+    return response.data;
+  }
+
+  async updateSOFQuestions(questions: SOFQuestion[]): Promise<SOFQuestion[]> {
+    // LEGACY: /api/sof-questions - No YAML equivalent
+    const response = await fetch(`${API_BASE_URL}/api/sof-questions`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ questions }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
   }
 }
 

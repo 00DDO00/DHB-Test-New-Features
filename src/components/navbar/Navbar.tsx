@@ -312,9 +312,9 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   // Search functionality
   const searchData = [
     { title: 'Accounts', path: '/accounts' },
-    { title: 'DHB MaxiSpaar Accounts', path: '/accounts' },
-    { title: 'DHB CombiSpaar Accounts', path: '/accounts' },
-    { title: 'DHB Solideextra Accounts', path: '/accounts' },
+    { title: 'DHB MaxiSpaar Accounts', path: '/accounts/maxispaar' },
+    { title: 'DHB CombiSpaar Accounts', path: '/accounts/combispaar' },
+    { title: 'DHB Solideextra Accounts', path: '/accounts/solideextra' },
     { title: 'Settings', path: '/settings' },
     { title: 'Personal Details', path: '/settings/personal-details' },
     { title: 'Change Password', path: '/settings/change-password' },

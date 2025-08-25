@@ -106,9 +106,9 @@ const ChangePassword: React.FC = () => {
   const handleConfirm = async () => {
     if (await validateForm()) {
       try {
-        // Get phone number from API
-        const phoneData = await apiService.getPhoneNumber();
-        setPhoneNumber(phoneData.phone);
+        // Get phone number from YAML API
+        const phoneData = await apiService.getCustomerPhone();
+        setPhoneNumber(phoneData[0]?.phoneNumber || '+31 123 456 789');
         
         // Send verification code
         const codeResponse = await apiService.sendVerificationCode();

@@ -70,8 +70,20 @@ const MaxiSpaarAccount: React.FC = () => {
         const data = await apiService.getMaxiSpaarPageData();
         setAccountData(data);
         
-        // Fetch IBAN options
-        const ibanResponse = await fetch('http://localhost:5002/api/combispaar/iban-options');
+        // Fetch IBAN options with proper headers
+        const headers = {
+          'Content-Type': 'application/json',
+          'channelCode': 'WEB',
+          'username': 'testuser',
+          'lang': 'en',
+          'countryCode': 'NL',
+          'sessionId': 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          'customerId': 'CUST001'
+        };
+        
+        const ibanResponse = await fetch('http://localhost:5003/api/combispaar/iban-options', {
+          headers
+        });
         const ibanData = await ibanResponse.json();
         
         if (ibanData.success) {
@@ -91,6 +103,20 @@ const MaxiSpaarAccount: React.FC = () => {
   useEffect(() => {
     console.log('State changed - showSummary:', showSummary, 'show2FA:', show2FA, 'showFinalConfirmation:', showFinalConfirmation);
   }, [showSummary, show2FA, showFinalConfirmation]);
+
+  // Auto-send verification code when 2FA popup opens
+  useEffect(() => {
+    if (show2FA && !isCodeSent) {
+      handleSendCode();
+    }
+  }, [show2FA]);
+
+  // Debug verification code state
+  useEffect(() => {
+    console.log('Verification code state changed:', verificationCode);
+    console.log('Generated code:', generatedCode);
+    console.log('Is code sent:', isCodeSent);
+  }, [verificationCode, generatedCode, isCodeSent]);
 
   const maxiSpaarOptions: MaxiSpaarOption[] = accountData?.account_options || [
     {
@@ -213,11 +239,11 @@ const MaxiSpaarAccount: React.FC = () => {
     console.log('Setting showSummary to false and show2FA to true');
     setShowSummary(false);
     setShow2FA(true);
-    console.log('Waiting 2 seconds before calling handleSendCode');
-    setTimeout(() => {
-      console.log('2 seconds passed, calling handleSendCode');
-      handleSendCode();
-    }, 2000);
+    // Reset verification code state
+    setVerificationCode(['', '', '', '', '', '']);
+    setIsCodeSent(false);
+    setGeneratedCode('');
+    setErrors({});
   };
 
   const handleFinalDone = () => {
@@ -241,16 +267,28 @@ const MaxiSpaarAccount: React.FC = () => {
     console.log('handleSendCode called');
     try {
       console.log('Fetching verification code from API...');
-      const response = await fetch('http://localhost:5002/api/verification/send-code');
+      const headers = {
+        'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'testuser',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        'customerId': 'CUST001'
+      };
+      
+      const response = await fetch('http://localhost:5003/api/verification/send-code', {
+        headers
+      });
       const data = await response.json();
       console.log('API response:', data);
       if (data.success) {
-        console.log('Setting generated code:', data.code);
-        setGeneratedCode(data.code);
+        console.log('Setting generated code:', data.data.code);
+        setGeneratedCode(data.data.code);
         setIsCodeSent(true);
         // Auto-fill the code after a short delay
         setTimeout(() => {
-          const codeArray = data.code.split('');
+          const codeArray = data.data.code.split('');
           console.log('Auto-filling code:', codeArray);
           setVerificationCode(codeArray);
         }, 1000);
@@ -349,19 +387,19 @@ const MaxiSpaarAccount: React.FC = () => {
         </Typography>
       </Breadcrumbs>
 
-      {/* Account Summary Section (Blue Box) */}
+      {/* Account Summary Section (White Box) */}
       <Card sx={{ 
         mb: 3,
-        backgroundColor: '#E6EDF5',
+        backgroundColor: 'white',
         borderRadius: 2,
-        boxShadow: 'none',
-        border: '1px solid #D1E0F0'
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        border: '1px solid #E0E0E0'
       }}>
         <CardContent sx={{ p: 3 }}>
           <Grid container spacing={3} alignItems="center">
             {/* Left Side */}
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" fontWeight="bold" color="#333" sx={{ mb: 1 }}>
+              <Typography variant="h4" fontWeight="bold" color="#004996" sx={{ mb: 1 }}>
                 {accountData?.main_account?.name || 'DHB Account'}
               </Typography>
               <Typography variant="body1" color="#666" sx={{ mb: 0.5 }}>
@@ -374,7 +412,7 @@ const MaxiSpaarAccount: React.FC = () => {
             
             {/* Right Side */}
             <Grid item xs={12} md={6} sx={{ textAlign: 'right' }}>
-              <Typography variant="h3" fontWeight="bold" color="#333" sx={{ mb: 1 }}>
+              <Typography variant="h3" fontWeight="bold" color="#004996" sx={{ mb: 1 }}>
                 {accountData?.balance || '€ --.---,--'}
               </Typography>
               <Typography variant="body1" color="#666" sx={{ mb: 0.5 }}>
@@ -593,11 +631,11 @@ const MaxiSpaarAccount: React.FC = () => {
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="body2" color="#000">Account</Typography>
-                        <Typography variant="body2" fontWeight="medium">{getSelectedIbanDetails().accountType}</Typography>
+                        <Typography variant="body2" fontWeight="medium">{getSelectedIbanDetails().accountName}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography variant="body2" color="#000">Account holder(s)</Typography>
-                        <Typography variant="body2" fontWeight="medium">{getSelectedIbanDetails().accountHolder}</Typography>
+                        <Typography variant="body2" fontWeight="medium">{getSelectedIbanDetails().holderName}</Typography>
                       </Box>
                     </Box>
                   )}

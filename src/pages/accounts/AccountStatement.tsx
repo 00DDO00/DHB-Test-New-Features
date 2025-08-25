@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiService } from '../../services/api';
 import {
   Box,
   Typography,
@@ -49,23 +50,55 @@ const AccountStatement: React.FC = () => {
   const [debitTransactions, setDebitTransactions] = useState(true);
   const [creditTransactions, setCreditTransactions] = useState(true);
   const [filteredTransactions, setFilteredTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock transaction data
-  const mockTransactions = [
-    { id: 1, date: '15-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 1.250,00', type: 'credit' },
-    { id: 2, date: '12-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 500,00', type: 'debit' },
-    { id: 3, date: '10-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 750,00', type: 'credit' },
-    { id: 4, date: '08-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 300,00', type: 'debit' },
-    { id: 5, date: '05-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 2.000,00', type: 'credit' },
-    { id: 6, date: '03-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 150,00', type: 'debit' },
-    { id: 7, date: '01-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 1.500,00', type: 'credit' },
-    { id: 8, date: '30-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 800,00', type: 'debit' },
-    { id: 9, date: '28-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 3.200,00', type: 'credit' },
-    { id: 10, date: '25-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 450,00', type: 'debit' },
-  ];
+  // Load transactions from YAML API
+  useEffect(() => {
+    const loadTransactions = async () => {
+      try {
+        // Use YAML endpoint to get account statement
+        const statementData = await apiService.getAccountStatement('2018470578', 0, 50);
+        
+        // Transform YAML data to match expected format
+        const transformedTransactions = statementData.transactions.map((txn: any, index: number) => ({
+          id: index + 1,
+          date: txn.transactionDate,
+          description: txn.description,
+          account: 'NL24DHBN2018470578',
+          balance: txn.amount > 0 ? `€ ${txn.amount.toFixed(2).replace('.', ',')}` : `- € ${Math.abs(txn.amount).toFixed(2).replace('.', ',')}`,
+          type: txn.type.toLowerCase()
+        }));
+
+        setTransactions(transformedTransactions);
+        setFilteredTransactions(transformedTransactions);
+      } catch (error) {
+        console.error('Failed to load transactions:', error);
+        // Fallback to mock data
+        const mockTransactions = [
+          { id: 1, date: '15-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 1.250,00', type: 'credit' },
+          { id: 2, date: '12-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 500,00', type: 'debit' },
+          { id: 3, date: '10-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 750,00', type: 'credit' },
+          { id: 4, date: '08-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 300,00', type: 'debit' },
+          { id: 5, date: '05-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 2.000,00', type: 'credit' },
+          { id: 6, date: '03-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 150,00', type: 'debit' },
+          { id: 7, date: '01-01-2024', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 1.500,00', type: 'credit' },
+          { id: 8, date: '30-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 800,00', type: 'debit' },
+          { id: 9, date: '28-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '€ 3.200,00', type: 'credit' },
+          { id: 10, date: '25-12-2023', description: 'Holder name', account: 'NL24DHBN2018470578', balance: '- € 450,00', type: 'debit' },
+        ];
+        setTransactions(mockTransactions);
+        setFilteredTransactions(mockTransactions);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTransactions();
+  }, []);
 
   const applyFilters = () => {
-    let filtered = [...mockTransactions];
+    let filtered = [...transactions];
 
     // Filter by transaction type
     if (!debitTransactions && !creditTransactions) {

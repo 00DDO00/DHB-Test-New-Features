@@ -154,16 +154,32 @@ const CombiSpaarAccount: React.FC = () => {
       try {
         setLoading(true);
         
+        const headers = {
+          'Content-Type': 'application/json',
+          'channelCode': 'WEB',
+          'username': 'testuser',
+          'lang': 'en',
+          'countryCode': 'NL',
+          'sessionId': 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          'customerId': 'CUST001'
+        };
+        
         // Fetch page data
-        const pageResponse = await fetch('http://localhost:5002/api/combispaar/page-data');
+        const pageResponse = await fetch('http://localhost:5003/api/combispaar/page-data', {
+          headers
+        });
         const pageData = await pageResponse.json();
         
         // Fetch account options
-        const accountResponse = await fetch('http://localhost:5002/api/combispaar/account-options');
+        const accountResponse = await fetch('http://localhost:5003/api/combispaar/account-options', {
+          headers
+        });
         const accountData = await accountResponse.json();
         
         // Fetch IBAN options
-        const ibanResponse = await fetch('http://localhost:5002/api/combispaar/iban-options');
+        const ibanResponse = await fetch('http://localhost:5003/api/combispaar/iban-options', {
+          headers
+        });
         const ibanData = await ibanResponse.json();
         
         if (pageData.success) {

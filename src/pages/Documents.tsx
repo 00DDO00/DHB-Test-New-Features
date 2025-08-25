@@ -1,4 +1,5 @@
 import React from 'react';
+import { apiService } from '../services/api';
 import {
   Box,
   Typography,
@@ -16,48 +17,130 @@ import {
 } from '@mui/icons-material';
 
 const Documents: React.FC = () => {
-  const documents = [
-    {
-      id: 'terms-conditions',
-      title: 'Terms & Conditions',
-      downloadUrl: '/documents/terms-conditions.pdf',
-    },
-    {
-      id: 'depositor-template',
-      title: 'Depositor Information Template',
-      downloadUrl: '/documents/depositor-template.pdf',
-    },
-    {
-      id: 'financial-overview',
-      title: 'Financial Annual Overview',
-      downloadUrl: '/documents/financial-overview.pdf',
-    },
-    {
-      id: 'account-statements',
-      title: 'Account Statements',
-      downloadUrl: '/documents/account-statements.pdf',
-    },
-    {
-      id: 'contracts',
-      title: 'Your contracts',
-      downloadUrl: '/documents/contracts.pdf',
-    },
-  ];
+  const [documents, setDocuments] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  // Load documents from YAML API
+  React.useEffect(() => {
+    const loadDocuments = async () => {
+      try {
+        // Use YAML endpoints to get documents
+        const [financialDocs, contracts] = await Promise.all([
+          apiService.getFinancialAnnualOverview(),
+          apiService.getCustomerContracts()
+        ]);
+
+        // Transform YAML data to documents array
+        const transformedDocs = [
+          {
+            id: 'terms-conditions',
+            title: 'Terms & Conditions',
+            downloadUrl: '/documents/terms-conditions.pdf',
+          },
+          {
+            id: 'depositor-template',
+            title: 'Depositor Information Template',
+            downloadUrl: '/documents/depositor-template.pdf',
+          },
+          ...financialDocs.map((doc: any) => ({
+            id: doc.id,
+            title: doc.name,
+            downloadUrl: `/documents/${doc.id}.pdf`,
+          })),
+          ...contracts.map((contract: any) => ({
+            id: contract.id,
+            title: contract.name,
+            downloadUrl: `/documents/${contract.id}.pdf`,
+          }))
+        ];
+
+        setDocuments(transformedDocs);
+      } catch (error) {
+        console.error('Failed to load documents:', error);
+        // Fallback to static documents
+        setDocuments([
+          {
+            id: 'terms-conditions',
+            title: 'Terms & Conditions',
+            downloadUrl: '/documents/terms-conditions.pdf',
+          },
+          {
+            id: 'depositor-template',
+            title: 'Depositor Information Template',
+            downloadUrl: '/documents/depositor-template.pdf',
+          },
+          {
+            id: 'financial-overview',
+            title: 'Financial Annual Overview',
+            downloadUrl: '/documents/financial-overview.pdf',
+          },
+          {
+            id: 'account-statements',
+            title: 'Account Statements',
+            downloadUrl: '/documents/account-statements.pdf',
+          },
+          {
+            id: 'contracts',
+            title: 'Your contracts',
+            downloadUrl: '/documents/contracts.pdf',
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDocuments();
+  }, []);
 
   const handleDownload = async (documentId: string, downloadUrl: string) => {
     try {
       console.log(`Downloading ${documentId}: ${downloadUrl}`);
       
-      // Create a temporary link element to trigger download
+      // Make API call with proper headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'testuser',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        'customerId': 'CUST001'
+      };
+      
+      const response = await fetch(`http://localhost:5003/api/documents/download?type=${documentId}`, {
+        method: 'GET',
+        headers
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Get the filename from the Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `${documentId}.txt`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '');
+        }
+      }
+      
+      // Convert response to blob and create download link
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = `http://localhost:5002/api/documents/download?type=${documentId}`;
-      link.download = ''; // Let the server set the filename
-      link.target = '_blank';
+      link.href = url;
+      link.download = filename;
       
       // Append to body, click, and remove
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      // Clean up the URL object
+      window.URL.revokeObjectURL(url);
       
     } catch (error) {
       console.error('Download failed:', error);
