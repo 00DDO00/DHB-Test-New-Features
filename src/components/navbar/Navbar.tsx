@@ -37,6 +37,7 @@ import NavbarLanguagesDropdown from "./NavbarLanguagesDropdown";
 import NavbarUserDropdown from "./NavbarUserDropdown";
 import MessagesPopup from "../MessagesPopup";
 import { apiService, UserProfile } from "../../services/api";
+import useAuth from "../../hooks/useAuth";
 
 // Import the logo image
 import dhbLogo from "../../assets/dhb-white.png";
@@ -173,6 +174,7 @@ type NavbarProps = {
 const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const { signOut } = useAuth();
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [totalMessageCount, setTotalMessageCount] = React.useState(9);
   const [messagesSeen, setMessagesSeen] = React.useState(false);
@@ -348,6 +350,16 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     handleSearchClose();
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setUserPopupOpen(false);
+      // The AuthGuard will automatically redirect to /auth/sign-in
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   const handleSearchToggle = () => {
     setSearchBarVisible(!searchBarVisible);
     if (searchBarVisible) {
@@ -430,7 +442,7 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                <EditIcon sx={{ fontSize: 16 }} />
                Edit profile
              </ActionLink>
-             <ActionLink>
+             <ActionLink onClick={handleLogout}>
                <LogoutIcon sx={{ fontSize: 16 }} />
                Logout
              </ActionLink>

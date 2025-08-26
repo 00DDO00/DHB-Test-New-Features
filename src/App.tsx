@@ -40,8 +40,7 @@ function App({ emotionCache = clientSideEmotionCache }) {
           <Provider store={store}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                           <MuiThemeProvider theme={createTheme(theme)}>
-              {/* <AuthProvider>{content}</AuthProvider> */}
-              {content}
+              <AuthProvider>{content}</AuthProvider>
             </MuiThemeProvider>
             </LocalizationProvider>
           </Provider>
