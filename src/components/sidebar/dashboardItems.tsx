@@ -19,21 +19,77 @@ import {
 
 const pagesSection = [
   {
-    href: "/dashboard",
+    href: "/private",
     icon: Sliders,
-    title: "Dashboard",
+    title: "DHB Dashboard",
+  },
+  {
+    href: "/accounts",
+    icon: CreditCard,
+    title: "Accounts",
     children: [
       {
-        href: "/dashboard/default",
-        title: "Default",
+        href: "/accounts/saveonline",
+        title: "SaveOnline Account",
       },
       {
-        href: "/dashboard/analytics",
-        title: "Analytics",
+        href: "/accounts/open",
+        title: "Open Account",
       },
       {
-        href: "/dashboard/saas",
-        title: "SaaS",
+        href: "/accounts/combispaar",
+        title: "CombiSpaar Account",
+      },
+      {
+        href: "/accounts/maxispaar",
+        title: "MaxiSpaar Account",
+      },
+      {
+        href: "/accounts/saveonline/statement",
+        title: "Account Statement",
+      },
+    ],
+  },
+  {
+    href: "/settings",
+    icon: Sliders,
+    title: "Settings",
+    children: [
+      {
+        href: "/settings",
+        title: "General Settings",
+      },
+      {
+        href: "/settings/personal-details",
+        title: "Personal Details",
+      },
+      {
+        href: "/settings/change-password",
+        title: "Change Password",
+      },
+      {
+        href: "/settings/online-identification",
+        title: "Online Identification",
+      },
+      {
+        href: "/settings/devices/registered",
+        title: "Registered Devices",
+      },
+      {
+        href: "/settings/daily-limit",
+        title: "Daily Limit",
+      },
+      {
+        href: "/settings/sof-questions",
+        title: "SOF Questions",
+      },
+      {
+        href: "/settings/change-counter-account",
+        title: "Change Counter Account",
+      },
+      {
+        href: "/settings/documents",
+        title: "Documents",
       },
     ],
   },

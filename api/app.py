@@ -1074,8 +1074,34 @@ personal_details_store = {
     "address": "Amsterdam, Netherlands"
 }
 
-# Separate storage for actual password value (in a real app, this would be encrypted in a database)
-current_password = "password123"
+# Separate storage for actual password value with file persistence
+PASSWORD_FILE = "current_password.txt"
+
+def load_current_password():
+    """Load current password from file, default to 'password123' if file doesn't exist"""
+    try:
+        if os.path.exists(PASSWORD_FILE):
+            with open(PASSWORD_FILE, 'r') as f:
+                return f.read().strip()
+        else:
+            # Create file with default password
+            with open(PASSWORD_FILE, 'w') as f:
+                f.write("password123")
+            return "password123"
+    except Exception as e:
+        print(f"Error loading password: {e}")
+        return "password123"
+
+def save_current_password(password):
+    """Save current password to file"""
+    try:
+        with open(PASSWORD_FILE, 'w') as f:
+            f.write(password)
+    except Exception as e:
+        print(f"Error saving password: {e}")
+
+# Initialize current password
+current_password = load_current_password()
 
 @app.route('/api/personal-details', methods=['GET'])
 def get_personal_details():
@@ -1137,6 +1163,7 @@ def update_password():
         if new_password:
             global current_password
             current_password = new_password
+            save_current_password(new_password)
             personal_details_store["password"] = "••••••••••••••••"
             return jsonify({
                 "success": True,

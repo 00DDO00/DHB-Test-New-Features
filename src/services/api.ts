@@ -591,6 +591,11 @@ export class ApiService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'demo_user',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'demo_session_123',
       },
       body: JSON.stringify(details),
     });
@@ -621,6 +626,11 @@ export class ApiService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'demo_user',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'demo_session_123',
       },
       body: JSON.stringify({ password }),
     });
@@ -639,6 +649,11 @@ export class ApiService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'demo_user',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'demo_session_123',
       },
       body: JSON.stringify({ password }),
     });
@@ -663,6 +678,11 @@ export class ApiService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'demo_user',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'demo_session_123',
       },
       body: JSON.stringify({ questions }),
     });

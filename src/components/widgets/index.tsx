@@ -14,6 +14,7 @@ import {
   MoreVert,
   AccountBalance,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 
 // Base Widget Component
@@ -234,6 +235,33 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
   items,
   showAllSettings = true
 }) => {
+  const navigate = useNavigate();
+  
+  const handleSettingsClick = (settingType: string) => {
+    switch (settingType) {
+      case 'counter-account':
+        navigate('/settings/change-counter-account');
+        break;
+      case 'online-identification':
+        navigate('/settings/online-identification');
+        break;
+      case 'documents':
+        navigate('/settings/documents');
+        break;
+      case 'login-confirmation':
+        navigate('/settings'); // General settings page
+        break;
+      case 'personal-info':
+        navigate('/settings/personal-details');
+        break;
+      case 'all-settings':
+        navigate('/settings');
+        break;
+      default:
+        console.log(`Navigation for ${settingType} not implemented yet`);
+    }
+  };
+
   return (
     <Widget
       title="Settings"
@@ -255,7 +283,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
-            onClick={() => console.log('Counter account change')}
+            onClick={() => handleSettingsClick('counter-account')}
           >
             <Box sx={{ 
               width: 32, 
@@ -274,9 +302,9 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
             </Typography>
           </Box>
 
-          <Box 
+                    <Box 
             sx={{ 
-              display: 'flex', 
+              display: 'flex',
               alignItems: 'center', 
               gap: 2, 
               p: 2, 
@@ -286,7 +314,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
-            onClick={() => console.log('Online identification')}
+            onClick={() => handleSettingsClick('online-identification')}
           >
             <Box sx={{ 
               width: 32, 
@@ -318,7 +346,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
-            onClick={() => console.log('Documents')}
+            onClick={() => handleSettingsClick('documents')}
           >
             <Box sx={{ 
               width: 32, 
@@ -349,7 +377,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
-            onClick={() => console.log('Login and confirmation')}
+            onClick={() => handleSettingsClick('login-confirmation')}
           >
             <Box sx={{ 
               width: 32, 
@@ -381,7 +409,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
-            onClick={() => console.log('Personal information')}
+            onClick={() => handleSettingsClick('personal-info')}
           >
             <Box sx={{ 
               width: 32, 
@@ -411,7 +439,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               cursor: 'pointer',
               '&:hover': { textDecoration: 'underline' }
             }}
-            onClick={() => console.log('All settings')}
+            onClick={() => handleSettingsClick('all-settings')}
           >
             <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 500 }}>
               All settings

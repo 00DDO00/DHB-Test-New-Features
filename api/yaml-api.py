@@ -96,6 +96,35 @@ messages_store = [
     }
 ]
 
+# Global password storage with file persistence
+PASSWORD_FILE = "current_password.txt"
+
+def load_current_password():
+    """Load current password from file, default to 'password123' if file doesn't exist"""
+    try:
+        if os.path.exists(PASSWORD_FILE):
+            with open(PASSWORD_FILE, 'r') as f:
+                return f.read().strip()
+        else:
+            # Create file with default password
+            with open(PASSWORD_FILE, 'w') as f:
+                f.write("password123")
+            return "password123"
+    except Exception as e:
+        print(f"Error loading password: {e}")
+        return "password123"
+
+def save_current_password(password):
+    """Save current password to file"""
+    try:
+        with open(PASSWORD_FILE, 'w') as f:
+            f.write(password)
+    except Exception as e:
+        print(f"Error saving password: {e}")
+
+# Initialize current password
+current_password = load_current_password()
+
 mock_accounts = [
     {
         "BIC": "DHBNNL2R",
@@ -1434,7 +1463,7 @@ def legacy_get_combispaar():
                 "holder_name": "Lucy Lavender"
             }
         ],
-        "total_balance": 15000.00,
+        "total_balance": 150000.00,
         "count": 1,
         "timestamp": datetime.now().isoformat()
     })
@@ -1764,20 +1793,28 @@ def legacy_update_password():
     
     try:
         data = request.get_json()
+        new_password = data.get('password')
         
-        # Mock response
-        return jsonify({
-            "success": True,
-            "data": {
-                "updateId": "PASSPORT - 1234567",
-                "mobilePhone": "+31 123 456 789",
-                "password": "**********",
-                "email": "lucy.lavender@example.com",
-                "telephone": "+31 987 654 321",
-                "address": "GRONINGEN, STR. VONDELLAAN 172"
-            },
-            "timestamp": datetime.now().isoformat()
-        })
+        if new_password:
+            global current_password
+            current_password = new_password
+            save_current_password(new_password)
+            
+            return jsonify({
+                "success": True,
+                "data": {
+                    "updateId": "PASSPORT - 1234567",
+                    "mobilePhone": "+31 123 456 789",
+                    "password": "**********",
+                    "email": "lucy.lavender@example.com",
+                    "telephone": "+31 987 654 321",
+                    "address": "GRONINGEN, STR. VONDELLAAN 172"
+                },
+                "message": "Password updated successfully",
+                "timestamp": datetime.now().isoformat()
+            })
+        else:
+            return create_error_response('470', 'Password is required')
     except Exception as e:
         return create_error_response('500', f'System error occurred: {str(e)}')
 
@@ -1792,14 +1829,22 @@ def legacy_validate_password():
     
     try:
         data = request.get_json()
+        provided_password = data.get('password')
         
-        # Mock validation
-        is_valid = data.get('password') and len(data.get('password', '')) >= 6
-        
-        return jsonify({
-            "valid": is_valid,
-            "message": "Password is valid" if is_valid else "Password must be at least 6 characters"
-        })
+        if provided_password == current_password:
+            return jsonify({
+                "success": True,
+                "valid": True,
+                "message": "Password is valid",
+                "timestamp": datetime.now().isoformat()
+            })
+        else:
+            return jsonify({
+                "success": True,
+                "valid": False,
+                "message": "Password is incorrect",
+                "timestamp": datetime.now().isoformat()
+            })
     except Exception as e:
         return create_error_response('500', f'System error occurred: {str(e)}')
 
