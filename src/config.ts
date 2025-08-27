@@ -58,6 +58,7 @@ export const apiConfigTest = {
   mainApi: API_GATEWAY_TEST + import.meta.env.VITE_APP_MAIN_API,
   notificationsApi:
     API_GATEWAY_TEST + import.meta.env.VITE_APP_NOTIFICATIONS_API,
+  localizationsApi: import.meta.env.VITE_APP_UAT_URL,
 };
 
 export const apiConfigProd = {
@@ -80,6 +81,7 @@ export const apiConfigProd = {
   mainApi: API_GATEWAY_PROD + import.meta.env.VITE_APP_MAIN_API,
   notificationsApi:
     API_GATEWAY_PROD + import.meta.env.VITE_APP_NOTIFICATIONS_API,
+  localizationsApi: import.meta.env.VITE_APP_UAT_URL,
 };
 
 export const DATA_CRYPT_SECRET_KEY = import.meta.env
@@ -87,3 +89,5 @@ export const DATA_CRYPT_SECRET_KEY = import.meta.env
 
 export const environment: "local" | "test" | "prod" = import.meta.env
   .VITE_APP_ENV_VARIABLE;
+
+export const apiConfig = environment === "prod" ? apiConfigProd : apiConfigTest;
