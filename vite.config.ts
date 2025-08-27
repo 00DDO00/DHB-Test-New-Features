@@ -10,6 +10,14 @@ export default defineConfig({
   base: "/",
   server: {
     port: 8080,
+    proxy: {
+      // Proxy API requests starting with /api
+      "/api": {
+        target: "https://mgw-uat.dhbbank.com",
+        changeOrigin: true,
+        secure: false, // if the UAT server has a self-signed cert
+      },
+    },
   },
   plugins: [
     react(),
