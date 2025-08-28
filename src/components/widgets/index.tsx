@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardContent,
@@ -235,6 +236,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
   items,
   showAllSettings = true
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const handleSettingsClick = (settingType: string) => {
@@ -264,7 +266,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
 
   return (
     <Widget
-      title="Settings"
+      title={t('settings')}
       onMenuClick={() => console.log('Menu clicked')}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -298,7 +300,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               <Box sx={{ fontSize: 16, color: '#1976d2' }}>🔄</Box>
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              Counter account change
+              {t('settings.nav.change_counter_account')}
             </Typography>
           </Box>
 
@@ -329,7 +331,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               <Box sx={{ fontSize: 16, color: '#1976d2' }}>📱</Box>
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              Online identification
+              {t('update-id')}
             </Typography>
           </Box>
 
@@ -361,7 +363,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               <Box sx={{ fontSize: 16, color: '#1976d2' }}>📄</Box>
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              Documents
+              {t('settings.nav.documents')}
             </Typography>
           </Box>
 
@@ -392,7 +394,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               <Box sx={{ fontSize: 16, color: '#1976d2' }}>🔒</Box>
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              Login and confirmation
+              {t('login_and_confirmation')}
             </Typography>
           </Box>
 
@@ -424,7 +426,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               <Box sx={{ fontSize: 16, color: '#1976d2' }}>✏️</Box>
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              Personal information
+              {t('personal-details')}
             </Typography>
           </Box>
 
@@ -442,7 +444,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
             onClick={() => handleSettingsClick('all-settings')}
           >
             <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 500 }}>
-              All settings
+              {t('all_settings')}
             </Typography>
             <Box sx={{ color: '#1976d2', fontSize: 16 }}>→</Box>
           </Box>

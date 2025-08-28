@@ -325,24 +325,24 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
 
   // Search functionality
   const searchData = [
-    { title: "Accounts", path: "/accounts" },
-    { title: "DHB MaxiSpaar Accounts", path: "/accounts/maxispaar" },
-    { title: "DHB CombiSpaar Accounts", path: "/accounts/combispaar" },
-    { title: "DHB Solideextra Accounts", path: "/accounts/solideextra" },
-    { title: "Settings", path: "/settings" },
-    { title: "Personal Details", path: "/settings/personal-details" },
-    { title: "Change Password", path: "/settings/change-password" },
-    { title: "Documents", path: "/settings/documents" },
-    { title: "Daily Limit", path: "/settings/daily-limit" },
-    { title: "SOF Questions", path: "/settings/sof-questions" },
-    { title: "Online Identification", path: "/settings/online-identification" },
-    { title: "Registered Devices", path: "/settings/devices/registered" },
+    { title: t('accounts.title'), path: "/accounts" },
+            { title: t('maxiSpaar'), path: "/accounts/maxispaar" },
+        { title: t('combiSpaar'), path: "/accounts/combispaar" },
+        { title: t('solidExtra'), path: "/accounts/solideextra" },
+    { title: t('settings'), path: "/settings" },
+    { title: t('personal-details'), path: "/settings/personal-details" },
+    { title: t('personal-detail.password.title'), path: "/settings/change-password" },
+    { title: t('settings.nav.documents'), path: "/settings/documents" },
+    { title: t('settings.nav.daily_limit'), path: "/settings/daily-limit" },
+    { title: t('settings.nav.sof_questions'), path: "/settings/sof-questions" },
+    { title: t('update-id'), path: "/settings/online-identification" },
+    { title: t('settings.nav.registered_devices'), path: "/settings/devices/registered" },
     {
-      title: "Change Counter Account",
+      title: t('settings.nav.change_counter_account'),
       path: "/settings/change-counter-account",
     },
-    { title: "Home", path: "/private" },
-    { title: "Contact", path: "/pages/profile" },
+    { title: t('home'), path: "/private" },
+    { title: t('contact'), path: "/pages/profile" },
   ];
 
   const filteredResults = searchData.filter((item) =>
@@ -429,26 +429,26 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
           <Divider />
 
           <PopupContent>
-            <DetailRow>
-              <DetailLabel>Institution Name</DetailLabel>
-              <DetailValue>{userProfile.institution_name}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>BIC</DetailLabel>
-              <DetailValue>{userProfile.bic}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>Customer Number</DetailLabel>
-              <DetailValue>{userProfile.customer_number}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>Support Reg. Number</DetailLabel>
-              <DetailValue>{userProfile.support_reg_number}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>Last login on</DetailLabel>
-              <DetailValue>{userProfile.last_login}</DetailValue>
-            </DetailRow>
+                         <DetailRow>
+               <DetailLabel>{t('institution_name')}</DetailLabel>
+               <DetailValue>{userProfile.institution_name}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>{t('bic')}</DetailLabel>
+               <DetailValue>{userProfile.bic}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>{t('customer_number')}</DetailLabel>
+               <DetailValue>{userProfile.customer_number}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>{t('support_reg_number')}</DetailLabel>
+               <DetailValue>{userProfile.support_reg_number}</DetailValue>
+             </DetailRow>
+             <DetailRow>
+               <DetailLabel>{t('last_login_on')}</DetailLabel>
+               <DetailValue>{userProfile.last_login}</DetailValue>
+             </DetailRow>
           </PopupContent>
 
           <Divider />
@@ -456,11 +456,11 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
           <PopupFooter>
             <ActionLink>
               <EditIcon sx={{ fontSize: 16 }} />
-              Edit profile
+              {t('edit_profile')}
             </ActionLink>
             <ActionLink onClick={handleLogout}>
               <LogoutIcon sx={{ fontSize: 16 }} />
-              Logout
+              {t('settings.logout')}
             </ActionLink>
           </PopupFooter>
         </UserPopup>
@@ -538,7 +538,7 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                   }}
                 >
                   <TextField
-                    placeholder={t("account-history.filter-button") + "..."}
+                                         placeholder={t("account-history.filter-button") + "..."}
                     value={searchQuery}
                     onChange={handleSearchChange}
                     onFocus={() => setSearchOpen(searchQuery.length > 0)}
@@ -646,22 +646,22 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                     gap: "1px",
                   }}
                 >
-                  <NavLink to="/private" active={isActive("/private")}>
-                    <NavText active={isActive("/private")}>Home</NavText>
-                  </NavLink>
-                  <NavLink to="/accounts" active={isActive("/accounts")}>
-                    <NavText active={isActive("/accounts")}>Accounts</NavText>
-                  </NavLink>
+                                     <NavLink to="/private" active={isActive("/private")}>
+                     <NavText active={isActive("/private")}>{t('home')}</NavText>
+                   </NavLink>
+                   <NavLink to="/accounts" active={isActive("/accounts")}>
+                     <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
+                   </NavLink>
                   <NavLink to="/settings" active={isActive("/settings")}>
-                    <NavText active={isActive("/settings")}>Settings</NavText>
+                    <NavText active={isActive("/settings")}>{t('settings')}</NavText>
                   </NavLink>
                   <NavLink
                     to="/pages/profile"
                     active={isActive("/pages/profile")}
                   >
-                    <NavText active={isActive("/pages/profile")}>
-                      Contact
-                    </NavText>
+                                    <NavText active={isActive("/pages/profile")}>
+                  {t('contact')}
+                </NavText>
                   </NavLink>
                 </Box>
               )}

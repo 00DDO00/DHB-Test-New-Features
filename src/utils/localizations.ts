@@ -1,61 +1,230 @@
 import { AxiosResponse } from "axios";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import { getLocalizations } from "../services/_localizationsApi";
 
 export const setLocalizations = () => {
-  getLocalizations()
-    .then((res: AxiosResponse) => {
-      const locals = res.data;
-      localStorage.setItem("dhbIbLocals", JSON.stringify(locals));
+  // Initialize with fallback translations first
+  const fallbackResources = {
+    en: {
+      translation: {
+        // Default fallback translations
+        Search: "Search",
+        "Welcome back": "Welcome back",
+        "We've missed you": "We've missed you",
+        // DHB Bank specific fallbacks
+        "accounts.title": "Accounts",
+        "settings": "Settings",
+        "personal-details": "Personal Details",
+        "account-statement": "Account Statement",
+        "account-history.filter-button": "Filter",
+        "settings.logout": "Log out",
+        "edit_profile": "Edit Profile",
+        "contact": "Contact",
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "terms-and-conditions.save-online.title": "DHB SaveOnline Account",
+        "terms-and-conditions.maxi-spaar.title": "DHB MaxiSpaar Account",
+        "terms-and-conditions.combispaar.title": "DHB CombiSpaar Account",
+        "terms-and-conditions.solide-extra.title": "DHB Solideextra Account",
+        "personal-detail.password.title": "Change Password",
+        "update-id": "Online Identification",
+        "settings.nav.application_settings": "Application Settings",
+        "settings.nav.change_counter_account": "Change Counter Account",
+        "settings.nav.documents": "Documents",
+        "settings.nav.daily_limit": "Daily Limit",
+        "settings.nav.sof_questions": "SOF Questions",
+        "settings.nav.registered_devices": "Registered Devices",
+        "application-settings.notification.title": "Notifications",
+        "application-settings.language.title": "Language",
+        "security": "Security",
+        "all_settings": "All Settings",
+        "login_and_confirmation": "Login and Confirmation",
+        "new-account": "New Account",
+        "welcome": "Welcome",
+        "something-went-wrong": "Something went wrong",
+        "statement-date": "Date",
+        "payments.explanation": "Description",
+        "accounts.balance": "Balance",
+        "accounts.download": "Download",
+        "period": "Period",
+        "today": "Today",
+        "week": "Week",
+        "month": "Month",
+        "six_months": "6 Months",
+        "rates-calculate.value-date": "Value Date",
+        "from": "From",
+        "pages": "Pages",
+        "elements": "Elements",
+        "mira_pro": "Mira Pro",
+        "profile": "Profile",
+        "institution_name": "Institution Name",
+        "bic": "BIC",
+        "customer_number": "Customer Number",
+        "support_reg_number": "Support Reg. Number",
+        "last_login_on": "Last login on",
+        "saveOnline": "DHB SaveOnline Account",
+        "maxiSpaar": "DHB MaxiSpaar Account", 
+        "combiSpaar": "DHB CombiSpaar Account",
+        "solidExtra": "Solidextra Deposit Account",
+        "account_opening.maxispaar-description": "Your fixed-term deposit with a guaranteed high interest rate:",
+        "accounts.open-account": "Open account",
+        "payments.title": "Transfers",
+        "accounts": "Overview",
+        "accounts.dhb": "DHB Accounts (missing key)"
+      },
+    },
+    nl: {
+      translation: {
+        // Default fallback translations
+        Search: "Zoeken",
+        "Welcome back": "Welkom terug",
+        "We've missed you": "We hebben je gemist",
+        // DHB Bank specific fallbacks
+        "accounts.title": "Rekeningen",
+        "settings": "Instellingen",
+        "personal-details": "Persoonlijke Gegevens",
+        "account-statement": "Rekeningafschrift",
+        "account-history.filter-button": "Filter",
+        "settings.logout": "Uitloggen",
+        "edit_profile": "Profiel Bewerken",
+        "contact": "Contact",
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "terms-and-conditions.save-online.title": "DHB SaveOnline Rekening",
+        "terms-and-conditions.maxi-spaar.title": "DHB MaxiSpaar Rekening",
+        "terms-and-conditions.combispaar.title": "DHB CombiSpaar Rekening",
+        "terms-and-conditions.solide-extra.title": "DHB Solideextra Rekening",
+        "personal-detail.password.title": "Wachtwoord Wijzigen",
+        "update-id": "Online Identificatie",
+        "settings.nav.application_settings": "App Instellingen",
+        "settings.nav.change_counter_account": "Tegenrekening Wijzigen",
+        "settings.nav.documents": "Documenten",
+        "settings.nav.daily_limit": "Dagelijkse Limiet",
+        "settings.nav.sof_questions": "SOF Vragen",
+        "settings.nav.registered_devices": "Geregistreerde Apparaten",
+        "application-settings.notification.title": "Meldingen",
+        "application-settings.language.title": "Taal",
+        "security": "Beveiliging",
+        "all_settings": "Alle Instellingen",
+        "login_and_confirmation": "Inloggen en Bevestiging",
+        "new-account": "Nieuwe Rekening",
+        "welcome": "Welkom",
+        "something-went-wrong": "Er is iets misgegaan",
+        "statement-date": "Datum",
+        "payments.explanation": "Beschrijving",
+        "accounts.balance": "Saldo",
+        "accounts.download": "Downloaden",
+        "period": "Periode",
+        "today": "Vandaag",
+        "week": "Week",
+        "month": "Maand",
+        "six_months": "6 Maanden",
+        "rates-calculate.value-date": "Waardedatum",
+        "from": "Van",
+        "pages": "Pagina's",
+        "elements": "Elementen",
+        "mira_pro": "Mira Pro",
+        "profile": "Profiel",
+        "institution_name": "Instituut Naam",
+        "bic": "BIC",
+        "customer_number": "Klantnummer",
+        "support_reg_number": "Ondersteuning Reg. Nummer",
+        "last_login_on": "Laatste inlog op",
+        "saveOnline": "DHB SaveOnlinerekening",
+        "maxiSpaar": "DHB MaxiSpaarrekening", 
+        "combiSpaar": "DHB CombiSpaarrekening",
+        "solidExtra": "Solidextra Depositorekening",
+        "account_opening.maxispaar-description": "Jouw spaardeposito met vaste looptijd en vaste hoge rente:",
+        "accounts.open-account": "Direct openen",
+        "payments.title": "Overboekingen",
+        "accounts": "Overzicht",
+        "accounts.dhb": "DHB Accounts (missing key)"
+      },
+    },
+    de: {
+      translation: {
+        // Default fallback translations
+        Search: "Suchen",
+        "Welcome back": "Willkommen zurück",
+        "We've missed you": "Wir haben dich vermisst",
+        // DHB Bank specific fallbacks
+        "accounts.title": "Konten",
+        "settings": "Einstellungen",
+        "personal-details": "Persönliche Daten",
+        "account-statement": "Kontoauszug",
+        "account-history.filter-button": "Filter",
+        "settings.logout": "Abmelden",
+        "edit_profile": "Profil Bearbeiten",
+        "contact": "Kontakt",
+        "home": "Startseite",
+        "dashboard": "Dashboard",
+        "terms-and-conditions.save-online.title": "DHB SaveOnline Konto",
+        "terms-and-conditions.maxi-spaar.title": "DHB MaxiSpaar Konto",
+        "terms-and-conditions.combispaar.title": "DHB CombiSpaar Konto",
+        "terms-and-conditions.solide-extra.title": "DHB Solideextra Konto",
+        "personal-detail.password.title": "Passwort Ändern",
+        "update-id": "Online Identifikation",
+        "settings.nav.application_settings": "App Einstellungen",
+        "settings.nav.change_counter_account": "Gegenkonto Ändern",
+        "settings.nav.documents": "Dokumente",
+        "settings.nav.daily_limit": "Tägliches Limit",
+        "settings.nav.sof_questions": "SOF Fragen",
+        "settings.nav.registered_devices": "Registrierte Geräte",
+        "application-settings.notification.title": "Benachrichtigungen",
+        "application-settings.language.title": "Sprache",
+        "security": "Sicherheit",
+        "all_settings": "Alle Einstellungen",
+        "login_and_confirmation": "Anmeldung und Bestätigung",
+        "new-account": "Neues Konto",
+        "welcome": "Willkommen",
+        "something-went-wrong": "Etwas ist schiefgelaufen",
+        "statement-date": "Datum",
+        "payments.explanation": "Beschreibung",
+        "accounts.balance": "Saldo",
+        "accounts.download": "Herunterladen",
+        "period": "Zeitraum",
+        "today": "Heute",
+        "week": "Woche",
+        "month": "Monat",
+        "six_months": "6 Monate",
+        "rates-calculate.value-date": "Wertstellung",
+        "from": "Von",
+        "pages": "Seiten",
+        "elements": "Elemente",
+        "mira_pro": "Mira Pro",
+        "profile": "Profil",
+        "institution_name": "Institutsname",
+        "bic": "BIC",
+        "customer_number": "Kundennummer",
+        "support_reg_number": "Support Reg. Nummer",
+        "last_login_on": "Letzter Login am",
+        "saveOnline": "DHB NetSp@r-Konto",
+        "maxiSpaar": "DHB FestgeldONLINE", 
+        "combiSpaar": "DHB KündigungsgeldONLINE",
+        "solidExtra": "DHB FestgeldONLINE Flex",
+        "account_opening.maxispaar-description": "Ihr Festgeld mit garantiert hohem Zinssatz:",
+        "accounts.open-account": "Jetzt eröffnen",
+        "payments.title": "Überweisungen",
+        "accounts": "Übersicht",
+        "accounts.dhb": "DHB Accounts (missing key)"
+      },
+    },
+  };
 
-      const resourceData: { [x: string]: any } = {};
-      locals.forEach((local: any) => {
-        i18next.addResourceBundle(
-          local.culture,
-          "namespace",
-          local.localizations
-        );
-        resourceData[local.culture] = local.localizations;
-      });
+  const lang = localStorage.getItem("dhbLang") || "en";
 
-      const resources = {
-        en: {
-          translation: {
-            Search: "Search topics…",
-            "Welcome back": "Welcome back",
-            "We've missed you": "We've missed you",
-            ...resourceData["en" as unknown as keyof typeof resourceData],
-          },
-        },
-        nl: {
-          translation: {
-            Search: "Издоо…",
-            "Welcome back": "Кайра кел",
-            "We've missed you": "Сагындырдын",
-            ...resourceData["nl" as unknown as keyof typeof resourceData],
-          },
-        },
-        de: {
-          translation: {
-            Search: "Поиск…",
-            "Welcome back": "Добро пожаловать назад",
-            "We've missed you": "Мы скучали по тебе",
-            ...resourceData["de" as unknown as keyof typeof resourceData],
-          },
-        },
-      };
+  // Initialize i18next with fallback translations first
+  i18next.use(initReactI18next).init({
+    resources: fallbackResources,
+    lng: lang,
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+    keySeparator: false,
+    nsSeparator: false,
+  });
 
-      const lang = localStorage.getItem("dhbLang") || "en";
-
-      i18next.use(initReactI18next).init({
-        resources,
-        lng: lang,
-        fallbackLng: "en",
-        interpolation: {
-          escapeValue: false,
-        },
-      });
-    })
-    .catch((err) => console.log(err));
+  // Using only fallback translations to avoid CORS issues
+  console.log("Using fallback translations");
 };

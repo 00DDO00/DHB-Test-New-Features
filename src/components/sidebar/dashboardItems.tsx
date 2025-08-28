@@ -1,4 +1,5 @@
 import { SidebarItemsType } from "../../types/sidebar";
+import { useTranslation } from "react-i18next";
 
 import {
   BookOpen,
@@ -17,79 +18,79 @@ import {
   Users,
 } from "react-feather";
 
-const pagesSection = [
+const pagesSection = (t: any) => [
   {
     href: "/private",
     icon: Sliders,
-    title: "DHB Dashboard",
+    title: t('dashboard'),
   },
   {
     href: "/accounts",
     icon: CreditCard,
-    title: "Accounts",
+    title: t('accounts.title'),
     children: [
       {
         href: "/accounts/saveonline",
-        title: "SaveOnline Account",
+        title: t('saveOnline'),
       },
       {
         href: "/accounts/open",
-        title: "Open Account",
+        title: t('new-account'),
       },
       {
         href: "/accounts/combispaar",
-        title: "CombiSpaar Account",
+        title: t('combiSpaar'),
       },
       {
         href: "/accounts/maxispaar",
-        title: "MaxiSpaar Account",
+        title: t('maxiSpaar'),
       },
       {
         href: "/accounts/saveonline/statement",
-        title: "Account Statement",
+        title: t('account-statement'),
       },
     ],
   },
   {
     href: "/settings",
     icon: Sliders,
-    title: "Settings",
+    title: t('settings'),
     children: [
       {
         href: "/settings",
-        title: "General Settings",
+        title: t('settings.nav.application_settings'),
       },
       {
         href: "/settings/personal-details",
-        title: "Personal Details",
+        title: t('personal-details'),
       },
       {
         href: "/settings/change-password",
-        title: "Change Password",
+        title: t('personal-detail.password.title'),
       },
       {
         href: "/settings/online-identification",
-        title: "Online Identification",
+        title: t('update-id'),
       },
       {
         href: "/settings/devices/registered",
-        title: "Registered Devices",
+        title: t('settings.nav.registered_devices'),
       },
       {
         href: "/settings/daily-limit",
-        title: "Daily Limit",
+        title: t('settings.nav.daily_limit'),
       },
       {
         href: "/settings/sof-questions",
-        title: "SOF Questions",
+        title: t('settings.nav.sof_questions'),
       },
       {
         href: "/settings/change-counter-account",
-        title: "Change Counter Account",
+        title: t('settings.nav.change_counter_account'),
       },
       {
         href: "/settings/documents",
-        title: "Documents",
+        title: t('settings.nav.documents'),
       },
     ],
   },
@@ -361,17 +362,17 @@ const docsSection = [
   },
 ] as SidebarItemsType[];
 
-const navItems = [
+const navItems = (t: any) => [
   {
-    title: "Pages",
-    pages: pagesSection,
+    title: t('pages'),
+    pages: pagesSection(t),
   },
   {
-    title: "Elements",
+    title: t('elements'),
     pages: elementsSection,
   },
   {
-    title: "Mira Pro",
+    title: t('mira_pro'),
     pages: docsSection,
   },
 ];

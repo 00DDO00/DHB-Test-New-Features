@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Grid, Button, Typography, CircularProgress } from '@mui/material';
 import { Add, ArrowForward, Headset } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,10 +23,10 @@ const Home: React.FC = () => {
 
   // Sample data for settings
   const settingsItems = [
-    { icon: "🔧", label: "Account Settings", onClick: () => console.log('Account Settings') },
-    { icon: "🔒", label: "Security", onClick: () => console.log('Security') },
-    { icon: "📱", label: "Notifications", onClick: () => console.log('Notifications') },
-    { icon: "🌍", label: "Language", onClick: () => console.log('Language') },
+    { icon: "🔧", label: t('settings.nav.application_settings'), onClick: () => console.log('Account Settings') },
+    { icon: "🔒", label: t('security'), onClick: () => console.log('Security') },
+    { icon: "📱", label: t('application-settings.notification.title'), onClick: () => console.log('Notifications') },
+    { icon: "🌍", label: t('application-settings.language.title'), onClick: () => console.log('Language') },
   ];
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const Home: React.FC = () => {
         setUserName(userData.name);
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load dashboard data');
+        setError(t('something-went-wrong'));
       } finally {
         setLoading(false);
       }
@@ -92,8 +94,8 @@ const Home: React.FC = () => {
         {/* Welcome Card - DHB SaveOnline */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <AccountWidget
-            accountName={`Welcome, ${userName}`}
-            accountType="DHB SaveOnline"
+            accountName={`${t('welcome')}, ${userName}`}
+            accountType={t('saveOnline')}
             balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
             iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
             interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
@@ -109,24 +111,24 @@ const Home: React.FC = () => {
         {/* Accounts Card - DHB MaxiSpaar */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <AccountWidget
-            accountName="Accounts"
-            accountType="DHB MaxiSpaar"
+            accountName={t('accounts.title')}
+            accountType={t('maxiSpaar')}
             balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
             iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
             interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
             primaryAction={{
               label: "Open account",
-              onClick: () => navigate('/accounts/open'),
+              onClick: () => navigate('/accounts/maxispaar'),
               color: 'primary'
             }}
-            onAccountTypeClick={() => console.log('DHB MaxiSpaar clicked')}
+            onAccountTypeClick={() => navigate('/accounts/maxispaar')}
           />
         </Box>
 
         {/* Account Opening Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <Widget
-            title="Account opening"
+            title={t('accounts.title') || 'Accounts (missing key)'}
             /*subtitle="DHB Accounts"*/
             onMenuClick={() => console.log('Menu clicked')}
             actions={
@@ -167,12 +169,12 @@ const Home: React.FC = () => {
                     opacity: 0.8
                   }
                 }}
-                onClick={() => console.log('DHB MaxiSpaar Account clicked')}
+                onClick={() => navigate('/accounts/open')}
               >
-                DHB Accounts
+                {t('accounts.dhb') || 'DHB Accounts (missing key)'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Savings deposit with fixed maturity and fixed high interest rate
+                {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
               </Typography>
             </Box>
           </Widget>
@@ -181,15 +183,15 @@ const Home: React.FC = () => {
         {/* Combispaar Accounts Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <StatsWidget
-            title={`You have ${combispaarData?.count || 10} Combispaar Accounts`}
+            title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
             value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
-            subtitle="Total Combispaar Balances"
+            subtitle={`Total ${t('combiSpaar')} Balances`}
             actions={
               <Box display="flex" gap={1}>
                 <Button
                   variant="contained"
                   endIcon={<ArrowForward />}
-                  onClick={() => navigate('/saveonline')}
+                  onClick={() => navigate('/accounts/saveonline')}
                   sx={{
                     background: '#FF6B35',
                     color: 'white',
@@ -201,7 +203,7 @@ const Home: React.FC = () => {
                     '&:hover': { background: '#e55a2b' }
                   }}
                 >
-                  Make Transfer
+                  {t('payments.title')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -222,7 +224,7 @@ const Home: React.FC = () => {
                     }
                   }}
                 >
-                  Open account
+                  {t('accounts.open-account')}
                 </Button>
               </Box>
             }
@@ -237,7 +239,7 @@ const Home: React.FC = () => {
         {/* Financial Overview Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <ChartWidget
-            title="Financial Overview"
+            title={t('accounts')}
             filterLabel="Filter"
             filterValue="last year"
             chartData={chartData.map(item => ({

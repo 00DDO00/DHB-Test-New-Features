@@ -20,7 +20,13 @@ function ThemeProvider({ children }: ThemeProviderProps) {
     const storedTheme = localStorage.getItem("theme");
 
     if (storedTheme) {
-      _setTheme(JSON.parse(storedTheme));
+      try {
+        _setTheme(JSON.parse(storedTheme));
+      } catch (error) {
+        // If stored theme is not valid JSON, use default
+        _setTheme(initialState.theme);
+        localStorage.removeItem("theme");
+      }
     }
   }, []);
 

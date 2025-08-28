@@ -93,6 +93,7 @@ import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount";
 import OpenAccount from "./pages/accounts/OpenAccount";
 import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount";
 import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount";
+import SolidExtraAccount from "./pages/accounts/SolidExtraAccount";
 import AccountStatement from "./pages/accounts/AccountStatement";
 import ChangeCounterAccount from "./pages/ChangeCounterAccount";
 import Documents from "./pages/Documents";
@@ -173,6 +174,10 @@ const routes = [
       {
         path: "maxispaar",
         element: <MaxiSpaarAccount />,
+      },
+      {
+        path: "solidextra",
+        element: <SolidExtraAccount />,
       },
       {
         path: "saveonline/statement",

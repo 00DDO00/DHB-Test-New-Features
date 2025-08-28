@@ -74,6 +74,8 @@ const OpenAccount: React.FC = () => {
       navigate('/accounts/combispaar');
     } else if (accountType === 'maxispaar') {
       navigate('/accounts/maxispaar');
+    } else if (accountType === 'solidextra') {
+      navigate('/accounts/solidextra');
     } else {
       console.log(`Opening ${accountType} account`);
       // TODO: Implement account opening logic for other account types
@@ -106,13 +108,10 @@ const OpenAccount: React.FC = () => {
         </Typography>
       </Breadcrumbs>
 
-      {/* Page Title */}
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 3, color: '#333' }}>
-        Open account
-      </Typography>
+
 
       {/* Account Cards Grid */}
-      <Grid container spacing={3} sx={{ maxWidth: 1200, mx: 'auto' }}>
+      <Grid container spacing={3} sx={{ maxWidth: 1020, mx: 'auto' }}>
         {accountTypes.map((account, index) => (
           <Grid item xs={12} md={6} lg={4} key={account.id}>
             <Card sx={{ 
@@ -123,10 +122,18 @@ const OpenAccount: React.FC = () => {
               flexDirection: 'column'
             }}>
               <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {/* Header with icon and interest rate */}
+                {/* Header with icon, title, subtitle and interest rate */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                  <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     {account.icon}
+                    <Box>
+                      <Typography variant="h6" fontWeight="bold" sx={{ color: '#333' }}>
+                        {account.title}
+                      </Typography>
+                      <Typography variant="body2" color="#666">
+                        {account.subtitle}
+                      </Typography>
+                    </Box>
                   </Box>
                   <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="h4" fontWeight="bold" color="#4CAF50">
@@ -140,14 +147,6 @@ const OpenAccount: React.FC = () => {
                     </Typography>
                   </Box>
                 </Box>
-
-                {/* Title and subtitle */}
-                <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5, color: '#333' }}>
-                  {account.title}
-                </Typography>
-                <Typography variant="body2" color="#666" sx={{ mb: 2 }}>
-                  {account.subtitle}
-                </Typography>
 
                 {/* Description */}
                 <Typography variant="body2" color="#666" sx={{ mb: 3, flex: 1 }}>
@@ -170,7 +169,6 @@ const OpenAccount: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
                   <Button
                     variant="contained"
-                    startIcon={<Add />}
                     onClick={() => handleOpenAccount(account.id)}
                     sx={{
                       backgroundColor: '#FC9F15',
@@ -178,7 +176,7 @@ const OpenAccount: React.FC = () => {
                       textTransform: 'none',
                       borderRadius: 2,
                       px: 3,
-                      py: 1.5,
+                      py: 2,
                       flex: 1,
                       fontWeight: 500,
                       '&:hover': {
@@ -190,7 +188,6 @@ const OpenAccount: React.FC = () => {
                   </Button>
                   <Button
                     variant="outlined"
-                    endIcon={<ArrowForward />}
                     onClick={() => handleMoreDetails(account.id)}
                     sx={{
                       borderColor: '#004996',
@@ -198,7 +195,7 @@ const OpenAccount: React.FC = () => {
                       textTransform: 'none',
                       borderRadius: 2,
                       px: 3,
-                      py: 1.5,
+                      py: 2,
                       flex: 1,
                       fontWeight: 500,
                       '&:hover': {

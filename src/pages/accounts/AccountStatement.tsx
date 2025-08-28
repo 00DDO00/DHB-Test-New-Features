@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiService } from '../../services/api';
 import {
   Box,
@@ -40,6 +41,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const AccountStatement: React.FC = () => {
+  const { t } = useTranslation();
   const [filterPopupOpen, setFilterPopupOpen] = useState(false);
   const [periodFilter, setPeriodFilter] = useState('today');
   const [periodFilterEnabled, setPeriodFilterEnabled] = useState(false);
@@ -176,15 +178,15 @@ const AccountStatement: React.FC = () => {
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink component={Link} to="/" color="inherit" sx={{ textDecoration: 'none' }}>
-          Home
+          {t('home')}
         </MuiLink>
         <MuiLink component={Link} to="/accounts" color="inherit" sx={{ textDecoration: 'none' }}>
-          Accounts
+          {t('accounts.title')}
         </MuiLink>
         <MuiLink component={Link} to="/accounts/saveonline" color="inherit" sx={{ textDecoration: 'none' }}>
-          DHB SaveOnline
+          {t('account-statements.select-account.title.saveOnline')}
         </MuiLink>
-        <Typography color="text.primary">Account statement</Typography>
+        <Typography color="text.primary">{t('account-statement')}</Typography>
       </Breadcrumbs>
 
 
@@ -196,7 +198,7 @@ const AccountStatement: React.FC = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Box>
               <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
-                Account statement
+                {t('account-statement')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 NN-LLL-NNNN - NN-LLL-NNNN
@@ -208,7 +210,7 @@ const AccountStatement: React.FC = () => {
                   <DownloadIcon />
                 </IconButton>
                 <Typography variant="caption" color="text.secondary">
-                  Download
+                  {t('accounts.download')}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -216,7 +218,7 @@ const AccountStatement: React.FC = () => {
                   <FilterIcon />
                 </IconButton>
                 <Typography variant="caption" color="text.secondary">
-                  Filter
+                  {t('account-history.filter-button')}
                 </Typography>
               </Box>
             </Box>
@@ -227,9 +229,9 @@ const AccountStatement: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Date</strong></TableCell>
-                  <TableCell><strong>Description</strong></TableCell>
-                  <TableCell align="right"><strong>Balance</strong></TableCell>
+                  <TableCell><strong>{t('statement-date')}</strong></TableCell>
+                  <TableCell><strong>{t('payments.explanation')}</strong></TableCell>
+                  <TableCell align="right"><strong>{t('accounts.balance')}</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -313,7 +315,7 @@ const AccountStatement: React.FC = () => {
             p: 3
           }}>
             <Typography variant="h5" fontWeight="bold" color="#333">
-              Filter
+              {t('account-history.filter-button')}
             </Typography>
             <IconButton onClick={() => setFilterPopupOpen(false)}>
               <CloseIcon />
@@ -333,7 +335,7 @@ const AccountStatement: React.FC = () => {
               <Box sx={{ mb: 6 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6" fontWeight="bold" color="#333">
-                    Period
+                    {t('period')}
                   </Typography>
                   <Switch 
                     checked={periodFilterEnabled} 
@@ -378,7 +380,7 @@ const AccountStatement: React.FC = () => {
                         }
                       }}
                     >
-                      {period === '6 month' ? '6 month' : period.charAt(0).toUpperCase() + period.slice(1)}
+                      {period === '6 month' ? t('six_months') : period === 'today' ? t('today') : period === 'week' ? t('week') : period === 'month' ? t('month') : period}
                     </Button>
                   ))}
                 </Box>
@@ -389,7 +391,7 @@ const AccountStatement: React.FC = () => {
                     {/* Value Date From */}
                     <Box sx={{ mb: 3 }}>
                       <Typography variant="body1" color="#333" sx={{ mb: 1 }}>
-                        Value Date: From
+                        {t('rates-calculate.value-date')}: {t('from')}
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <FormControl size="small" sx={{ flex: 1 }}>

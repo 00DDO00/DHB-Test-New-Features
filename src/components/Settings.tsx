@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 
-import { THEMES } from "../constants";
 import useTheme from "../hooks/useTheme";
 
 type DemoButtonType = {
@@ -52,36 +51,7 @@ const DemoButtonInner = styled.div<DemoButtonInnerType>`
   box-shadow: 0 0 0 1px ${(props) => props.theme.palette.action.selected};
   position: relative;
 
-  ${(props) =>
-    props.selectedTheme === THEMES.DEFAULT &&
-    css`
-      background: linear-gradient(-45deg, #23303f 50%, ${grey[100]} 0);
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.DARK &&
-    css`
-      background: #23303f;
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.LIGHT &&
-    css`
-      background: ${grey[100]};
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.BLUE &&
-    css`
-      background: linear-gradient(-45deg, #4782da 50%, ${grey[100]} 0);
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.GREEN &&
-    css`
-      background: linear-gradient(-45deg, ${green[500]} 50%, ${grey[100]} 0);
-    `}
-  ${(props) =>
-    props.selectedTheme === THEMES.INDIGO &&
-    css`
-      background: linear-gradient(-45deg, ${indigo[500]} 50%, ${grey[100]} 0);
-    `}
+  background: linear-gradient(-45deg, #004996 50%, ${grey[100]} 0);
 `;
 
 const DemoTitle = styled(Typography)`
@@ -137,50 +107,21 @@ function Demo({ title, themeVariant }: DemoTypes) {
 function Demos() {
   return (
     <Wrapper>
-      <Heading>Select a demo</Heading>
+      <Heading>DHB Dashboard</Heading>
 
       <Box px={4} my={3}>
         <Alert icon={false} severity="info">
-          <strong>Hello!</strong> Select your style below. Choose the ones that
-          best fits your needs.
+          <strong>DHB Dashboard</strong> Welcome to the DHB Banking Dashboard.
         </Alert>
       </Box>
 
       <Box px={4} my={3}>
         <Grid container spacing={3}>
-          <Demo title="Dark" themeVariant={THEMES.DARK} />
-          <Demo title="Light" themeVariant={THEMES.LIGHT} />
-          <Demo title="Default" themeVariant={THEMES.DEFAULT} />
-          <Demo title="Blue" themeVariant={THEMES.BLUE} />
-          <Demo title="Green" themeVariant={THEMES.GREEN} />
-          <Demo title="Indigo" themeVariant={THEMES.INDIGO} />
+          <Demo title="Default" themeVariant="DEFAULT" />
         </Grid>
       </Box>
 
-      <Box my={3} mx={4}>
-        <Button
-          component={Link}
-          to="/documentation/welcome"
-          variant="outlined"
-          size="large"
-          target="_blank"
-          fullWidth={true}
-        >
-          Documentation
-        </Button>
-      </Box>
-      <Box my={3} mx={4}>
-        <Button
-          href="https://mui.com/store/items/mira-pro-react-material-admin-dashboard/"
-          variant="contained"
-          color="primary"
-          size="large"
-          target="_blank"
-          fullWidth={true}
-        >
-          Get Mira Pro
-        </Button>
-      </Box>
+
     </Wrapper>
   );
 }

@@ -259,39 +259,8 @@ export default variants;
 
 export type VariantType = {
   name: string;
-  palette: {
-    primary: MainContrastTextType;
-    secondary: MainContrastTextType;
-  };
-  header: ColorBgType & {
-    search: {
-      color: string;
-    };
-    indicator: {
-      background: string;
-    };
-  };
-  footer: ColorBgType;
-  sidebar: ColorBgType & {
-    header: ColorBgType & {
-      brand: {
-        color: string;
-      };
-    };
-    footer: ColorBgType & {
-      online: {
-        background: string;
-      };
-    };
-    badge: ColorBgType;
-  };
-};
-
-type MainContrastTextType = {
-  main: string;
-  contrastText: string;
-};
-type ColorBgType = {
-  color: string;
-  background: string;
+  palette: any;
+  header: any;
+  footer: any;
+  sidebar: any;
 };
