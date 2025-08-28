@@ -1,11 +1,12 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useTheme } from "@mui/material/styles";
+import useTheme from "../hooks/useTheme";
 
 import { spacing } from "@mui/system";
 
 import { CssBaseline, Paper as MuiPaper, useMediaQuery } from "@mui/material";
+import { useTheme as useMuiTheme } from "@mui/material/styles";
 
 import Settings from "../components/Settings";
 import GlobalStyle from "../components/GlobalStyle";
@@ -46,8 +47,9 @@ interface DefaultLayoutProps {
 }
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
-  const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
+  const { theme: themeName } = useTheme();
+  const muiTheme = useMuiTheme();
+  const isLgUp = useMediaQuery(muiTheme.breakpoints.up("lg"));
   return (
     <Root>
       <CssBaseline />

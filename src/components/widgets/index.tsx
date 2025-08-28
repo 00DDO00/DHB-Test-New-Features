@@ -191,7 +191,7 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
 interface StatsWidgetProps {
   title: string;
   value: string;
-  subtitle: string;
+  subtitle: React.ReactNode;
   actions?: React.ReactNode;
 }
 

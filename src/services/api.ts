@@ -669,9 +669,25 @@ export class ApiService {
   }
 
   async getSOFQuestions(): Promise<SOFQuestion[]> {
-    // LEGACY: /api/sof-questions - No YAML equivalent
-    const response = await this.fetchApi<{ success: boolean; data: SOFQuestion[]; timestamp: string }>('/api/sof-questions');
-    return response.data;
+    // LEGACY: /api/sof-questions - Get SOF questions from API
+    const response = await fetch(`${API_BASE_URL}/api/sof-questions`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'channelCode': 'WEB',
+        'username': 'demo_user',
+        'lang': 'en',
+        'countryCode': 'NL',
+        'sessionId': 'demo_session_123',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data || data; // Handle both {data: [...]} and [...] formats
   }
 
   async updateSOFQuestions(questions: SOFQuestion[]): Promise<SOFQuestion[]> {

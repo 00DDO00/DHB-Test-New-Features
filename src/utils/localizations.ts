@@ -70,7 +70,8 @@ export const setLocalizations = () => {
         "accounts.open-account": "Open account",
         "payments.title": "Transfers",
         "accounts": "Overview",
-        "accounts.dhb": "DHB Accounts (missing key)"
+        "accounts.dhb": "DHB Accounts (missing key)",
+        "theme": "Theme"
       },
     },
     nl: {
@@ -138,7 +139,8 @@ export const setLocalizations = () => {
         "accounts.open-account": "Direct openen",
         "payments.title": "Overboekingen",
         "accounts": "Overzicht",
-        "accounts.dhb": "DHB Accounts (missing key)"
+        "accounts.dhb": "DHB Accounts (missing key)",
+        "theme": "Theme"
       },
     },
     de: {
@@ -206,7 +208,8 @@ export const setLocalizations = () => {
         "accounts.open-account": "Jetzt eröffnen",
         "payments.title": "Überweisungen",
         "accounts": "Übersicht",
-        "accounts.dhb": "DHB Accounts (missing key)"
+        "accounts.dhb": "DHB Accounts (missing key)",
+        "theme": "Theme"
       },
     },
   };

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5002';
+const API_BASE_URL = 'http://localhost:5003';
 
 export interface Account {
   id: string;
@@ -494,15 +494,24 @@ class ApiService {
   }
 
   async getSOFQuestions(): Promise<SOFQuestion[]> {
-    const response = await this.fetchApi<{ success: boolean; data: SOFQuestion[]; timestamp: string }>('/api/sof-questions');
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/api/sof-questions`, {
+      method: 'GET',
+      headers: this.getDefaultHeaders(),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data || data; // Handle both {data: [...]} and [...] formats
   }
 
   async updateSOFQuestions(questions: SOFQuestion[]): Promise<SOFQuestion[]> {
     const response = await fetch(`${API_BASE_URL}/api/sof-questions`, {
       method: 'PUT',
       headers: this.getDefaultHeaders(),
-      body: JSON.stringify(questions),
+      body: JSON.stringify({ questions }),
     });
     
     if (!response.ok) {

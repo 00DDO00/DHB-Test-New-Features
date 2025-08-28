@@ -11,9 +11,6 @@ import {
   Grid,
   Paper,
   TextField,
-  FormControl,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import {
   Link,
@@ -21,7 +18,7 @@ import {
   HeadsetMic,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { apiService } from '../services/api';
+import { apiService } from '../services/api-yaml-compliant';
 
 const SOFQuestions: React.FC = () => {
   const navigate = useNavigate();
@@ -35,37 +32,40 @@ const SOFQuestions: React.FC = () => {
       answer: "Leftover from my income"
     },
     {
+      question: "What is the source of your income?",
+      answer: "Director, Major Shareholder"
+    },
+    {
       question: "What is your (joint) gross annual income?",
       answer: "Between €0 and €30,000"
+    },
+    {
+      question: "What amount do you expect to save/deposit annually with NIBC?",
+      answer: "Nothing or less than €1,000"
     },
     {
       question: "How often do you expect to deposit money into your Savings Account?",
       answer: "Never or on average once a month"
     },
     {
+      question: "Do you expect to make one or more occasional (larger) deposits with us?",
+      answer: "Yes"
+    },
+    {
       question: "What is the amount if these are the amounts you plan to deposit?",
       answer: "Less than €10,000"
-    },
-    {
-      question: "What is the source of your income?",
-      answer: "Director, Major Shareholder"
-    },
-    {
-      question: "What amount do you expect to save/deposit annually with NIBC?",
-      answer: "Nothing or less than €1,000"
-    },
-          {
-        question: "Do you expect to make one or more occasional (larger) deposits with us?",
-        answer: "Yes"
-      }
-    ]);
+    }
+  ]);
 
   // Load SOF questions data from API
   React.useEffect(() => {
     const loadSOFQuestions = async () => {
       try {
+        setLoading(true);
         const data = await apiService.getSOFQuestions();
-        setQuestions(data);
+        if (data && data.length > 0) {
+          setQuestions(data);
+        }
       } catch (error) {
         console.error('Failed to load SOF questions:', error);
         // Keep default data if API fails
@@ -84,11 +84,14 @@ const SOFQuestions: React.FC = () => {
   const handleConfirmProfile = async () => {
     setSaving(true);
     try {
-      await apiService.updateSOFQuestions(questions);
-      console.log('SOF questions saved successfully');
+      const updatedQuestions = await apiService.updateSOFQuestions(questions);
+      console.log('SOF questions saved successfully:', updatedQuestions);
+      setIsEditing(false);
       navigate('/settings');
     } catch (error) {
       console.error('Failed to save SOF questions:', error);
+      // Show error to user (you could add a toast notification here)
+    } finally {
       setSaving(false);
     }
   };
@@ -156,143 +159,475 @@ const SOFQuestions: React.FC = () => {
               sx={{
                 fontWeight: 700,
                 color: '#333',
-                mb: 6,
+                mb: 4,
                 fontSize: '24px',
               }}
             >
               SOF questions
             </Typography>
-            
 
+            {/* Loading State */}
+            {loading && (
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  Loading SOF questions...
+                </Typography>
+              </Box>
+            )}
 
-            {/* Questions and Answers Grid */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-                                            {/* Left Column */}
-               <Grid item xs={12} md={6}>
-                 {questions.slice(0, 4).map((item, index) => (
-                   <Box key={index} sx={{ mb: 3 }}>
-                     <Typography
-                       variant="body2"
-                       sx={{
-                         color: '#004996',
-                         fontSize: '14px',
-                         mb: 1,
-                         fontWeight: 500,
-                       }}
-                     >
-                       {item.question}
-                     </Typography>
-                     {isEditing ? (
-                       <TextField
-                         fullWidth
-                         value={item.answer}
-                         onChange={(e) => handleAnswerChange(index, e.target.value)}
-                         sx={{
-                           '& .MuiOutlinedInput-root': {
-                             backgroundColor: 'white',
-                             '& fieldset': {
-                               borderColor: '#004996',
-                             },
-                             '&:hover fieldset': {
-                               borderColor: '#004996',
-                             },
-                             '&.Mui-focused fieldset': {
-                               borderColor: '#004996',
-                             },
-                           },
-                           '& .MuiInputBase-input': {
-                             color: '#333',
-                             fontSize: '14px',
-                           },
-                         }}
-                       />
-                     ) : (
-                       <Paper
-                         sx={{
-                           backgroundColor: '#f5f5f5',
-                           padding: '12px 16px',
-                           borderRadius: '4px',
-                           border: '1px solid #e0e0e0',
-                         }}
-                       >
-                         <Typography
-                           variant="body2"
-                           sx={{
-                             color: '#666',
-                             fontSize: '14px',
-                           }}
-                         >
-                           {item.answer}
-                         </Typography>
-                       </Paper>
-                     )}
-                   </Box>
-                 ))}
-               </Grid>
+            {/* Questions and Answers Grid - Properly Aligned */}
+            {!loading && (
+              <Grid container spacing={4} sx={{ mb: 4 }}>
+                {/* Row 1 */}
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[0].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[0].answer}
+                        onChange={(e) => handleAnswerChange(0, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[0].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[1].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[1].answer}
+                        onChange={(e) => handleAnswerChange(1, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[1].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
 
-                                            {/* Right Column */}
-               <Grid item xs={12} md={6}>
-                 {questions.slice(4, 7).map((item, index) => (
-                   <Box key={index + 4} sx={{ mb: 3 }}>
-                     <Typography
-                       variant="body2"
-                       sx={{
-                         color: '#004996',
-                         fontSize: '14px',
-                         mb: 1,
-                         fontWeight: 500,
-                       }}
-                     >
-                       {item.question}
-                     </Typography>
-                     {isEditing ? (
-                       <TextField
-                         fullWidth
-                         value={item.answer}
-                         onChange={(e) => handleAnswerChange(index + 4, e.target.value)}
-                         sx={{
-                           '& .MuiOutlinedInput-root': {
-                             backgroundColor: 'white',
-                             '& fieldset': {
-                               borderColor: '#004996',
-                             },
-                             '&:hover fieldset': {
-                               borderColor: '#004996',
-                             },
-                             '&.Mui-focused fieldset': {
-                               borderColor: '#004996',
-                             },
-                           },
-                           '& .MuiInputBase-input': {
-                             color: '#333',
-                             fontSize: '14px',
-                           },
-                         }}
-                       />
-                     ) : (
-                       <Paper
-                         sx={{
-                           backgroundColor: '#f5f5f5',
-                           padding: '12px 16px',
-                           borderRadius: '4px',
-                           border: '1px solid #e0e0e0',
-                         }}
-                       >
-                         <Typography
-                           variant="body2"
-                           sx={{
-                             color: '#666',
-                             fontSize: '14px',
-                           }}
-                         >
-                           {item.answer}
-                         </Typography>
-                       </Paper>
-                     )}
-                   </Box>
-                 ))}
-               </Grid>
-            </Grid>
+                {/* Row 2 */}
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[2].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[2].answer}
+                        onChange={(e) => handleAnswerChange(2, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[2].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[3].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[3].answer}
+                        onChange={(e) => handleAnswerChange(3, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[3].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+
+                {/* Row 3 */}
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[4].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[4].answer}
+                        onChange={(e) => handleAnswerChange(4, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[4].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[5].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[5].answer}
+                        onChange={(e) => handleAnswerChange(5, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[5].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+
+                {/* Row 4 - Only left column */}
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#004996',
+                        fontSize: '14px',
+                        mb: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {questions[6].question}
+                    </Typography>
+                    {isEditing ? (
+                      <TextField
+                        fullWidth
+                        value={questions[6].answer}
+                        onChange={(e) => handleAnswerChange(6, e.target.value)}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'white',
+                            '& fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#004996',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: '#333',
+                            fontSize: '14px',
+                            padding: '8px 12px',
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Paper
+                        sx={{
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          border: '1px solid #e0e0e0',
+                          minHeight: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#666',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {questions[6].answer}
+                        </Typography>
+                      </Paper>
+                    )}
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
 
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>

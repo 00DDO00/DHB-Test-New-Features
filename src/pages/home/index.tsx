@@ -185,7 +185,23 @@ const Home: React.FC = () => {
           <StatsWidget
             title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
             value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
-            subtitle={`Total ${t('combiSpaar')} Balances`}
+            subtitle={
+              <Typography 
+                variant="h3" 
+                color="#004996" 
+                fontWeight="bold"
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    opacity: 0.8
+                  }
+                }}
+                onClick={() => navigate('/accounts/combispaar')}
+              >
+                {`Total ${t('combiSpaar')} Balances`}
+              </Typography>
+            }
             actions={
               <Box display="flex" gap={1}>
                 <Button
@@ -208,7 +224,7 @@ const Home: React.FC = () => {
                 <Button
                   variant="outlined"
                   endIcon={<Add />}
-                  onClick={() => navigate('/accounts/open')}
+                  onClick={() => navigate('/accounts/combispaar')}
                   sx={{
                     background: 'transparent',
                     color: '#004996',

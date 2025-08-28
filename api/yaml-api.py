@@ -96,6 +96,38 @@ messages_store = [
     }
 ]
 
+# SOF Questions storage
+sof_questions_store = [
+    {
+        "question": "What is the origin of the money in your NIBC Savings Account?",
+        "answer": "Leftover from my income"
+    },
+    {
+        "question": "What is the source of your income?",
+        "answer": "Director, Major Shareholder"
+    },
+    {
+        "question": "What is your (joint) gross annual income?",
+        "answer": "Between €0 and €30,000"
+    },
+    {
+        "question": "What amount do you expect to save/deposit annually with NIBC?",
+        "answer": "Nothing or less than €1,000"
+    },
+    {
+        "question": "How often do you expect to deposit money into your Savings Account?",
+        "answer": "Never or on average once a month"
+    },
+    {
+        "question": "Do you expect to make one or more occasional (larger) deposits with us?",
+        "answer": "Yes"
+    },
+    {
+        "question": "What is the amount if these are the amounts you plan to deposit?",
+        "answer": "Less than €10,000"
+    }
+]
+
 # Global password storage with file persistence
 PASSWORD_FILE = "current_password.txt"
 
@@ -1906,23 +1938,10 @@ def legacy_get_sof_questions():
     if not header_valid:
         return create_error_response('495', f"Missing required headers: {', '.join(missing_headers)}")
     
-    # Mock response
+    # Mock response with the correct 7 questions
     return jsonify({
         "success": True,
-        "data": [
-            {
-                "question": "What is your primary source of income?",
-                "answer": "Employment"
-            },
-            {
-                "question": "What is your annual income range?",
-                "answer": "€50,000 - €100,000"
-            },
-            {
-                "question": "What is your occupation?",
-                "answer": "Software Engineer"
-            }
-        ],
+        "data": sof_questions_store,
         "timestamp": datetime.now().isoformat()
     })
 
@@ -1937,11 +1956,18 @@ def legacy_update_sof_questions():
     
     try:
         data = request.get_json()
+        questions = data.get('questions', [])
+        
+        # Store the updated questions (in a real app, this would be saved to a database)
+        # For now, we'll just return the updated questions
+        global sof_questions_store
+        sof_questions_store = questions
         
         # Mock response
         return jsonify({
             "success": True,
-            "data": data.get('questions', []),
+            "data": questions,
+            "message": "SOF questions updated successfully",
             "timestamp": datetime.now().isoformat()
         })
     except Exception as e:

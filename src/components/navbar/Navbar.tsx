@@ -19,6 +19,8 @@ import {
   Popper,
   Paper,
   ClickAwayListener,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 
 import {
@@ -38,6 +40,7 @@ import NavbarUserDropdown from "./NavbarUserDropdown";
 import MessagesPopup from "../MessagesPopup";
 import { apiService, UserProfile } from "../../services/api";
 import useAuth from "../../hooks/useAuth";
+import useTheme from "../../hooks/useTheme";
 
 // Import the logo image
 import dhbLogo from "../../assets/dhb-white.png";
@@ -177,6 +180,7 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [totalMessageCount, setTotalMessageCount] = React.useState(9);
   const [messagesSeen, setMessagesSeen] = React.useState(false);
@@ -375,6 +379,12 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     }
   };
 
+  // Function to handle theme toggle
+  const handleThemeToggle = () => {
+    const newTheme = theme === "DARK" ? "LIGHT" : "DARK";
+    setTheme(newTheme);
+  };
+
   const handleSearchToggle = () => {
     setSearchBarVisible(!searchBarVisible);
     if (searchBarVisible) {
@@ -449,6 +459,42 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                <DetailLabel>{t('last_login_on')}</DetailLabel>
                <DetailValue>{userProfile.last_login}</DetailValue>
              </DetailRow>
+          </PopupContent>
+
+          <Divider />
+
+          <PopupContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1 }}>
+              <Box>
+                <Typography variant="body2" sx={{ color: '#666', fontWeight: 500 }}>
+                  {t('theme') || 'Theme'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#999', fontSize: '12px' }}>
+                  {theme === "DARK" ? "Dark Mode" : "Light Mode"}
+                </Typography>
+              </Box>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={theme === "DARK"}
+                    onChange={handleThemeToggle}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#004996',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 73, 150, 0.08)',
+                        },
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#004996',
+                      },
+                    }}
+                  />
+                }
+                label=""
+                sx={{ margin: 0 }}
+              />
+            </Box>
           </PopupContent>
 
           <Divider />
