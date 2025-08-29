@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -41,6 +41,7 @@ import {
   CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { apiService } from '../../services/api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -120,8 +121,34 @@ const SaveOnlineAccount: React.FC = () => {
   const [amountDecimal, setAmountDecimal] = useState('');
   const [amountError, setAmountError] = useState('');
   const [mockTransactions, setMockTransactions] = useState<any[]>([]);
+  const [accountData, setAccountData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch account data on component mount
+  useEffect(() => {
+    const fetchAccountData = async () => {
+      try {
+        // Use the IBAN from the SaveOnline account
+        const data = await apiService.getAccountByIban('NL24DHBN2018470578');
+        setAccountData(data);
+      } catch (error) {
+        console.error('Failed to fetch account data:', error);
+        // Set fallback data if API fails
+        setAccountData({
+          holder_name: 'Lucy Lavender',
+          institution_name: 'DHB Bank',
+          bic: 'DHBNL2R',
+          customer_number: 'CUST001',
+          support_reg_number: 'SR001',
+          email: 'lucy.lavender@example.com'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchAccountData();
+  }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -776,7 +803,7 @@ const SaveOnlineAccount: React.FC = () => {
             {/* Left Side - Holder Name and IBAN */}
             <Grid item xs={12} md={4}>
               <Typography variant="h6" sx={{ mb: 1 }}>
-                Holder name
+                {accountData?.holder_name || 'Loading...'}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 NL24DHBN2018470578
