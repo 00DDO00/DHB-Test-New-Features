@@ -18,6 +18,7 @@ import createEmotionCache from "./utils/createEmotionCache";
 
 import { AuthProvider } from "./contexts/AuthPkceContext";
 import ErrorBoundary from "./components/ErrorBoundary";
+import SkipLink from "./components/SkipLink";
 import { setLocalizations } from "./utils/localizations";
 import { useTranslation } from "react-i18next";
 // import { AuthProvider } from "./contexts/FirebaseAuthContext";
@@ -59,6 +60,7 @@ function App({ emotionCache = clientSideEmotionCache }) {
             titleTemplate="%s | Mira"
             defaultTitle="Mira - React Material Admin Dashboard"
           />
+          <SkipLink />
           <Provider store={store}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <MuiThemeProvider theme={createTheme(theme)}>

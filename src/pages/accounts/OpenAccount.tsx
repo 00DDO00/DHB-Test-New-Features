@@ -16,6 +16,7 @@ import {
   CheckCircle,
   Add,
   ArrowForward,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -90,17 +91,24 @@ const OpenAccount: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink 
           component={Link}
           to="/private" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer' }}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
-        <MuiLink color="inherit" underline="hover" sx={{ cursor: 'pointer' }}>
+        <MuiLink 
+          component={Link}
+          to="/accounts" 
+          color="inherit" 
+          underline="hover" 
+          sx={{ cursor: 'pointer' }}
+        >
           Accounts
         </MuiLink>
         <Typography color="text.primary" fontWeight="bold">

@@ -269,20 +269,32 @@ const AccountStatement: React.FC = () => {
           </Typography>
           
           {/* Table */}
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
+          <TableContainer 
+            component={Paper} 
+            variant="outlined"
+            role="region"
+            aria-label="Transaction history table"
+          >
+            <Table 
+              aria-label="Account transactions"
+              role="table"
+            >
               <TableHead>
-                <TableRow>
-                  <TableCell><strong>{t('statement-date')}</strong></TableCell>
-                  <TableCell><strong>{t('payments.explanation')}</strong></TableCell>
-                  <TableCell align="right"><strong>{t('accounts.balance')}</strong></TableCell>
+                <TableRow role="row">
+                  <TableCell role="columnheader"><strong>{t('statement-date')}</strong></TableCell>
+                  <TableCell role="columnheader"><strong>{t('payments.explanation')}</strong></TableCell>
+                  <TableCell align="right" role="columnheader"><strong>{t('accounts.balance')}</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
-                  <TableRow key={transaction.id || index}>
-                    <TableCell>{transaction.date}</TableCell>
-                    <TableCell>
+                  <TableRow 
+                    key={transaction.id || index}
+                    role="row"
+                    aria-label={`Transaction on ${transaction.date} for ${transaction.balance}`}
+                  >
+                    <TableCell role="cell">{transaction.date}</TableCell>
+                    <TableCell role="cell">
                       {transaction.description}
                       <br />
                       <Typography variant="caption" color="text.secondary">
@@ -291,10 +303,12 @@ const AccountStatement: React.FC = () => {
                     </TableCell>
                     <TableCell 
                       align="right"
+                      role="cell"
                       sx={{ 
                         color: transaction.type === 'debit' ? 'error.main' : 'success.main',
                         fontWeight: 'bold'
                       }}
+                      aria-label={`${transaction.type === 'debit' ? 'Debit' : 'Credit'} of ${transaction.balance}`}
                     >
                       {transaction.balance}
                     </TableCell>
@@ -384,6 +398,8 @@ const AccountStatement: React.FC = () => {
                   <Switch 
                     checked={periodFilterEnabled} 
                     onChange={(e) => setPeriodFilterEnabled(e.target.checked)}
+                    aria-label="Enable period filter"
+                    role="switch"
                     sx={{
                       '& .MuiSwitch-track': {
                         backgroundColor: periodFilterEnabled ? '#4CAF50' : '#E0E0E0',

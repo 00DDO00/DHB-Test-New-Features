@@ -599,11 +599,13 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                   }}
                 >
                   <TextField
-                                         placeholder={t("account-history.filter-button") + "..."}
+                    placeholder={t("account-history.filter-button") + "..."}
                     value={searchQuery}
                     onChange={handleSearchChange}
                     onFocus={() => setSearchOpen(searchQuery.length > 0)}
                     autoFocus
+                    aria-label="Search accounts and transactions"
+                    role="searchbox"
                     sx={{
                       width: "100%",
                       "& .MuiOutlinedInput-root": {
@@ -633,6 +635,7 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                       startAdornment: (
                         <SearchIcon
                           sx={{ color: "#666", fontSize: "20px", mr: 1 }}
+                          aria-hidden="true"
                         />
                       ),
                     }}

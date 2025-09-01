@@ -14,13 +14,14 @@ import {
   Modal,
 } from '@mui/material';
 import {
-  Link,
+  Link as LinkIcon,
   ArrowForward,
   HeadsetMic,
   Visibility,
   VisibilityOff,
+  Home as HomeIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 
 const ChangePassword: React.FC = () => {
@@ -237,41 +238,36 @@ const ChangePassword: React.FC = () => {
         Change Password
       </Typography>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3, color: '#666' }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink
           component={Link}
-          to="/"
-          sx={{ 
-            color: '#666', 
-            textDecoration: 'none',
-            '&:hover': { color: '#333' }
-          }}
+          to="/private"
+          color="inherit"
+          underline="hover"
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
         <MuiLink
           component={Link}
           to="/settings"
-          sx={{ 
-            color: '#666', 
-            textDecoration: 'none',
-            '&:hover': { color: '#333' }
-          }}
+          color="inherit"
+          underline="hover"
+          sx={{ cursor: 'pointer' }}
         >
           Settings
         </MuiLink>
         <MuiLink
           component={Link}
-          to="/settings/personal-details"
-          sx={{ 
-            color: '#666', 
-            textDecoration: 'none',
-            '&:hover': { color: '#333' }
-          }}
+          to="/pages/personal-details"
+          color="inherit"
+          underline="hover"
+          sx={{ cursor: 'pointer' }}
         >
           Personal Details
         </MuiLink>
-        <Typography sx={{ color: '#333' }}>
+        <Typography color="text.primary" fontWeight="bold">
           Change password
         </Typography>
       </Breadcrumbs>
@@ -317,7 +313,7 @@ const ChangePassword: React.FC = () => {
             </Typography>
 
             {/* Form Fields */}
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 4 }} role="form" aria-label="Change password form">
               {/* Current Password */}
               <Box sx={{ mb: 3 }}>
                 <Typography
@@ -328,6 +324,7 @@ const ChangePassword: React.FC = () => {
                     mb: 1,
                     fontWeight: 500,
                   }}
+                  id="current-password-label"
                 >
                   Current password
                 </Typography>
@@ -340,6 +337,9 @@ const ChangePassword: React.FC = () => {
                   size="small"
                   error={!!errors.currentPassword}
                   helperText={errors.currentPassword}
+                  aria-labelledby="current-password-label"
+                  aria-describedby={errors.currentPassword ? "current-password-error" : undefined}
+                  aria-required="true"
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'white',

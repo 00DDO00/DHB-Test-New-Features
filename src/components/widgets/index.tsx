@@ -47,25 +47,45 @@ export const Widget: React.FC<WidgetProps> = ({
   actions, 
   onMenuClick 
 }) => {
+  const widgetId = `widget-${title?.toLowerCase().replace(/\s+/g, '-') || 'untitled'}`;
+  
   return (
-    <StyledCard>
+    <StyledCard 
+      role="region" 
+      aria-labelledby={title ? `${widgetId}-title` : undefined}
+      aria-label={title ? undefined : "Widget"}
+    >
       <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3 }}>
         {(title || onMenuClick) && (
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
             <Box flex={1}>
               {title && (
-                <Typography variant="h5" fontWeight="bold" color="text.primary">
+                <Typography 
+                  variant="h5" 
+                  fontWeight="bold" 
+                  color="text.primary"
+                  id={`${widgetId}-title`}
+                >
                   {title}
                 </Typography>
               )}
               {subtitle && (
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ mt: 0.5 }}
+                  aria-describedby={title ? `${widgetId}-title` : undefined}
+                >
                   {subtitle}
                 </Typography>
               )}
             </Box>
             {onMenuClick && (
-              <IconButton size="medium" onClick={onMenuClick}>
+              <IconButton 
+                size="medium" 
+                onClick={onMenuClick}
+                aria-label={`More options for ${title || 'widget'}`}
+              >
                 <MoreVert />
               </IconButton>
             )}
@@ -78,7 +98,7 @@ export const Widget: React.FC<WidgetProps> = ({
           </Box>
           
           {actions && (
-            <Box mt={3}>
+            <Box mt={3} role="group" aria-label="Widget actions">
               {actions}
             </Box>
           )}
@@ -139,13 +159,19 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
           color={primaryAction.color === 'orange' ? 'primary' : primaryAction.color}
           customColor={primaryAction.color}
           fullWidth
+          aria-label={`${primaryAction.label} for ${accountType} account with balance ${balance}`}
+          role="button"
         >
           {primaryAction.label}
         </ActionButton>
       }
     >
-        {/* DHB SaveOnline section */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* Account Details Section */}
+      <Box 
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        role="region"
+        aria-label={`${accountType} account details`}
+      >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography 
             variant="h3" 
@@ -159,26 +185,52 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
               } : {}
             }}
             onClick={onAccountTypeClick}
+            role={onAccountTypeClick ? "button" : undefined}
+            aria-label={onAccountTypeClick ? `View details for ${accountType} account` : undefined}
+            tabIndex={onAccountTypeClick ? 0 : undefined}
+            onKeyDown={onAccountTypeClick ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onAccountTypeClick();
+              }
+            } : undefined}
           >
             {accountType}
           </Typography>
-          <Typography variant="h3" fontWeight="bold" color="text.primary">
+          <Typography 
+            variant="h3" 
+            fontWeight="bold" 
+            color="text.primary"
+            aria-label={`Account balance: ${balance}`}
+          >
             {balance}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" id={`iban-label-${iban}`}>
             IBAN Number
           </Typography>
-          <Typography variant="body2" color="text.secondary" fontWeight="medium">
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            fontWeight="medium"
+            aria-labelledby={`iban-label-${iban}`}
+            aria-label={`IBAN: ${iban}`}
+          >
             {iban}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" id={`interest-label-${iban}`}>
             Cumulative Interest Amount
           </Typography>
-          <Typography variant="body2" color="text.secondary" fontWeight="medium">
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            fontWeight="medium"
+            aria-labelledby={`interest-label-${iban}`}
+            aria-label={`Interest rate: ${interestRate}`}
+          >
             {interestRate}
           </Typography>
         </Box>
@@ -286,6 +338,15 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
               '&:hover': { bgcolor: '#f5f5f5' }
             }}
             onClick={() => handleSettingsClick('counter-account')}
+            role="button"
+            tabIndex={0}
+            aria-label={`Navigate to ${t('settings.nav.change_counter_account')} settings`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSettingsClick('counter-account');
+              }
+            }}
           >
             <Box sx={{ 
               width: 32, 

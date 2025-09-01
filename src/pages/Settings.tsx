@@ -12,9 +12,9 @@ import {
   Modal,
   Backdrop,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
-  Link,
+  Link as LinkIcon,
   ArrowForward,
   AccountBalance,
   Description,
@@ -27,6 +27,7 @@ import {
   Help,
   HeadsetMic,
   ArrowBack,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 
 const Settings: React.FC = () => {
@@ -143,17 +144,18 @@ const Settings: React.FC = () => {
         Settings
       </Typography>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink 
           component={Link}
           to="/private" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer', color: '#666' }}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
-        <Typography color="text.primary" sx={{ color: '#666' }}>
+        <Typography color="text.primary" fontWeight="bold">
           Settings
         </Typography>
       </Breadcrumbs>
@@ -189,6 +191,15 @@ const Settings: React.FC = () => {
                 }
               }}
               onClick={() => handleCardClick(card.id)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Navigate to ${card.title} settings`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCardClick(card.id);
+                }
+              }}
             >
               <CardContent sx={{ p: 3 }}>
                 {/* Header with Icon and Arrow */}
@@ -199,20 +210,26 @@ const Settings: React.FC = () => {
                   mb: 2
                 }}>
                   {/* Icon */}
-                  <Box sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: '50%',
-                    backgroundColor: '#F0F0F0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+                  <Box 
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      backgroundColor: '#F0F0F0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    aria-hidden="true"
+                  >
                     {card.icon}
                   </Box>
                   
                   {/* Arrow */}
-                  <ArrowForward sx={{ color: '#666', fontSize: 20 }} />
+                  <ArrowForward 
+                    sx={{ color: '#666', fontSize: 20 }} 
+                    aria-hidden="true"
+                  />
                 </Box>
 
                 {/* Title */}

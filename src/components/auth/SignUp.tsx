@@ -75,9 +75,20 @@ function SignUp() {
         touched,
         values,
       }) => (
-        <form noValidate onSubmit={handleSubmit}>
+        <form 
+          noValidate 
+          onSubmit={handleSubmit}
+          role="form"
+          aria-label="Create your account"
+        >
           {errors.submit && (
-            <Alert mt={2} mb={1} severity="warning">
+            <Alert 
+              mt={2} 
+              mb={1} 
+              severity="warning"
+              role="alert"
+              aria-live="polite"
+            >
               {errors.submit}
             </Alert>
           )}
@@ -92,6 +103,8 @@ function SignUp() {
             onBlur={handleBlur}
             onChange={handleChange}
             my={3}
+            aria-required="true"
+            aria-describedby={touched.firstName && errors.firstName ? "firstName-error" : undefined}
           />
           <TextField
             type="text"
@@ -104,6 +117,8 @@ function SignUp() {
             onBlur={handleBlur}
             onChange={handleChange}
             my={3}
+            aria-required="true"
+            aria-describedby={touched.lastName && errors.lastName ? "lastName-error" : undefined}
           />
           <TextField
             type="email"

@@ -39,6 +39,7 @@ import {
   Tune as TuneIcon,
   Close as CloseIcon,
   CheckCircle as CheckCircleIcon,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { apiService } from '../../services/api';
@@ -729,14 +730,28 @@ const SaveOnlineAccount: React.FC = () => {
         DHB SaveOnline Account
       </Typography>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
-        <MuiLink component={Link} to="/private" color="inherit" underline="hover">
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
+        <MuiLink 
+          component={Link} 
+          to="/private" 
+          color="inherit" 
+          underline="hover"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
-        <MuiLink component={Link} to="/dashboard/analytics" color="inherit" underline="hover">
+        <MuiLink 
+          component={Link} 
+          to="/accounts" 
+          color="inherit" 
+          underline="hover"
+        >
           Accounts
         </MuiLink>
-        <Typography color="text.primary">DHB SaveOnline</Typography>
+        <Typography color="text.primary" fontWeight="bold">
+          DHB SaveOnline Account
+        </Typography>
       </Breadcrumbs>
 
       {/* Savings Goals Section */}

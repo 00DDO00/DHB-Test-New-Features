@@ -61,13 +61,30 @@ function SignIn() {
         touched,
         values,
       }) => (
-        <form noValidate onSubmit={handleSubmit}>
-          <Alert mt={3} mb={3} severity="info">
+        <form 
+          noValidate 
+          onSubmit={handleSubmit}
+          role="form"
+          aria-label="Sign in to your account"
+        >
+          <Alert 
+            mt={3} 
+            mb={3} 
+            severity="info"
+            role="status"
+            aria-label="Demo credentials information"
+          >
             Use <strong>demo@bootlab.io</strong> and{" "}
             <strong>unsafepassword</strong> to sign in
           </Alert>
           {errors.submit && (
-            <Alert mt={2} mb={3} severity="warning">
+            <Alert 
+              mt={2} 
+              mb={3} 
+              severity="warning"
+              role="alert"
+              aria-live="polite"
+            >
               {errors.submit}
             </Alert>
           )}
@@ -82,6 +99,8 @@ function SignIn() {
             onBlur={handleBlur}
             onChange={handleChange}
             my={2}
+            aria-required="true"
+            aria-describedby={touched.email && errors.email ? "email-error" : undefined}
           />
           <TextField
             type="password"
@@ -94,9 +113,17 @@ function SignIn() {
             onBlur={handleBlur}
             onChange={handleChange}
             my={2}
+            aria-required="true"
+            aria-describedby={touched.password && errors.password ? "password-error" : undefined}
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={
+              <Checkbox 
+                value="remember" 
+                color="primary"
+                aria-describedby="remember-me-description"
+              />
+            }
             label="Remember me"
           />
           <Button
@@ -105,6 +132,7 @@ function SignIn() {
             variant="contained"
             color="primary"
             disabled={isSubmitting}
+            aria-label={isSubmitting ? "Signing in..." : "Sign in to your account"}
           >
             Sign in
           </Button>
@@ -113,6 +141,7 @@ function SignIn() {
             to="/auth/reset-password"
             fullWidth
             color="primary"
+            aria-label="Go to password reset page"
           >
             Forgot password
           </Button>

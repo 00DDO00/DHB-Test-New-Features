@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Grid, Button, Typography, CircularProgress } from '@mui/material';
-import { Add, ArrowForward, Headset } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Grid, Button, Typography, CircularProgress, Breadcrumbs, Link as MuiLink } from '@mui/material';
+import { Add, ArrowForward, Headset, Home as HomeIcon } from '@mui/icons-material';
+import { useNavigate, Link } from 'react-router-dom';
 import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
@@ -97,6 +97,22 @@ const Home: React.FC = () => {
         Dashboard - {t('welcome')} {userName}
       </Typography>
       
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
+        <MuiLink
+          component="span"
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            color: '#004996',
+            fontWeight: 600,
+          }}
+        >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
+          {t('home')}
+        </MuiLink>
+      </Breadcrumbs>
+      
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
@@ -122,7 +138,7 @@ const Home: React.FC = () => {
         </Typography>
         
         {/* Welcome Card - DHB SaveOnline */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
           <AccountWidget
             accountName={`${t('welcome')}, ${userName}`}
             accountType={t('saveOnline')}
@@ -139,7 +155,7 @@ const Home: React.FC = () => {
         </Box>
 
         {/* Accounts Card - DHB MaxiSpaar */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
           <AccountWidget
             accountName={t('accounts.title')}
             accountType={t('maxiSpaar')}
@@ -293,7 +309,7 @@ const Home: React.FC = () => {
         </Typography>
         
         {/* Settings Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
           <SettingsWidget items={settingsItems} />
         </Box>
 
@@ -328,8 +344,19 @@ const Home: React.FC = () => {
       </Box>
 
       {/* Support Button */}
-      <SupportButton>
-        <Headset />
+      <SupportButton
+        role="button"
+        aria-label="Contact customer support"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            // Add support action here
+            console.log('Support clicked');
+          }
+        }}
+      >
+        <Headset aria-hidden="true" />
       </SupportButton>
     </Box>
   );

@@ -11,10 +11,12 @@ import {
   Fab,
 } from '@mui/material';
 import {
-  Link,
+  Link as LinkIcon,
   ArrowForward,
   HeadsetMic,
+  Home as HomeIcon,
 } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const Documents: React.FC = () => {
   const [documents, setDocuments] = React.useState<any[]>([]);
@@ -151,14 +153,15 @@ const Documents: React.FC = () => {
   return (
     <Box sx={{ p: 3, backgroundColor: '#F5F5F5', minHeight: '100vh' }}>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink 
           component={Link}
           to="/private" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer', color: '#666' }}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
         <MuiLink 
@@ -166,11 +169,11 @@ const Documents: React.FC = () => {
           to="/settings" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer', color: '#666' }}
+          sx={{ cursor: 'pointer' }}
         >
           Settings
         </MuiLink>
-        <Typography color="text.primary" sx={{ color: '#666' }}>
+        <Typography color="text.primary" fontWeight="bold">
           Documents
         </Typography>
       </Breadcrumbs>

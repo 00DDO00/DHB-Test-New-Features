@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiService, PersonalDetails as PersonalDetailsType } from '../services/api';
 import {
   Box,
@@ -21,13 +21,14 @@ import {
   Alert,
 } from '@mui/material';
 import {
-  Link,
+  Link as LinkIcon,
   ArrowForward,
   HeadsetMic,
   ArrowBack,
   KeyboardArrowDown,
   CloudUpload,
   Warning,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 
 const PersonalDetails: React.FC = () => {
@@ -290,14 +291,15 @@ const PersonalDetails: React.FC = () => {
         Personal Details
       </Typography>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink 
           component={Link}
           to="/private" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer', color: '#666' }}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
         <MuiLink 
@@ -305,11 +307,11 @@ const PersonalDetails: React.FC = () => {
           to="/settings" 
           color="inherit" 
           underline="hover"
-          sx={{ cursor: 'pointer', color: '#666' }}
+          sx={{ cursor: 'pointer' }}
         >
           Settings
         </MuiLink>
-        <Typography color="text.primary" sx={{ color: '#666' }}>
+        <Typography color="text.primary" fontWeight="bold">
           Personal Details
         </Typography>
       </Breadcrumbs>
@@ -370,10 +372,15 @@ const PersonalDetails: React.FC = () => {
           </Grid>
 
           {/* Action Buttons */}
-          <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'flex-end' }}>
+          <Box 
+            sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'flex-end' }}
+            role="group"
+            aria-label="Personal details actions"
+          >
             <Button
               variant="outlined"
               onClick={handleChangeAll}
+              aria-label="Change all personal details"
               sx={{
                 borderColor: '#1976d2',
                 color: '#1976d2',
@@ -393,7 +400,8 @@ const PersonalDetails: React.FC = () => {
             <Button
               variant="contained"
               onClick={handleConfirm}
-              endIcon={<ArrowForward />}
+              endIcon={<ArrowForward aria-hidden="true" />}
+              aria-label="Confirm personal details changes"
               sx={{
                 backgroundColor: '#FC9F15',
                 color: 'white',
@@ -416,7 +424,7 @@ const PersonalDetails: React.FC = () => {
       {/* Floating Action Button */}
       <Fab
         color="primary"
-        aria-label="support"
+        aria-label="Contact customer support"
         sx={{
           position: 'fixed',
           bottom: 24,
@@ -427,13 +435,15 @@ const PersonalDetails: React.FC = () => {
           },
         }}
       >
-        <HeadsetMic />
+        <HeadsetMic aria-hidden="true" />
       </Fab>
 
       {/* Update ID Popup */}
       <Modal
         open={updateIdPopupOpen}
         onClose={handleCloseUpdateIdPopup}
+        aria-labelledby="update-id-modal-title"
+        aria-describedby="update-id-modal-description"
         sx={{
           display: 'flex',
           alignItems: 'center',

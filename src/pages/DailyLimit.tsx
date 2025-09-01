@@ -17,12 +17,13 @@ import {
   IconButton,
 } from '@mui/material';
 import {
-  Link,
+  Link as LinkIcon,
   ArrowForward,
   HeadsetMic,
   CheckCircleOutline,
+  Home as HomeIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const DailyLimit: React.FC = () => {
   const navigate = useNavigate();
@@ -96,30 +97,27 @@ const DailyLimit: React.FC = () => {
       padding: '24px'
     }}>
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3, color: '#666' }}>
+      <Breadcrumbs sx={{ mb: 3 }} aria-label="breadcrumb navigation">
         <MuiLink
           component={Link}
-          to="/"
-          sx={{ 
-            color: '#666', 
-            textDecoration: 'none',
-            '&:hover': { color: '#333' }
-          }}
+          to="/private"
+          color="inherit"
+          underline="hover"
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         >
+          <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
         <MuiLink
           component={Link}
           to="/settings"
-          sx={{ 
-            color: '#666', 
-            textDecoration: 'none',
-            '&:hover': { color: '#333' }
-          }}
+          color="inherit"
+          underline="hover"
+          sx={{ cursor: 'pointer' }}
         >
           Settings
         </MuiLink>
-        <Typography sx={{ color: '#333' }}>
+        <Typography color="text.primary" fontWeight="bold">
           Daily limit
         </Typography>
       </Breadcrumbs>
