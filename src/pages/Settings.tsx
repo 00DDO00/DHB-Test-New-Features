@@ -128,6 +128,20 @@ const Settings: React.FC = () => {
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#F5F5F5', minHeight: '100vh' }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Settings
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink 
@@ -144,6 +158,21 @@ const Settings: React.FC = () => {
         </Typography>
       </Breadcrumbs>
 
+      {/* Account Settings Section */}
+      <Typography
+        component="h2"
+        variant="h5"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Account Settings
+      </Typography>
+      
       {/* Settings Grid */}
       <Grid container spacing={4}>
         {settingsCards.map((card) => (

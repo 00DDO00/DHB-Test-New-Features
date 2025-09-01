@@ -714,6 +714,20 @@ const SaveOnlineAccount: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        DHB SaveOnline Account
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink component={Link} to="/private" color="inherit" underline="hover">
@@ -1151,6 +1165,21 @@ const SaveOnlineAccount: React.FC = () => {
             </IconButton>
           </Box>
 
+          {/* Account Information Section */}
+          <Typography
+            component="h2"
+            variant="h5"
+            sx={{
+              position: 'absolute',
+              left: '-10000px',
+              width: '1px',
+              height: '1px',
+              overflow: 'hidden'
+            }}
+          >
+            Account Information
+          </Typography>
+          
           {/* Account Details Section */}
           <Box 
             sx={{ 

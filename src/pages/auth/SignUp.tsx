@@ -25,6 +25,20 @@ const Wrapper = styled(Paper)`
 function SignUp() {
   return (
     <React.Fragment>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Sign Up
+      </Typography>
       <Brand />
       <Wrapper>
         <Helmet title="Sign Up" />

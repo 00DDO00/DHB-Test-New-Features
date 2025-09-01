@@ -82,6 +82,21 @@ const Home: React.FC = () => {
 
   return (
     <Box sx={{ p: 1 }}>
+      {/* Main page heading - hidden visually but available to screen readers */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Dashboard - {t('welcome')} {userName}
+      </Typography>
+      
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
@@ -91,6 +106,21 @@ const Home: React.FC = () => {
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
+        {/* Account Overview Section */}
+        <Typography
+          component="h2"
+          variant="h5"
+          sx={{
+            position: 'absolute',
+            left: '-10000px',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden'
+          }}
+        >
+          Account Overview
+        </Typography>
+        
         {/* Welcome Card - DHB SaveOnline */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <AccountWidget
@@ -247,11 +277,41 @@ const Home: React.FC = () => {
           />
         </Box>
 
+        {/* Quick Actions Section */}
+        <Typography
+          component="h2"
+          variant="h5"
+          sx={{
+            position: 'absolute',
+            left: '-10000px',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden'
+          }}
+        >
+          Quick Actions
+        </Typography>
+        
         {/* Settings Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <SettingsWidget items={settingsItems} />
         </Box>
 
+        {/* Financial Overview Section */}
+        <Typography
+          component="h2"
+          variant="h5"
+          sx={{
+            position: 'absolute',
+            left: '-10000px',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden'
+          }}
+        >
+          Financial Overview
+        </Typography>
+        
         {/* Financial Overview Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <ChartWidget

@@ -205,6 +205,20 @@ const CombiSpaarAccount: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        DHB CombiSpaar Account
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink 

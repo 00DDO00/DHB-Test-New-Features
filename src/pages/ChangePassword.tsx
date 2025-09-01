@@ -222,6 +222,20 @@ const ChangePassword: React.FC = () => {
       backgroundColor: '#f5f5f5',
       padding: '24px'
     }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Change Password
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3, color: '#666' }}>
         <MuiLink

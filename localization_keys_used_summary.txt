@@ -1,0 +1,233 @@
+# DHB Localization Keys Currently Used in Codebase
+
+## Core Navigation & Settings (used)
+* settings.nav.application_settings: "Mobile app settings"
+* security: "Security"
+* application-settings.notification.title: "Notification Settings"
+* application-settings.language.title: "Set Language"
+* settings.nav.change_counter_account: "Change Counter Account"
+* settings.nav.documents: "Documents"
+* settings.nav.daily_limit: "Daily Limit"
+* settings.nav.sof_questions: "SOF Questions"
+* settings.nav.registered_devices: "Registered Devices"
+* settings.logout: "Log out"
+* settings: "Service"
+
+## Account Related (used)
+* accounts.title: "Accounts"
+* accounts.dhb: "DHB Accounts"
+* accounts.open-account: "Open now"
+* accounts.download: "Download"
+* accounts.balance: "Balance"
+* saveOnline: "DHB SaveOnline Account"
+* maxiSpaar: "DHB MaxiSpaar Account"
+* combiSpaar: "DHB Combispaar Account"
+* solidExtra: "Solidextra Deposit Account"
+
+## Account Opening (used)
+* account_opening.maxispaar-description: "Your fixed-term deposit with a guaranteed high interest rate:"
+
+## Personal Details (used)
+* personal-details: "Personal Data"
+* personal-detail.password.title: "Access Code"
+* update-id: "Update your ID card"
+* login_and_confirmation: "Login and Confirmation"
+
+## Payments (used)
+* payments.title: "Transfers"
+* payments.explanation: "Description"
+
+## Account Statements (used)
+* account-statement: "Account Statements"
+* account-statements.select-account.title.saveOnline: "DHB SaveOnline Account"
+* account-history.filter-button: "Search"
+* statement-date: "Date"
+
+## General UI (used)
+* welcome: "Welcome to DHB Bank"
+* home: "Home"
+* contact: "Contact"
+* theme: "Theme"
+* edit_profile: "Edit Profile"
+* all_settings: "All Settings"
+* something-went-wrong: "Oops ! Something went wrong"
+
+## Institution Details (used)
+* institution_name: "Institution Name"
+* bic: "BIC"
+* customer_number: "Customer Number"
+* support_reg_number: "Support Registration Number"
+* last_login_on: "Last Login On"
+
+## Time Periods (used)
+* period: "Period"
+* six_months: "Last 6 months"
+* today: "Today"
+* week: "Last week"
+* month: "Last month"
+
+## Basic i18n Keys (used)
+* Search: "Search topics…"
+* Welcome back: "Welcome back"
+* We've missed you: "We've missed you"
+
+## Navigation Menu (used)
+* accounts: "Overview"
+* settings.nav.personal_details: "Personal Data"
+* personal-detail.password.title: "Access Code"
+* settings.nav.documents: "Documents"
+* settings.nav.daily_limit: "Daily Limit"
+* settings.nav.sof_questions: "SOF Questions"
+* settings.nav.registered_devices: "Registered Devices"
+* settings.nav.change_counter_account: "Change Counter Account"
+
+## Missing Keys - Need to be Added (need keys)
+### Change Password Page
+* change-password.current-password-required: "Current password is required"
+* change-password.current-password-incorrect: "Current password is incorrect"
+* change-password.validation-failed: "Failed to validate password"
+* change-password.new-password-required: "New password is required"
+* change-password.new-password-min-length: "New password must be at least 6 characters"
+* change-password.confirm-password-required: "Please confirm your new password"
+* change-password.passwords-dont-match: "Passwords do not match"
+* change-password.updating: "Updating..."
+* change-password.confirm: "Confirm"
+* change-password.confirm-action: "Confirm your action"
+* change-password.resend-code: "Resend code"
+* change-password.another-number: "Do you have another number?"
+* change-password.verifying: "Verifying..."
+* change-password.send: "Send →"
+* change-password.cancel: "Cancel"
+
+### Home Page
+* home.holder-name: "Holder name"
+* home.make-transfer: "Make Transfer"
+* home.open-account: "Open account"
+* home.last-year: "last year"
+* home.total-balances: "Total {account} Balances"
+* home.you-have-count: "You have {count} {account}"
+
+### Account Pages
+* accounts.dhb-combispaarrekening: "DHB CombiSpaarrekening"
+* accounts.dhb-maxispaarrekening: "DHB MaxiSpaarrekening"
+* accounts.lucy-lavender: "Lucy Lavender"
+* accounts.dhb-bank: "DHB Bank"
+* accounts.holder-name: "Holder name"
+* accounts.not-selected: "Not selected"
+* accounts.not-specified: "Not specified"
+* accounts.counteraccount-change: "Counteraccount change"
+* accounts.transcript-download: "Transcript download"
+* accounts.account-closure: "Account Closure"
+* accounts.completed-transfers: "Completed transfers"
+* accounts.scheduled-transfers: "Scheduled transfers"
+* accounts.beneficiary-account: "Beneficiary Account"
+* accounts.one-time-transfer: "One-time Transfer"
+* accounts.recurring-transfer: "Recurring Transfer"
+* accounts.transfer-completed: "Transfer completed"
+* accounts.dhb-account: "DHB Account"
+
+### Personal Details Page
+* personal-details.update-id: "Update ID"
+* personal-details.change-password: "Change password"
+* personal-details.change-address: "Change Address"
+* personal-details.personal-information: "Personal information"
+* personal-details.online-identification: "Online identification"
+* personal-details.saving-profile: "Saving Profile"
+
+### SOF Questions Page
+* sof-questions.editing: "Editing..."
+* sof-questions.edit-details: "Edit details"
+
+### Documents Page
+* documents.account-statements: "Account Statements"
+* documents.your-contracts: "Your contracts"
+
+### CSV Headers
+* csv.date: "Date"
+* csv.description: "Description"
+* csv.account-number: "Account Number"
+* csv.balance: "Balance"
+* csv.type: "Type"
+
+### Search and Navigation
+* search.filter: "Filter"
+* search.search-contacts: "Search contacts"
+
+### Chat and Messages
+* chat.sent-photo: "Sent a photo"
+* chat.coffee: "Coffee?"
+* chat.hello: "Hello! 👋"
+
+### Analytics Dashboard
+* analytics.traffic-sources: "Traffic sources"
+* analytics.session-duration: "Session Duration"
+* analytics.page-views: "Page Views"
+* analytics.total-visits: "Total Visits"
+* analytics.social: "Social"
+* analytics.search-engines: "Search Engines"
+* analytics.direct: "Direct"
+* analytics.other: "Other"
+
+### Map and Location
+* maps.new-york: "New York"
+* maps.los-angeles: "Los Angeles"
+
+### Chart Data
+* charts.marine-sprite: "Marine Sprite"
+* charts.striking-calf: "Striking Calf"
+* charts.tank-picture: "Tank Picture"
+* charts.bucket-slope: "Bucket Slope"
+* charts.reborn-kid: "Reborn Kid"
+
+### Orders and Products
+* orders.pocket-speaker: "Pocket Speaker"
+* orders.glass-teapot: "Glass Teapot"
+* orders.spoon-saver: "Spoon Saver"
+* orders.hip-flash: "Hip Flash"
+* orders.woven-slippers: "Woven Slippers"
+* orders.womens-watch: "Womens Watch"
+* orders.order-id: "Order ID"
+* orders.payment-method: "Payment Method"
+
+### Invoice and Customer Names
+* invoice.anna-walley: "Anna Walley"
+* invoice.doris-fritz: "Doris Fritz"
+* invoice.edward-adkins: "Edward Adkins"
+* invoice.edwin-baker: "Edwin Baker"
+* invoice.gordon-workman: "Gordon Workman"
+* invoice.jo-avery: "Jo Avery"
+* invoice.leigha-hyden: "Leigha Hyden"
+* invoice.maureen-gagnon: "Maureen Gagnon"
+
+### Footer and Help
+* footer.help-center: "Help Center"
+
+### Components and UI
+* components.show-badge: "Show Badge"
+* components.add-account: "Add account"
+* components.full-width: "Full width"
+* components.email-address: "Email Address"
+* components.material-ui: "Material UI"
+
+### Authentication
+* auth.sign-in: "Sign In"
+* auth.sign-up: "Sign Up"
+* auth.reset-password: "Reset Password"
+
+### Page Titles
+* pages.material-icons: "Material Icons"
+* pages.feather-icons: "Feather Icons"
+* pages.getting-started: "Getting Started"
+* pages.google-maps: "Google Maps"
+* pages.invoice-details: "Invoice Details"
+* pages.analytics-dashboard: "Analytics Dashboard"
+
+## Summary
+Total keys marked as (used): 45
+Total keys marked as (need keys): 89
+Total keys in original file: 1913
+Usage percentage: ~2.4%
+Missing keys percentage: ~4.7%
+
+The keys marked with "(used)" are actively referenced in the React components using the useTranslation hook and t() function calls.
+The keys marked with "(need keys)" are hardcoded text in the application that should be localized but don't exist in the current localization file.

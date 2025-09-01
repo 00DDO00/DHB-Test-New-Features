@@ -354,6 +354,20 @@ const MaxiSpaarAccount: React.FC = () => {
 
   return (
       <Box sx={{ pl: 3, pr: 3, maxWidth: '100%' }}>      {/* Breadcrumbs */}
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        DHB MaxiSpaar Account
+      </Typography>
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink 
           component={Link}

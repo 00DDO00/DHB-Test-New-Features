@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { withTheme } from "@emotion/react";
 import { useTranslation } from "react-i18next";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 import {
   Grid,
@@ -10,6 +10,7 @@ import {
   IconButton as MuiIconButton,
   Toolbar,
   Typography,
+  Button,
   Badge,
   Box,
   Card,
@@ -64,13 +65,15 @@ const LogoImage = styled.img`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-const NavLink = styled(Link)<{ active?: boolean }>`
+const NavButton = styled(MuiIconButton)<{ active?: boolean }>`
   color: #ffffff;
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 4px;
   transition: all 0.2s ease;
   position: relative;
+  display: inline-flex;
+  align-items: center;
   background: ${(props) =>
     props.active ? "rgba(252, 159, 21, 0.1)" : "transparent"};
 
@@ -78,6 +81,18 @@ const NavLink = styled(Link)<{ active?: boolean }>`
     background: ${(props) =>
       props.active ? "rgba(252, 159, 21, 0.15)" : "rgba(255, 255, 255, 0.1)"};
   }
+
+  &:focus,
+  &.Mui-focusVisible,
+  &:focus-visible,
+  .MuiTouchRipple-root {
+    outline: 3px solid #ff9500;
+    outline-offset: 3px;
+  }
+  text-transform: none;
+  box-shadow: none;
+  min-width: 0;
+  background-color: transparent;
 `;
 
 const NavText = styled(Typography)<{ active?: boolean }>`
@@ -692,23 +707,25 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                     gap: "1px",
                   }}
                 >
-                                     <NavLink to="/private" active={isActive("/private")}>
-                     <NavText active={isActive("/private")}>{t('home')}</NavText>
-                   </NavLink>
-                   <NavLink to="/accounts" active={isActive("/accounts")}>
-                     <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
-                   </NavLink>
-                  <NavLink to="/settings" active={isActive("/settings")}>
+                  <NavButton onClick={() => (window.location.href = "/private")} active={isActive("/private")} aria-current={isActive("/private") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('home')}>
+                    <NavText active={isActive("/private")}>{t('home')}</NavText>
+                  </NavButton>
+                  <NavButton onClick={() => (window.location.href = "/accounts")} active={isActive("/accounts")} aria-current={isActive("/accounts") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('accounts.title')}>
+                    <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
+                  </NavButton>
+                  <NavButton onClick={() => (window.location.href = "/settings")} active={isActive("/settings")} aria-current={isActive("/settings") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('settings')}>
                     <NavText active={isActive("/settings")}>{t('settings')}</NavText>
-                  </NavLink>
-                  <NavLink
-                    to="/pages/profile"
+                  </NavButton>
+                  <NavButton
+                    onClick={() => (window.location.href = "/pages/profile")}
                     active={isActive("/pages/profile")}
+                    aria-current={isActive("/pages/profile") ? "page" : undefined}
+                    disableRipple
+                    tabIndex={0}
+                    aria-label={t('contact')}
                   >
-                                    <NavText active={isActive("/pages/profile")}>
-                  {t('contact')}
-                </NavText>
-                  </NavLink>
+                    <NavText active={isActive("/pages/profile")}>{t('contact')}</NavText>
+                  </NavButton>
                 </Box>
               )}
             </Grid>

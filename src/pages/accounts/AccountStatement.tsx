@@ -175,6 +175,20 @@ const AccountStatement: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Account Statement
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink component={Link} to="/" color="inherit" sx={{ textDecoration: 'none' }}>
@@ -191,6 +205,21 @@ const AccountStatement: React.FC = () => {
 
 
 
+      {/* Transaction Filters Section */}
+      <Typography
+        component="h2"
+        variant="h5"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Transaction Filters
+      </Typography>
+      
       {/* Account Statement Section */}
       <Card>
         <CardContent>
@@ -224,6 +253,21 @@ const AccountStatement: React.FC = () => {
             </Box>
           </Box>
 
+          {/* Transaction History Section */}
+          <Typography
+            component="h3"
+            variant="h6"
+            sx={{
+              position: 'absolute',
+              left: '-10000px',
+              width: '1px',
+              height: '1px',
+              overflow: 'hidden'
+            }}
+          >
+            Transaction History
+          </Typography>
+          
           {/* Table */}
           <TableContainer component={Paper} variant="outlined">
             <Table>

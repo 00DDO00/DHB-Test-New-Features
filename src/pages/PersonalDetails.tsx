@@ -275,6 +275,20 @@ const PersonalDetails: React.FC = () => {
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#F5F5F5', minHeight: '100vh' }}>
+      {/* Page heading */}
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden'
+        }}
+      >
+        Personal Details
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <MuiLink 
@@ -311,8 +325,9 @@ const PersonalDetails: React.FC = () => {
         }}
       >
         <CardContent sx={{ p: 4 }}>
-          {/* Title */}
+          {/* Personal Information Section */}
           <Typography
+            component="h2"
             variant="h5"
             sx={{
               fontWeight: 700,
@@ -321,7 +336,7 @@ const PersonalDetails: React.FC = () => {
               fontSize: '24px',
             }}
           >
-            Personal Details
+            Personal Information
           </Typography>
 
           {/* Description */}

@@ -15,6 +15,34 @@ const GlobalStyle = (props: any) => (
         margin: 0;
       }
 
+      /* WCAG: Ensure visible focus indicator for keyboard users */
+      *:focus {
+        outline: 2px solid #0a84ff;
+        outline-offset: 2px;
+      }
+
+      /* Prefer :focus-visible where supported for better UX */
+      :focus-visible,
+      .Mui-focusVisible {
+        outline: 3px solid #ff9500;
+        outline-offset: 3px;
+      }
+
+      /* Strengthen focus ring for common interactive elements (MUI + native) */
+      a[href]:focus,
+      button:focus,
+      .MuiButtonBase-root:focus,
+      .MuiButtonBase-root.Mui-focusVisible,
+      input:focus,
+      select:focus,
+      textarea:focus,
+      .MuiInputBase-input:focus,
+      [role="button"]:focus,
+      [tabindex]:not([tabindex="-1"]):focus {
+        outline: 3px solid #0a84ff;
+        outline-offset: 3px;
+      }
+
       .MuiCardHeader-action .MuiIconButton-root {
         padding: 4px;
         width: 28px;
