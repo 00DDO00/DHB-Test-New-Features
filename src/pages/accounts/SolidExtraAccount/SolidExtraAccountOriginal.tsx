@@ -30,7 +30,7 @@ import {
   Home as HomeIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import { apiService } from '../../../services/api';
 
 interface SolidExtraOption {
   id: string;

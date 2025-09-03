@@ -1,2 +1,2 @@
 // Re-export the modular SaveOnlineAccount component
-export { default } from './SaveOnlineAccount/index';
+export { default } from './index';

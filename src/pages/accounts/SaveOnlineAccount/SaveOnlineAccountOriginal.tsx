@@ -41,7 +41,7 @@ import {
   CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import { apiService } from '../../../services/api';
 
 interface TabPanelProps {
   children?: React.ReactNode;
