@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiService, PersonalDetails as PersonalDetailsType } from '../services/api';
+import { apiService, PersonalDetails as PersonalDetailsType } from '../../services/api';
 import {
   Box,
   Typography,

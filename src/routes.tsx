@@ -52,7 +52,7 @@ import InvoiceDetails from "./pages/pages/InvoiceDetails";
 import InvoiceList from "./pages/pages/InvoiceList";
 import Orders from "./pages/pages/Orders";
 import Pricing from "./pages/pages/Pricing";
-import Settings from "./pages/Settings";
+import Settings from "./pages/settings/Settings";
 import Projects from "./pages/pages/Projects";
 import Chat from "./pages/pages/Chat";
 
@@ -95,14 +95,14 @@ import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount/CombiSpaarAcco
 import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount/MaxiSpaarAccount";
 import SolidExtraAccount from "./pages/accounts/SolidExtraAccount/SolidExtraAccount";
 import AccountStatement from "./pages/accounts/AccountStatement/AccountStatement";
-import ChangeCounterAccount from "./pages/ChangeCounterAccount";
-import Documents from "./pages/Documents";
-import PersonalDetails from "./pages/PersonalDetails";
-import ChangePassword from "./pages/ChangePassword";
-import OnlineIdentification from "./pages/OnlineIdentification";
-import RegisteredDevices from "./pages/RegisteredDevices";
-import DailyLimit from "./pages/DailyLimit";
-import SOFQuestions from "./pages/SOFQuestions";
+import ChangeCounterAccount from "./pages/settings/ChangeCounterAccount";
+import Documents from "./pages/settings/Documents";
+import PersonalDetails from "./pages/settings/PersonalDetails";
+import ChangePassword from "./pages/settings/ChangePassword";
+import OnlineIdentification from "./pages/settings/OnlineIdentification";
+import RegisteredDevices from "./pages/settings/RegisteredDevices";
+import DailyLimit from "./pages/settings/DailyLimit";
+import SOFQuestions from "./pages/settings/SOFQuestions";
 const Analytics = async(() => import("./pages/dashboards/Analytics"));
 const SaaS = async(() => import("./pages/dashboards/SaaS"));
 

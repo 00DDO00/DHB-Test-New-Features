@@ -1,5 +1,5 @@
 import React from 'react';
-import { apiService } from '../services/api';
+import { apiService } from '../../services/api';
 import {
   Box,
   Typography,

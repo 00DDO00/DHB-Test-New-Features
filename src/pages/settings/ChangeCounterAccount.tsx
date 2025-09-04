@@ -20,7 +20,7 @@ import {
   Close as CloseIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { apiService, AccountByIban } from '../services/api';
+import { apiService, AccountByIban } from '../../services/api';
 
 const ChangeCounterAccount: React.FC = () => {
   const navigate = useNavigate();

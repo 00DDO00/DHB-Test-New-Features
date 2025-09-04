@@ -19,7 +19,7 @@ import {
   Home as HomeIcon,
 } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiService } from '../services/api-yaml-compliant';
+import { apiService } from '../../services/api-yaml-compliant';
 
 const SOFQuestions: React.FC = () => {
   const navigate = useNavigate();
