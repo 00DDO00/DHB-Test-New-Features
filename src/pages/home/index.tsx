@@ -6,6 +6,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
+import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
+import { flushSync } from 'react-dom';
+import EditModeFAB from '../dashboards/Default/EditModeFAB';
+import WidgetCatalog from '../dashboards/Default/WidgetCatalog';
+import DraggableWidget from '../dashboards/Default/DraggableWidget';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -20,6 +25,18 @@ const Home: React.FC = () => {
   } | null>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [userName, setUserName] = useState("Holder name");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [visibleWidgets, setVisibleWidgets] = useState([
+    'welcome-card',
+    'accounts-card', 
+    'account-opening',
+    'combispaar-stats',
+    'settings-widget',
+    'chart-widget'
+  ]);
+  const [dashboardKey, setDashboardKey] = useState(0);
+  const [forceRender, setForceRender] = useState(0);
+  const [isDragActive, setIsDragActive] = useState(false);
 
   // Sample data for settings
   const settingsItems = [
@@ -58,6 +75,266 @@ const Home: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleToggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
+
+  const renderAdditionalWidget = (widgetId: string, index: number) => {
+    switch (widgetId) {
+      case 'stats':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <StatsWidget
+                  title="Additional Stats"
+                  value="€ 1,234.56"
+                  subtitle="Sample Statistics"
+                  actions={
+                    <Button variant="outlined" size="small">
+                      View Details
+                    </Button>
+                  }
+                />
+              </DraggableWidget>
+            ) : (
+              <StatsWidget
+                title="Additional Stats"
+                value="€ 1,234.56"
+                subtitle="Sample Statistics"
+                actions={
+                  <Button variant="outlined" size="small">
+                    View Details
+                  </Button>
+                }
+              />
+            )}
+          </Box>
+        );
+      case 'line-chart':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <ChartWidget
+                  title="Line Chart"
+                  filterLabel="Period"
+                  filterValue="Last 6 months"
+                  chartData={[
+                    { label: 'Jan', value: 1000, color: '#004996' },
+                    { label: 'Feb', value: 1200, color: '#004996' },
+                    { label: 'Mar', value: 1100, color: '#004996' },
+                    { label: 'Apr', value: 1300, color: '#004996' },
+                    { label: 'May', value: 1250, color: '#004996' },
+                    { label: 'Jun', value: 1400, color: '#004996' }
+                  ]}
+                />
+              </DraggableWidget>
+            ) : (
+              <ChartWidget
+                title="Line Chart"
+                filterLabel="Period"
+                filterValue="Last 6 months"
+                chartData={[
+                  { label: 'Jan', value: 1000, color: '#004996' },
+                  { label: 'Feb', value: 1200, color: '#004996' },
+                  { label: 'Mar', value: 1100, color: '#004996' },
+                  { label: 'Apr', value: 1300, color: '#004996' },
+                  { label: 'May', value: 1250, color: '#004996' },
+                  { label: 'Jun', value: 1400, color: '#004996' }
+                ]}
+              />
+            )}
+          </Box>
+        );
+      case 'bar-chart':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <ChartWidget
+                  title="Bar Chart"
+                  filterLabel="Category"
+                  filterValue="All categories"
+                  chartData={[
+                    { label: 'Savings', value: 5000, color: '#FF6B35' },
+                    { label: 'Investments', value: 3000, color: '#004996' },
+                    { label: 'Checking', value: 2000, color: '#28a745' }
+                  ]}
+                />
+              </DraggableWidget>
+            ) : (
+              <ChartWidget
+                title="Bar Chart"
+                filterLabel="Category"
+                filterValue="All categories"
+                chartData={[
+                  { label: 'Savings', value: 5000, color: '#FF6B35' },
+                  { label: 'Investments', value: 3000, color: '#004996' },
+                  { label: 'Checking', value: 2000, color: '#28a745' }
+                ]}
+              />
+            )}
+          </Box>
+        );
+      case 'doughnut-chart':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <ChartWidget
+                  title="Doughnut Chart"
+                  filterLabel="Portfolio"
+                  filterValue="Current allocation"
+                  chartData={[
+                    { label: 'Stocks', value: 60, color: '#004996' },
+                    { label: 'Bonds', value: 30, color: '#FF6B35' },
+                    { label: 'Cash', value: 10, color: '#28a745' }
+                  ]}
+                />
+              </DraggableWidget>
+            ) : (
+              <ChartWidget
+                title="Doughnut Chart"
+                filterLabel="Portfolio"
+                filterValue="Current allocation"
+                chartData={[
+                  { label: 'Stocks', value: 60, color: '#004996' },
+                  { label: 'Bonds', value: 30, color: '#FF6B35' },
+                  { label: 'Cash', value: 10, color: '#28a745' }
+                ]}
+              />
+            )}
+          </Box>
+        );
+      case 'table':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <Widget
+                  title="Data Table"
+                  onMenuClick={() => console.log('Table menu clicked')}
+                >
+                  <Box sx={{ p: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Sample table data would go here
+                    </Typography>
+                  </Box>
+                </Widget>
+              </DraggableWidget>
+            ) : (
+              <Widget
+                title="Data Table"
+                onMenuClick={() => console.log('Table menu clicked')}
+              >
+                <Box sx={{ p: 2 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Sample table data would go here
+                  </Typography>
+                </Box>
+              </Widget>
+            )}
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const handleWidgetReorder = (result: DropResult) => {
+    console.log('Drag result:', result);
+    
+    if (!result.destination) {
+      console.log('No destination, drag cancelled');
+      return;
+    }
+    
+    // Handle dropping from dashboard to catalog (removal)
+    if (result.source.droppableId === 'dashboard' && result.destination.droppableId === 'catalog') {
+      const widgetId = result.draggableId;
+      console.log('Removing widget:', widgetId);
+      setVisibleWidgets(prev => {
+        const newWidgets = prev.filter(id => id !== widgetId);
+        console.log('Updated visible widgets after removal:', newWidgets);
+        return newWidgets;
+      });
+      return;
+    }
+
+    // Handle dropping from catalog to dashboard (addition)
+    if (result.source.droppableId === 'catalog' && result.destination.droppableId === 'dashboard') {
+      const widgetId = result.draggableId;
+      console.log('Adding widget:', widgetId, 'to position:', result.destination.index);
+      
+      // Use flushSync to force immediate DOM update
+      flushSync(() => {
+        setVisibleWidgets(prev => {
+          if (!prev.includes(widgetId)) {
+            const newWidgets = Array.from(prev);
+            newWidgets.splice(result.destination.index, 0, widgetId);
+            console.log('New visible widgets after addition:', newWidgets);
+            return newWidgets;
+          } else {
+            console.log('Widget already exists, reordering instead');
+            // If widget already exists, just reorder it
+            const newWidgets = Array.from(prev);
+            const currentIndex = newWidgets.indexOf(widgetId);
+            if (currentIndex !== -1) {
+              newWidgets.splice(currentIndex, 1);
+              newWidgets.splice(result.destination.index, 0, widgetId);
+              console.log('Reordered widgets:', newWidgets);
+            }
+            return newWidgets;
+          }
+        });
+      });
+      
+      // Force additional re-render to ensure visibility
+      flushSync(() => {
+        setDashboardKey(prev => prev + 1);
+        setForceRender(prev => prev + 1);
+      });
+      
+      // Double-check with requestAnimationFrame to ensure DOM update
+      requestAnimationFrame(() => {
+        setForceRender(prev => prev + 1);
+      });
+      return;
+    }
+
+    // Handle reordering within dashboard
+    if (result.source.droppableId === 'dashboard' && result.destination.droppableId === 'dashboard') {
+      setVisibleWidgets(prev => {
+        const newWidgets = Array.from(prev);
+        const [reorderedWidget] = newWidgets.splice(result.source.index, 1);
+        newWidgets.splice(result.destination.index, 0, reorderedWidget);
+        console.log('Reordered widgets within dashboard:', newWidgets);
+        return newWidgets;
+      });
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
@@ -80,8 +357,25 @@ const Home: React.FC = () => {
   const saveOnlineAccount = accounts.find(acc => acc.name === "DHB SaveOnline");
   const maxiSpaarAccount = accounts.find(acc => acc.name === "DHB MaxiSpaar");
 
+  const handleDragStart = () => {
+    setIsDragActive(true);
+  };
+
+  const handleDragEnd = (result: DropResult) => {
+    setIsDragActive(false);
+    handleWidgetReorder(result);
+  };
+
   return (
-    <Box sx={{ p: 1 }}>
+    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <Box 
+        key={forceRender}
+        sx={{ 
+          p: 1,
+          marginRight: isEditMode ? '320px' : '0',
+          transition: 'margin-right 0.3s ease'
+        }}
+      >
       {/* Main page heading - hidden visually but available to screen readers */}
       <Typography
         component="h1"
@@ -113,15 +407,25 @@ const Home: React.FC = () => {
         </MuiLink>
       </Breadcrumbs>
       
-      <Box sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '16px',
-        paddingLeft: '80px',
-        paddingRight: '80px',
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
+        <Droppable droppableId="dashboard" direction="vertical" key={dashboardKey}>
+          {(provided, snapshot) => (
+            <Box 
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '16px',
+                paddingLeft: '80px',
+                paddingRight: '80px',
+                maxWidth: '1200px',
+                margin: '0 auto',
+                minHeight: '200px',
+                backgroundColor: snapshot.isDraggingOver ? 'rgba(0, 73, 150, 0.05)' : 'transparent',
+                borderRadius: '8px',
+                transition: 'background-color 0.2s ease'
+              }}
+            >
         {/* Account Overview Section */}
         <Typography
           component="h2"
@@ -138,139 +442,158 @@ const Home: React.FC = () => {
         </Typography>
         
         {/* Welcome Card - DHB SaveOnline */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
-          <AccountWidget
-            accountName={`${t('welcome')}, ${userName}`}
-            accountType={t('saveOnline')}
-            balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
-            iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
-            interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
-            primaryAction={{
-              label: "Make Transfer",
-              onClick: () => navigate('/accounts'),
-              color: 'orange'
-            }}
-            onAccountTypeClick={() => navigate('/accounts')}
-          />
-        </Box>
+        {visibleWidgets.includes('welcome-card') && (
+          <Box key={`welcome-card-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="welcome-card"
+                index={visibleWidgets.indexOf('welcome-card')}
+                isEditMode={isEditMode}
+              >
+                <AccountWidget
+                  accountName={`${t('welcome')}, ${userName}`}
+                  accountType={t('saveOnline')}
+                  balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
+                  iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
+                  interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
+                  primaryAction={{
+                    label: "Make Transfer",
+                    onClick: () => navigate('/accounts'),
+                    color: 'orange'
+                  }}
+                  onAccountTypeClick={() => navigate('/accounts')}
+                />
+              </DraggableWidget>
+            ) : (
+              <AccountWidget
+                accountName={`${t('welcome')}, ${userName}`}
+                accountType={t('saveOnline')}
+                balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
+                iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
+                interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
+                primaryAction={{
+                  label: "Make Transfer",
+                  onClick: () => navigate('/accounts'),
+                  color: 'orange'
+                }}
+                onAccountTypeClick={() => navigate('/accounts')}
+              />
+            )}
+          </Box>
+        )}
 
         {/* Accounts Card - DHB MaxiSpaar */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
-          <AccountWidget
-            accountName={t('accounts.title')}
-            accountType={t('maxiSpaar')}
-            balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
-            iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
-            interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
-            primaryAction={{
-              label: "Open account",
-              onClick: () => navigate('/accounts/maxispaar'),
-              color: 'primary'
-            }}
-            onAccountTypeClick={() => navigate('/accounts/maxispaar')}
-          />
-        </Box>
+        {visibleWidgets.includes('accounts-card') && (
+          <Box key={`accounts-card-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="accounts-card"
+                index={visibleWidgets.indexOf('accounts-card')}
+                isEditMode={isEditMode}
+              >
+                <AccountWidget
+                  accountName={t('accounts.title')}
+                  accountType={t('maxiSpaar')}
+                  balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
+                  iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
+                  interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
+                  primaryAction={{
+                    label: "Open account",
+                    onClick: () => navigate('/accounts/maxispaar'),
+                    color: 'primary'
+                  }}
+                  onAccountTypeClick={() => navigate('/accounts/maxispaar')}
+                />
+              </DraggableWidget>
+            ) : (
+              <AccountWidget
+                accountName={t('accounts.title')}
+                accountType={t('maxiSpaar')}
+                balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
+                iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
+                interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
+                primaryAction={{
+                  label: "Open account",
+                  onClick: () => navigate('/accounts/maxispaar'),
+                  color: 'primary'
+                }}
+                onAccountTypeClick={() => navigate('/accounts/maxispaar')}
+              />
+            )}
+          </Box>
+        )}
 
         {/* Account Opening Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-          <Widget
-            title={t('accounts.title') || 'Accounts (missing key)'}
-            /*subtitle="DHB Accounts"*/
-            onMenuClick={() => console.log('Menu clicked')}
-            actions={
-              <Button
-                variant="outlined"
-                endIcon={<Add />}
-                onClick={() => navigate('/accounts/open')}
-                sx={{
-                  background: 'transparent',
-                  color: '#004996',
-                  border: '1px solid #004996',
-                  textTransform: 'none',
-                  borderRadius: '8px',
-                  padding: '12px 24px',
-                  width: '100%',
-                  fontWeight: 500,
-                  '&:hover': { 
-                    background: 'rgba(0, 73, 150, 0.1)',
-                    border: '1px solid #004996'
-                  }
-                }}
+        {visibleWidgets.includes('account-opening') && (
+          <Box key={`account-opening-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="account-opening"
+                index={visibleWidgets.indexOf('account-opening')}
+                isEditMode={isEditMode}
               >
-                Open account
-              </Button>
-            }
-          >
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Typography 
-                variant="h3" 
-                color="#004996" 
-                fontWeight="bold"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '1.5rem',
-                  lineHeight: 1.2,
-                  '&:hover': {
-                    textDecoration: 'underline',
-                    opacity: 0.8
-                  }
-                }}
-                onClick={() => navigate('/accounts/open')}
+              <Widget
+                title={t('accounts.title') || 'Accounts (missing key)'}
+                /*subtitle="DHB Accounts"*/
+                onMenuClick={() => console.log('Menu clicked')}
+                actions={
+                  <Button
+                    variant="outlined"
+                    endIcon={<Add />}
+                    onClick={() => navigate('/accounts/open')}
+                    sx={{
+                      background: 'transparent',
+                      color: '#004996',
+                      border: '1px solid #004996',
+                      textTransform: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      width: '100%',
+                      fontWeight: 500,
+                      '&:hover': { 
+                        background: 'rgba(0, 73, 150, 0.1)',
+                        border: '1px solid #004996'
+                      }
+                    }}
+                  >
+                    Open account
+                  </Button>
+                }
               >
-                {t('accounts.dhb') || 'DHB Accounts (missing key)'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
-              </Typography>
-            </Box>
-          </Widget>
-        </Box>
-
-        {/* Combispaar Accounts Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-          <StatsWidget
-            title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
-            value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
-            subtitle={
-              <Typography 
-                variant="h3" 
-                color="#004996" 
-                fontWeight="bold"
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                    opacity: 0.8
-                  }
-                }}
-                onClick={() => navigate('/accounts/combispaar')}
-              >
-                {`Total ${t('combiSpaar')} Balances`}
-              </Typography>
-            }
-            actions={
-              <Box display="flex" gap={1}>
-                <Button
-                  variant="contained"
-                  endIcon={<ArrowForward />}
-                  onClick={() => navigate('/accounts/saveonline')}
-                  sx={{
-                    background: '#FF6B35',
-                    color: 'white',
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 24px',
-                    flex: 1,
-                    fontWeight: 500,
-                    '&:hover': { background: '#e55a2b' }
-                  }}
-                >
-                  {t('payments.title')}
-                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Typography 
+                    variant="h3" 
+                    color="#004996" 
+                    fontWeight="bold"
+                    sx={{
+                      cursor: 'pointer',
+                      fontSize: '1.5rem',
+                      lineHeight: 1.2,
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        opacity: 0.8
+                      }
+                    }}
+                    onClick={() => navigate('/accounts/open')}
+                  >
+                    {t('accounts.dhb') || 'DHB Accounts (missing key)'}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
+                  </Typography>
+                </Box>
+              </Widget>
+            </DraggableWidget>
+          ) : (
+            <Widget
+              title={t('accounts.title') || 'Accounts (missing key)'}
+              /*subtitle="DHB Accounts"*/
+              onMenuClick={() => console.log('Menu clicked')}
+              actions={
                 <Button
                   variant="outlined"
                   endIcon={<Add />}
-                  onClick={() => navigate('/accounts/combispaar')}
+                  onClick={() => navigate('/accounts/open')}
                   sx={{
                     background: 'transparent',
                     color: '#004996',
@@ -278,7 +601,7 @@ const Home: React.FC = () => {
                     textTransform: 'none',
                     borderRadius: '8px',
                     padding: '12px 24px',
-                    flex: 1,
+                    width: '100%',
                     fontWeight: 500,
                     '&:hover': { 
                       background: 'rgba(0, 73, 150, 0.1)',
@@ -286,12 +609,177 @@ const Home: React.FC = () => {
                     }
                   }}
                 >
-                  {t('accounts.open-account')}
+                  Open account
                 </Button>
+              }
+            >
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Typography 
+                  variant="h3" 
+                  color="#004996" 
+                  fontWeight="bold"
+                  sx={{
+                    cursor: 'pointer',
+                    fontSize: '1.5rem',
+                    lineHeight: 1.2,
+                    '&:hover': {
+                      textDecoration: 'underline',
+                      opacity: 0.8
+                    }
+                  }}
+                  onClick={() => navigate('/accounts/open')}
+                >
+                  {t('accounts.dhb') || 'DHB Accounts (missing key)'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
+                </Typography>
               </Box>
-            }
-          />
-        </Box>
+            </Widget>
+          )}
+          </Box>
+        )}
+
+        {/* Combispaar Accounts Card */}
+        {visibleWidgets.includes('combispaar-stats') && (
+          <Box key={`combispaar-stats-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="combispaar-stats"
+                index={visibleWidgets.indexOf('combispaar-stats')}
+                isEditMode={isEditMode}
+              >
+              <StatsWidget
+                title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
+                value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
+                subtitle={
+                  <Typography 
+                    variant="h3" 
+                    color="#004996" 
+                    fontWeight="bold"
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        opacity: 0.8
+                      }
+                    }}
+                    onClick={() => navigate('/accounts/combispaar')}
+                  >
+                    {`Total ${t('combiSpaar')} Balances`}
+                  </Typography>
+                }
+                actions={
+                  <Box display="flex" gap={1}>
+                    <Button
+                      variant="contained"
+                      endIcon={<ArrowForward />}
+                      onClick={() => navigate('/accounts/saveonline')}
+                      sx={{
+                        background: '#FF6B35',
+                        color: 'white',
+                        textTransform: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        flex: 1,
+                        fontWeight: 500,
+                        '&:hover': { background: '#e55a2b' }
+                      }}
+                    >
+                      {t('payments.title')}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      endIcon={<Add />}
+                      onClick={() => navigate('/accounts/combispaar')}
+                      sx={{
+                        background: 'transparent',
+                        color: '#004996',
+                        border: '1px solid #004996',
+                        textTransform: 'none',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        flex: 1,
+                        fontWeight: 500,
+                        '&:hover': { 
+                          background: 'rgba(0, 73, 150, 0.1)',
+                          border: '1px solid #004996'
+                        }
+                      }}
+                    >
+                      {t('accounts.open-account')}
+                    </Button>
+                  </Box>
+                }
+              />
+            </DraggableWidget>
+          ) : (
+            <StatsWidget
+              title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
+              value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
+              subtitle={
+                <Typography 
+                  variant="h3" 
+                  color="#004996" 
+                  fontWeight="bold"
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                      opacity: 0.8
+                    }
+                  }}
+                  onClick={() => navigate('/accounts/combispaar')}
+                >
+                  {`Total ${t('combiSpaar')} Balances`}
+                </Typography>
+              }
+              actions={
+                <Box display="flex" gap={1}>
+                  <Button
+                    variant="contained"
+                    endIcon={<ArrowForward />}
+                    onClick={() => navigate('/accounts/saveonline')}
+                    sx={{
+                      background: '#FF6B35',
+                      color: 'white',
+                      textTransform: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      flex: 1,
+                      fontWeight: 500,
+                      '&:hover': { background: '#e55a2b' }
+                    }}
+                  >
+                    {t('payments.title')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    endIcon={<Add />}
+                    onClick={() => navigate('/accounts/combispaar')}
+                    sx={{
+                      background: 'transparent',
+                      color: '#004996',
+                      border: '1px solid #004996',
+                      textTransform: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      flex: 1,
+                      fontWeight: 500,
+                      '&:hover': { 
+                        background: 'rgba(0, 73, 150, 0.1)',
+                        border: '1px solid #004996'
+                      }
+                    }}
+                  >
+                    {t('accounts.open-account')}
+                  </Button>
+                </Box>
+              }
+            />
+          )}
+          </Box>
+        )}
 
         {/* Quick Actions Section */}
         <Typography
@@ -309,9 +797,21 @@ const Home: React.FC = () => {
         </Typography>
         
         {/* Settings Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
-          <SettingsWidget items={settingsItems} />
-        </Box>
+        {visibleWidgets.includes('settings-widget') && (
+          <Box key={`settings-widget-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="settings-widget"
+                index={visibleWidgets.indexOf('settings-widget')}
+                isEditMode={isEditMode}
+              >
+                <SettingsWidget items={settingsItems} />
+              </DraggableWidget>
+            ) : (
+              <SettingsWidget items={settingsItems} />
+            )}
+          </Box>
+        )}
 
         {/* Financial Overview Section */}
         <Typography
@@ -329,18 +829,56 @@ const Home: React.FC = () => {
         </Typography>
         
         {/* Financial Overview Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-          <ChartWidget
-            title={t('accounts')}
-            filterLabel="Filter"
-            filterValue="last year"
-            chartData={chartData.map(item => ({
-              label: item.label,
-              value: formatCurrency(item.value),
-              color: item.color
-            }))}
-          />
-        </Box>
+        {visibleWidgets.includes('chart-widget') && (
+          <Box key={`chart-widget-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId="chart-widget"
+                index={visibleWidgets.indexOf('chart-widget')}
+                isEditMode={isEditMode}
+              >
+                <ChartWidget
+                  title={t('accounts')}
+                  filterLabel="Filter"
+                  filterValue="last year"
+                  chartData={chartData.map(item => ({
+                    label: item.label,
+                    value: formatCurrency(item.value),
+                    color: item.color
+                  }))}
+                />
+              </DraggableWidget>
+            ) : (
+              <ChartWidget
+                title={t('accounts')}
+                filterLabel="Filter"
+                filterValue="last year"
+                chartData={chartData.map(item => ({
+                  label: item.label,
+                  value: formatCurrency(item.value),
+                  color: item.color
+                }))}
+              />
+            )}
+          </Box>
+        )}
+        
+        {/* Render additional widgets that were added from catalog */}
+        {visibleWidgets
+          .filter(widgetId => !['welcome-card', 'accounts-card', 'account-opening', 'combispaar-stats', 'settings-widget', 'chart-widget'].includes(widgetId))
+          .map((widgetId, index) => {
+            const actualIndex = visibleWidgets.indexOf(widgetId);
+            return (
+              <React.Fragment key={`${widgetId}-${forceRender}`}>
+                {renderAdditionalWidget(widgetId, actualIndex)}
+              </React.Fragment>
+            );
+          })}
+        
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
       </Box>
 
       {/* Support Button */}
@@ -358,7 +896,19 @@ const Home: React.FC = () => {
       >
         <Headset aria-hidden="true" />
       </SupportButton>
-    </Box>
+
+      <EditModeFAB
+        isEditMode={isEditMode}
+        onToggleEditMode={handleToggleEditMode}
+      />
+
+      <WidgetCatalog
+        isOpen={isEditMode}
+        onClose={() => setIsEditMode(false)}
+        usedWidgets={visibleWidgets}
+        isDragActive={isDragActive}
+      />
+    </DragDropContext>
   );
 };
 

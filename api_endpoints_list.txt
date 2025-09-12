@@ -1,0 +1,400 @@
+DHB BANK API ENDPOINTS LIST
+============================
+
+Base URL: http://localhost:5003
+All endpoints require standard headers:
+- Content-Type: application/json
+- channelCode: WEB
+- username: testuser
+- lang: en
+- countryCode: NL
+- sessionId: [generated]
+- customerId: CUST001
+
+==========================================
+YAML COMPLIANT ENDPOINTS (Primary API)
+==========================================
+
+ACCOUNT ENDPOINTS (/accounts)
+-----------------------------
+GET  /accounts/list/{customerId}?accountType=saving
+     - Get list of customer accounts
+     - Used by: Dashboard, Account pages
+
+GET  /accounts/saving/modification/{customerId}/{accountNumber}
+     - Get saving account modification options
+     - Used by: Account modification features
+
+GET  /accounts/saving/new/{customerId}
+     - Get new saving account options
+     - Used by: Account opening flows
+
+GET  /accounts/utilities/customerMatchByAccount/{customerId}/{accountNumber}
+     - Verify customer-account match
+     - Used by: Account verification
+
+GET  /accounts/targetAccounts/{customerId}/{accountNumber}/{transactionType}
+     - Get target accounts for transfers
+     - Used by: Transfer functionality
+
+GET  /accounts/saving/transactions/receipt/{accountNumber}
+     - Get transaction receipt
+     - Used by: Transaction details
+
+GET  /accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize}
+     - Get account statement with pagination
+     - Used by: AccountStatement page
+
+GET  /accounts/saving/statement/print/{accountNumber}
+     - Print account statement
+     - Used by: Statement printing
+
+GET  /accounts/saving/rates/{customerId}
+     - Get saving account interest rates
+     - Used by: Rate comparison
+
+GET  /accounts/saving/history/{accountNumber}
+     - Get account history
+     - Used by: Account history features
+
+GET  /accounts/saving/history/print/{accountNumber}
+     - Print account history
+     - Used by: History printing
+
+GET  /accounts/saving/calculate/{customerId}
+     - Calculate saving returns
+     - Used by: Savings calculator
+
+CUSTOMER ENDPOINTS (/customer)
+------------------------------
+GET  /customer/profile/phone/{customerId}
+     - Get customer phone information
+     - Used by: PersonalDetails page
+
+PUT  /customer/profile/phone/{customerId}
+     - Update customer phone
+     - Used by: PersonalDetails page
+
+GET  /customer/profile/identification/{customerId}
+     - Get customer identification
+     - Used by: PersonalDetails page
+
+PUT  /customer/profile/identification/{customerId}
+     - Update customer identification
+     - Used by: PersonalDetails page
+
+GET  /customer/profile/email/{customerId}
+     - Get customer email
+     - Used by: PersonalDetails page
+
+PUT  /customer/profile/email/{customerId}
+     - Update customer email
+     - Used by: PersonalDetails page
+
+GET  /customer/profile/address/{customerId}
+     - Get customer address
+     - Used by: PersonalDetails page
+
+PUT  /customer/profile/address/{customerId}
+     - Update customer address
+     - Used by: PersonalDetails page
+
+POST /customer/profile/validateNetBankingUser
+     - Validate net banking user
+     - Used by: Authentication
+
+POST /customer/profile/login
+     - Customer login
+     - Used by: Authentication
+
+POST /customer/profile/appStatus
+     - Get application status
+     - Used by: App status checks
+
+POST /customer/messages/{customerId}
+     - Create customer message
+     - Used by: Messages functionality
+
+GET  /customer/profile/resolveAddress/{customerId}/{postCode}
+     - Resolve address by postcode
+     - Used by: Address resolution
+
+GET  /customer/profile/resolveAddress/{customerId}/{postCode}/{houseNo}
+     - Resolve address by house number
+     - Used by: Address resolution
+
+GET  /customer/profile/isNetBankingUserActive/{customerId}
+     - Check if net banking user is active
+     - Used by: User status checks
+
+GET  /customer/profile/fullProfile/{customerId}
+     - Get full customer profile
+     - Used by: UserProfile, Dashboard
+
+GET  /customer/messages/{customerId}/{reference}
+     - Get message by reference
+     - Used by: Message details
+
+DELETE /customer/messages/{customerId}/{reference}
+     - Delete customer message
+     - Used by: Message management
+
+GET  /customer/messages/unread/{customerId}
+     - Get unread message count
+     - Used by: Message notifications
+
+GET  /customer/messages/list/{customerId}
+     - Get customer messages list
+     - Used by: Messages page
+
+GET  /customer/downloads/financialAnnualOverview/{customerId}
+     - Get financial annual overview
+     - Used by: Documents page
+
+GET  /customer/downloads/financialAnnualOverview/print/{customerId}/{id}
+     - Print financial annual overview
+     - Used by: Document printing
+
+GET  /customer/downloads/contracts/{customerId}
+     - Get customer contracts
+     - Used by: Documents page
+
+GET  /customer/downloads/contracts/print/{customerId}/{id}
+     - Print customer contract
+     - Used by: Contract printing
+
+GET  /customer/campaigns/list/{customerId}
+     - Get customer campaigns
+     - Used by: Campaign features
+
+TRANSFER ENDPOINTS (/transfers)
+------------------------------
+GET  /transfers/payment/{customerId}/{sourceAccount}
+     - Get transfer simulation
+     - Used by: Transfer functionality
+
+GET  /transfers/ownAccountTransfer/{customerId}/{sourceAccount}
+     - Get own account transfer options
+     - Used by: Internal transfers
+
+GET  /transfers/utilities/holidays
+     - Get bank holidays
+     - Used by: Date calculations
+
+GET  /transfers/utilities/bankDate
+     - Get bank date
+     - Used by: Date calculations
+
+GET  /transfers/payment/futurePayment/list/{customerId}
+     - Get future payment list
+     - Used by: Scheduled payments
+
+GET  /transfers/payment/{customerId}/{reference}
+     - Get payment by reference
+     - Used by: Payment details
+
+VOP ENDPOINTS (/vop)
+-------------------
+POST /vop/requestPayeeVerification
+     - Request payee verification
+     - Used by: Transfer verification
+
+==========================================
+LEGACY ENDPOINTS (/api)
+==========================================
+
+LEGACY ACCOUNT ENDPOINTS
+------------------------
+GET  /api/combispaar
+     - Get combispaar accounts (legacy)
+     - Used by: Dashboard, Combispaar pages
+
+GET  /api/combispaar/page-data
+     - Get combispaar page data (legacy)
+     - Used by: CombispaarAccount page
+
+GET  /api/combispaar/account-options
+     - Get combispaar account options (legacy)
+     - Used by: CombispaarAccount page
+
+GET  /api/combispaar/iban-options
+     - Get combispaar IBAN options (legacy)
+     - Used by: CombispaarAccount page
+
+GET  /api/maxispaar/page-data
+     - Get maxispaar page data (legacy)
+     - Used by: MaxiSpaarAccount page
+
+LEGACY DASHBOARD ENDPOINTS
+-------------------------
+GET  /api/chart-data
+     - Get chart data (legacy)
+     - Used by: Dashboard charts
+
+GET  /api/user
+     - Get user info (legacy)
+     - Used by: Dashboard user info
+
+GET  /api/dashboard
+     - Get dashboard data (legacy)
+     - Used by: Dashboard page
+
+LEGACY PERSONAL DETAILS ENDPOINTS
+--------------------------------
+GET  /api/personal-details
+     - Get personal details (legacy)
+     - Used by: PersonalDetails page
+
+PUT  /api/personal-details
+     - Update personal details (legacy)
+     - Used by: PersonalDetails page
+
+GET  /api/personal-details/phone
+     - Get phone number (legacy)
+     - Used by: PersonalDetails page
+
+PUT  /api/personal-details/password
+     - Update password (legacy)
+     - Used by: ChangePassword page
+
+POST /api/personal-details/validate-password
+     - Validate password (legacy)
+     - Used by: Password validation
+
+LEGACY VERIFICATION ENDPOINTS
+----------------------------
+GET  /api/verification/send-code
+     - Send verification code (legacy)
+     - Used by: 2FA verification
+
+LEGACY ACCOUNT LOOKUP ENDPOINTS
+------------------------------
+GET  /api/account/by-iban
+     - Get account by IBAN (legacy)
+     - Used by: IBAN lookup
+
+LEGACY SOF QUESTIONS ENDPOINTS
+-----------------------------
+GET  /api/sof-questions
+     - Get SOF questions (legacy)
+     - Used by: SOFQuestions page
+
+PUT  /api/sof-questions
+     - Update SOF questions (legacy)
+     - Used by: SOFQuestions page
+
+LEGACY DOCUMENT ENDPOINTS
+------------------------
+GET  /api/documents/download
+     - Download document (legacy)
+     - Used by: Document downloads
+
+==========================================
+ENDPOINT USAGE BY PAGE
+==========================================
+
+DASHBOARD PAGE
+--------------
+- GET /api/dashboard (legacy)
+- GET /api/chart-data (legacy)
+- GET /api/user (legacy)
+- GET /api/combispaar (legacy)
+
+SAVEONLINE ACCOUNT PAGE
+-----------------------
+- GET /accounts/list/CUST001 (YAML)
+- GET /accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize} (YAML)
+- GET /transfers/payment/{customerId}/{sourceAccount} (YAML)
+- GET /transfers/ownAccountTransfer/{customerId}/{sourceAccount} (YAML)
+- GET /transfers/utilities/holidays (YAML)
+- GET /transfers/utilities/bankDate (YAML)
+- GET /transfers/payment/futurePayment/list/{customerId} (YAML)
+- POST /vop/requestPayeeVerification (YAML)
+
+ACCOUNT STATEMENT PAGE
+----------------------
+- GET /accounts/saving/statement/{accountNumber}/{pageIndex}/{pageSize} (YAML)
+- GET /accounts/saving/statement/print/{accountNumber} (YAML)
+
+COMBI SPAAR ACCOUNT PAGE
+------------------------
+- GET /api/combispaar/page-data (legacy)
+- GET /api/combispaar/account-options (legacy)
+- GET /api/combispaar/iban-options (legacy)
+- GET /accounts/saving/new/{customerId} (YAML)
+
+MAXI SPAAR ACCOUNT PAGE
+-----------------------
+- GET /api/maxispaar/page-data (legacy)
+- GET /accounts/saving/new/{customerId} (YAML)
+
+SOLID EXTRA ACCOUNT PAGE
+------------------------
+- GET /api/maxispaar/page-data (legacy) - overridden with SolidExtra data
+- GET /accounts/saving/new/{customerId} (YAML)
+
+PERSONAL DETAILS PAGE
+---------------------
+- GET /api/personal-details (legacy)
+- PUT /api/personal-details (legacy)
+- GET /api/personal-details/phone (legacy)
+- GET /customer/profile/fullProfile/{customerId} (YAML)
+- GET /customer/profile/phone/{customerId} (YAML)
+- PUT /customer/profile/phone/{customerId} (YAML)
+- GET /customer/profile/email/{customerId} (YAML)
+- PUT /customer/profile/email/{customerId} (YAML)
+- GET /customer/profile/address/{customerId} (YAML)
+- PUT /customer/profile/address/{customerId} (YAML)
+- GET /customer/profile/identification/{customerId} (YAML)
+- PUT /customer/profile/identification/{customerId} (YAML)
+
+CHANGE PASSWORD PAGE
+--------------------
+- PUT /api/personal-details/password (legacy)
+- POST /api/personal-details/validate-password (legacy)
+- GET /api/verification/send-code (legacy)
+
+SOF QUESTIONS PAGE
+------------------
+- GET /api/sof-questions (legacy)
+- PUT /api/sof-questions (legacy)
+
+DOCUMENTS PAGE
+--------------
+- GET /customer/downloads/financialAnnualOverview/{customerId} (YAML)
+- GET /customer/downloads/contracts/{customerId} (YAML)
+- GET /api/documents/download (legacy)
+
+MESSAGES FUNCTIONALITY
+----------------------
+- GET /customer/messages/list/{customerId} (YAML)
+- GET /customer/messages/unread/{customerId} (YAML)
+- POST /customer/messages/{customerId} (YAML)
+- GET /customer/messages/{customerId}/{reference} (YAML)
+- DELETE /customer/messages/{customerId}/{reference} (YAML)
+
+==========================================
+NOTES
+==========================================
+
+1. The application uses a hybrid approach with both YAML-compliant endpoints
+   (primary) and legacy endpoints (for backward compatibility).
+
+2. All endpoints require standard authentication headers.
+
+3. Most endpoints return mock data for development purposes.
+
+4. The YAML endpoints follow RESTful conventions and are the preferred
+   endpoints for new development.
+
+5. Legacy endpoints are maintained for existing functionality that hasn't
+   been migrated to YAML-compliant endpoints yet.
+
+6. Customer ID is typically hardcoded as 'CUST001' for development.
+
+7. All endpoints include proper error handling and validation.
+
+8. The base URL is http://localhost:5003 for the Java Spring Boot backend.
+
+Generated on: 2025-01-15
+Total Endpoints: 67 (47 YAML + 20 Legacy)
