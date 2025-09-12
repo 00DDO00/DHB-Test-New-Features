@@ -11,6 +11,7 @@ import { flushSync } from 'react-dom';
 import EditModeFAB from '../dashboards/Default/EditModeFAB';
 import WidgetCatalog from '../dashboards/Default/WidgetCatalog';
 import DraggableWidget from '../dashboards/Default/DraggableWidget';
+import WidgetDragPreview from '../dashboards/Default/WidgetDragPreview';
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -34,9 +35,8 @@ const Home: React.FC = () => {
     'settings-widget',
     'chart-widget'
   ]);
-  const [dashboardKey, setDashboardKey] = useState(0);
-  const [forceRender, setForceRender] = useState(0);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
 
   // Sample data for settings
   const settingsItems = [
@@ -74,6 +74,7 @@ const Home: React.FC = () => {
 
     fetchData();
   }, []);
+
 
   const handleToggleEditMode = () => {
     setIsEditMode(!isEditMode);
@@ -287,38 +288,14 @@ const Home: React.FC = () => {
       const widgetId = result.draggableId;
       console.log('Adding widget:', widgetId, 'to position:', result.destination.index);
       
-      // Use flushSync to force immediate DOM update
-      flushSync(() => {
-        setVisibleWidgets(prev => {
-          if (!prev.includes(widgetId)) {
-            const newWidgets = Array.from(prev);
-            newWidgets.splice(result.destination.index, 0, widgetId);
-            console.log('New visible widgets after addition:', newWidgets);
-            return newWidgets;
-          } else {
-            console.log('Widget already exists, reordering instead');
-            // If widget already exists, just reorder it
-            const newWidgets = Array.from(prev);
-            const currentIndex = newWidgets.indexOf(widgetId);
-            if (currentIndex !== -1) {
-              newWidgets.splice(currentIndex, 1);
-              newWidgets.splice(result.destination.index, 0, widgetId);
-              console.log('Reordered widgets:', newWidgets);
-            }
-            return newWidgets;
-          }
-        });
-      });
-      
-      // Force additional re-render to ensure visibility
-      flushSync(() => {
-        setDashboardKey(prev => prev + 1);
-        setForceRender(prev => prev + 1);
-      });
-      
-      // Double-check with requestAnimationFrame to ensure DOM update
-      requestAnimationFrame(() => {
-        setForceRender(prev => prev + 1);
+      setVisibleWidgets(prev => {
+        if (!prev.includes(widgetId)) {
+          const newWidgets = [...prev];
+          newWidgets.splice(result.destination.index, 0, widgetId);
+          console.log('New visible widgets after addition:', newWidgets);
+          return newWidgets;
+        }
+        return prev;
       });
       return;
     }
@@ -357,19 +334,23 @@ const Home: React.FC = () => {
   const saveOnlineAccount = accounts.find(acc => acc.name === "DHB SaveOnline");
   const maxiSpaarAccount = accounts.find(acc => acc.name === "DHB MaxiSpaar");
 
-  const handleDragStart = () => {
+  const handleDragStart = (start: any) => {
     setIsDragActive(true);
+    // Only set dragged widget if it's from catalog
+    if (start.source.droppableId === 'catalog') {
+      setDraggedWidget(start.draggableId);
+    }
   };
 
   const handleDragEnd = (result: DropResult) => {
-    setIsDragActive(false);
     handleWidgetReorder(result);
+    setIsDragActive(false);
+    setDraggedWidget(null);
   };
 
   return (
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <Box 
-        key={forceRender}
         sx={{ 
           p: 1,
           marginRight: isEditMode ? '320px' : '0',
@@ -407,7 +388,7 @@ const Home: React.FC = () => {
         </MuiLink>
       </Breadcrumbs>
       
-        <Droppable droppableId="dashboard" direction="vertical" key={dashboardKey}>
+        <Droppable droppableId="dashboard" direction="vertical">
           {(provided, snapshot) => (
             <Box 
               ref={provided.innerRef}
@@ -443,7 +424,7 @@ const Home: React.FC = () => {
         
         {/* Welcome Card - DHB SaveOnline */}
         {visibleWidgets.includes('welcome-card') && (
-          <Box key={`welcome-card-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
             {isEditMode ? (
               <DraggableWidget
                 widgetId="welcome-card"
@@ -484,7 +465,7 @@ const Home: React.FC = () => {
 
         {/* Accounts Card - DHB MaxiSpaar */}
         {visibleWidgets.includes('accounts-card') && (
-          <Box key={`accounts-card-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
             {isEditMode ? (
               <DraggableWidget
                 widgetId="accounts-card"
@@ -525,7 +506,7 @@ const Home: React.FC = () => {
 
         {/* Account Opening Card */}
         {visibleWidgets.includes('account-opening') && (
-          <Box key={`account-opening-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
             {isEditMode ? (
               <DraggableWidget
                 widgetId="account-opening"
@@ -642,7 +623,7 @@ const Home: React.FC = () => {
 
         {/* Combispaar Accounts Card */}
         {visibleWidgets.includes('combispaar-stats') && (
-          <Box key={`combispaar-stats-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
             {isEditMode ? (
               <DraggableWidget
                 widgetId="combispaar-stats"
@@ -798,7 +779,7 @@ const Home: React.FC = () => {
         
         {/* Settings Card */}
         {visibleWidgets.includes('settings-widget') && (
-          <Box key={`settings-widget-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
             {isEditMode ? (
               <DraggableWidget
                 widgetId="settings-widget"
@@ -830,7 +811,7 @@ const Home: React.FC = () => {
         
         {/* Financial Overview Card */}
         {visibleWidgets.includes('chart-widget') && (
-          <Box key={`chart-widget-${forceRender}`} sx={{ flex: '0 0 calc(50% - 8px)' }}>
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
             {isEditMode ? (
               <DraggableWidget
                 widgetId="chart-widget"
@@ -869,7 +850,7 @@ const Home: React.FC = () => {
           .map((widgetId, index) => {
             const actualIndex = visibleWidgets.indexOf(widgetId);
             return (
-              <React.Fragment key={`${widgetId}-${forceRender}`}>
+              <React.Fragment key={widgetId}>
                 {renderAdditionalWidget(widgetId, actualIndex)}
               </React.Fragment>
             );
@@ -907,6 +888,11 @@ const Home: React.FC = () => {
         onClose={() => setIsEditMode(false)}
         usedWidgets={visibleWidgets}
         isDragActive={isDragActive}
+      />
+
+      <WidgetDragPreview 
+        widgetId={draggedWidget || ''} 
+        isDragging={!!draggedWidget && isDragActive} 
       />
     </DragDropContext>
   );

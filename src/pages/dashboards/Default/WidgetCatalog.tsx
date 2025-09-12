@@ -21,7 +21,6 @@ import {
   Settings as SettingsIcon
 } from "@mui/icons-material";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import WidgetDragPreview from './WidgetDragPreview';
 
 const StyledDrawer = styled(Drawer)`
   .MuiDrawer-paper {
@@ -185,19 +184,8 @@ const availableWidgets: WidgetType[] = [
 ];
 
 const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidgets, onWidgetRemove, isDragActive = false }) => {
-  const [draggedWidget, setDraggedWidget] = React.useState<string | null>(null);
-
-  // Reset drag state when catalog closes or drag ends
-  React.useEffect(() => {
-    if (!isOpen || !isDragActive) {
-      setDraggedWidget(null);
-    }
-  }, [isOpen, isDragActive]);
-
   return (
-    <>
-      <WidgetDragPreview widgetId={draggedWidget || ''} isDragging={!!draggedWidget && isDragActive} />
-      <StyledDrawer
+    <StyledDrawer
         anchor="right"
         open={isOpen}
         onClose={onClose}
@@ -269,23 +257,6 @@ const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidg
                     isDragDisabled={isUsed}
                   >
                     {(provided, snapshot) => {
-                      // Track drag state
-                      React.useEffect(() => {
-                        if (snapshot.isDragging) {
-                          setDraggedWidget(widget.id);
-                        } else {
-                          // Reset drag state when drag ends
-                          setDraggedWidget(null);
-                        }
-                      }, [snapshot.isDragging, widget.id]);
-
-                      // Additional cleanup on unmount
-                      React.useEffect(() => {
-                        return () => {
-                          setDraggedWidget(null);
-                        };
-                      }, []);
-
                       return (
                         <WidgetItem
                           ref={provided.innerRef}
@@ -295,8 +266,7 @@ const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidg
                           style={{
                             ...provided.draggableProps.style,
                             ...(snapshot.isDragging && {
-                              opacity: 0.3, // Make original item semi-transparent
-                              transform: 'scale(0.95)'
+                              opacity: 0.3 // Make original item semi-transparent
                             })
                           }}
                         >
@@ -333,7 +303,6 @@ const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidg
         </Droppable>
       </Box>
     </StyledDrawer>
-    </>
   );
 };
 
