@@ -25,27 +25,20 @@ const Home: React.FC = () => {
     total_balance: number;
     count: number;
   } | null>(null);
+  const [solidExtraAccount, setSolidExtraAccount] = useState<Account | null>(null);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [userName, setUserName] = useState("Holder name");
   const [isEditMode, setIsEditMode] = useState(false);
   const [visibleWidgets, setVisibleWidgets] = useState([
     'welcome-card',
     'accounts-card', 
-    'account-opening',
+    'solidextra-card',
     'combispaar-stats',
-    'settings-widget',
     'chart-widget'
   ]);
   const [isDragActive, setIsDragActive] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
 
-  // Sample data for settings
-  const settingsItems = [
-    { icon: "🔧", label: t('settings.nav.application_settings'), onClick: () => console.log('Account Settings') },
-    { icon: "🔒", label: t('security'), onClick: () => console.log('Security') },
-    { icon: "📱", label: t('application-settings.notification.title'), onClick: () => console.log('Notifications') },
-    { icon: "🌍", label: t('application-settings.language.title'), onClick: () => console.log('Language') },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,17 +47,32 @@ const Home: React.FC = () => {
         setError(null);
 
         // Fetch all data in parallel
-        const [accountsData, combispaarData, chartData, userData] = await Promise.all([
+        const [accountsData, combispaarData, chartData, userData, solidExtraData] = await Promise.all([
           apiService.getAccounts(),
           apiService.getCombispaarAccounts(),
           apiService.getChartData(),
           apiService.getUserInfo(),
+          apiService.getMaxiSpaarPageData(), // Use same endpoint for SolidExtra
         ]);
 
         setAccounts(accountsData);
         setCombispaarData(combispaarData);
         setChartData(chartData);
         setUserName(userData.name);
+        
+        // Create SolidExtra account from the data
+        const solidExtraAccountData = {
+          id: 'solid-extra-001',
+          name: 'DHB SolidExtra',
+          type: 'solid-extra',
+          balance: 25000, // Sample balance
+          currency: 'EUR',
+          iban: 'NL24DHBN2018470580',
+          interest_rate: 1.8, // Higher interest rate for SolidExtra
+          holder_name: userData.name
+        };
+        setSolidExtraAccount(solidExtraAccountData);
+        console.log('SolidExtra account created:', solidExtraAccountData);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(t('something-went-wrong'));
@@ -131,12 +139,12 @@ const Home: React.FC = () => {
                   filterLabel="Period"
                   filterValue="Last 6 months"
                   chartData={[
-                    { label: 'Jan', value: 1000, color: '#004996' },
-                    { label: 'Feb', value: 1200, color: '#004996' },
-                    { label: 'Mar', value: 1100, color: '#004996' },
-                    { label: 'Apr', value: 1300, color: '#004996' },
-                    { label: 'May', value: 1250, color: '#004996' },
-                    { label: 'Jun', value: 1400, color: '#004996' }
+                    { label: 'Jan', value: '€ 1,000', color: '#004996' },
+                    { label: 'Feb', value: '€ 1,200', color: '#004996' },
+                    { label: 'Mar', value: '€ 1,100', color: '#004996' },
+                    { label: 'Apr', value: '€ 1,300', color: '#004996' },
+                    { label: 'May', value: '€ 1,250', color: '#004996' },
+                    { label: 'Jun', value: '€ 1,400', color: '#004996' }
                   ]}
                 />
               </DraggableWidget>
@@ -146,12 +154,12 @@ const Home: React.FC = () => {
                 filterLabel="Period"
                 filterValue="Last 6 months"
                 chartData={[
-                  { label: 'Jan', value: 1000, color: '#004996' },
-                  { label: 'Feb', value: 1200, color: '#004996' },
-                  { label: 'Mar', value: 1100, color: '#004996' },
-                  { label: 'Apr', value: 1300, color: '#004996' },
-                  { label: 'May', value: 1250, color: '#004996' },
-                  { label: 'Jun', value: 1400, color: '#004996' }
+                  { label: 'Jan', value: '€ 1,000', color: '#004996' },
+                  { label: 'Feb', value: '€ 1,200', color: '#004996' },
+                  { label: 'Mar', value: '€ 1,100', color: '#004996' },
+                  { label: 'Apr', value: '€ 1,300', color: '#004996' },
+                  { label: 'May', value: '€ 1,250', color: '#004996' },
+                  { label: 'Jun', value: '€ 1,400', color: '#004996' }
                 ]}
               />
             )}
@@ -171,9 +179,9 @@ const Home: React.FC = () => {
                   filterLabel="Category"
                   filterValue="All categories"
                   chartData={[
-                    { label: 'Savings', value: 5000, color: '#FF6B35' },
-                    { label: 'Investments', value: 3000, color: '#004996' },
-                    { label: 'Checking', value: 2000, color: '#28a745' }
+                    { label: 'Savings', value: '€ 5,000', color: '#FF6B35' },
+                    { label: 'Investments', value: '€ 3,000', color: '#004996' },
+                    { label: 'Checking', value: '€ 2,000', color: '#28a745' }
                   ]}
                 />
               </DraggableWidget>
@@ -183,9 +191,9 @@ const Home: React.FC = () => {
                 filterLabel="Category"
                 filterValue="All categories"
                 chartData={[
-                  { label: 'Savings', value: 5000, color: '#FF6B35' },
-                  { label: 'Investments', value: 3000, color: '#004996' },
-                  { label: 'Checking', value: 2000, color: '#28a745' }
+                  { label: 'Savings', value: '€ 5,000', color: '#FF6B35' },
+                  { label: 'Investments', value: '€ 3,000', color: '#004996' },
+                  { label: 'Checking', value: '€ 2,000', color: '#28a745' }
                 ]}
               />
             )}
@@ -205,9 +213,9 @@ const Home: React.FC = () => {
                   filterLabel="Portfolio"
                   filterValue="Current allocation"
                   chartData={[
-                    { label: 'Stocks', value: 60, color: '#004996' },
-                    { label: 'Bonds', value: 30, color: '#FF6B35' },
-                    { label: 'Cash', value: 10, color: '#28a745' }
+                    { label: 'Stocks', value: '60%', color: '#004996' },
+                    { label: 'Bonds', value: '30%', color: '#FF6B35' },
+                    { label: 'Cash', value: '10%', color: '#28a745' }
                   ]}
                 />
               </DraggableWidget>
@@ -217,9 +225,9 @@ const Home: React.FC = () => {
                 filterLabel="Portfolio"
                 filterValue="Current allocation"
                 chartData={[
-                  { label: 'Stocks', value: 60, color: '#004996' },
-                  { label: 'Bonds', value: 30, color: '#FF6B35' },
-                  { label: 'Cash', value: 10, color: '#28a745' }
+                  { label: 'Stocks', value: '60%', color: '#004996' },
+                  { label: 'Bonds', value: '30%', color: '#FF6B35' },
+                  { label: 'Cash', value: '10%', color: '#28a745' }
                 ]}
               />
             )}
@@ -285,14 +293,14 @@ const Home: React.FC = () => {
     }
 
     // Handle dropping from catalog to dashboard (addition)
-    if (result.source.droppableId === 'catalog' && result.destination.droppableId === 'dashboard') {
+    if (result.source.droppableId === 'catalog' && result.destination?.droppableId === 'dashboard') {
       const widgetId = result.draggableId;
       console.log('Adding widget:', widgetId, 'to position:', result.destination.index);
       
       setVisibleWidgets(prev => {
         if (!prev.includes(widgetId)) {
           const newWidgets = [...prev];
-          newWidgets.splice(result.destination.index, 0, widgetId);
+          newWidgets.splice(result.destination!.index, 0, widgetId);
           console.log('New visible widgets after addition:', newWidgets);
           return newWidgets;
         }
@@ -302,11 +310,11 @@ const Home: React.FC = () => {
     }
 
     // Handle reordering within dashboard
-    if (result.source.droppableId === 'dashboard' && result.destination.droppableId === 'dashboard') {
+    if (result.source.droppableId === 'dashboard' && result.destination?.droppableId === 'dashboard') {
       setVisibleWidgets(prev => {
         const newWidgets = Array.from(prev);
         const [reorderedWidget] = newWidgets.splice(result.source.index, 1);
-        newWidgets.splice(result.destination.index, 0, reorderedWidget);
+        newWidgets.splice(result.destination!.index, 0, reorderedWidget);
         console.log('Reordered widgets within dashboard:', newWidgets);
         return newWidgets;
       });
@@ -334,6 +342,8 @@ const Home: React.FC = () => {
   // Find specific accounts
   const saveOnlineAccount = accounts.find(acc => acc.name === "DHB SaveOnline");
   const maxiSpaarAccount = accounts.find(acc => acc.name === "DHB MaxiSpaar");
+
+
 
   // Native drag handlers
   const handleNativeDragStart = (widgetId: string, event: React.DragEvent) => {
@@ -515,66 +525,28 @@ const Home: React.FC = () => {
           </Box>
         )}
 
-        {/* Account Opening Card */}
-        {visibleWidgets.includes('account-opening') && (
-          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+        {/* SolidExtra Account Card */}
+        {visibleWidgets.includes('solidextra-card') && (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="SolidExtra account summary">
             <NativeDraggableWidget
-              widgetId="account-opening"
+              widgetId="solidextra-card"
               isEditMode={isEditMode}
               onDragStart={handleNativeDragStart}
               onDragEnd={handleNativeDragEnd}
             >
-              <Widget
-                title={t('accounts.title') || 'Accounts (missing key)'}
-                /*subtitle="DHB Accounts"*/
-                onMenuClick={() => console.log('Menu clicked')}
-                actions={
-                  <Button
-                    variant="outlined"
-                    endIcon={<Add />}
-                    onClick={() => navigate('/accounts/open')}
-                    sx={{
-                      background: 'transparent',
-                      color: '#004996',
-                      border: '1px solid #004996',
-                      textTransform: 'none',
-                      borderRadius: '8px',
-                      padding: '12px 24px',
-                      width: '100%',
-                      fontWeight: 500,
-                      '&:hover': { 
-                        background: 'rgba(0, 73, 150, 0.1)',
-                        border: '1px solid #004996'
-                      }
-                    }}
-                  >
-                    Open account
-                  </Button>
-                }
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Typography 
-                    variant="h3" 
-                    color="#004996" 
-                    fontWeight="bold"
-                    sx={{
-                      cursor: 'pointer',
-                      fontSize: '1.5rem',
-                      lineHeight: 1.2,
-                      '&:hover': {
-                        textDecoration: 'underline',
-                        opacity: 0.8
-                      }
-                    }}
-                    onClick={() => navigate('/accounts/open')}
-                  >
-                    {t('accounts.dhb') || 'DHB Accounts (missing key)'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
-                  </Typography>
-                </Box>
-              </Widget>
+              <AccountWidget
+                accountName={t('solidExtra') || 'DHB SolidExtra'}
+                accountType={t('solidExtra') || 'SolidExtra'}
+                balance={solidExtraAccount ? formatCurrency(solidExtraAccount.balance) : "€ --.---,--"}
+                iban={solidExtraAccount?.iban || "NL24DHBN2018470580"}
+                interestRate={solidExtraAccount ? formatInterestRate(solidExtraAccount.interest_rate) : "1.8%"}
+                primaryAction={{
+                  label: "Open account",
+                  onClick: () => navigate('/accounts/solidextra'),
+                  color: 'primary'
+                }}
+                onAccountTypeClick={() => navigate('/accounts/solidextra')}
+              />
             </NativeDraggableWidget>
           </Box>
         )}
@@ -670,19 +642,6 @@ const Home: React.FC = () => {
           Quick Actions
         </Typography>
         
-        {/* Settings Card */}
-        {visibleWidgets.includes('settings-widget') && (
-          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
-            <NativeDraggableWidget
-              widgetId="settings-widget"
-              isEditMode={isEditMode}
-              onDragStart={handleNativeDragStart}
-              onDragEnd={handleNativeDragEnd}
-            >
-              <SettingsWidget items={settingsItems} />
-            </NativeDraggableWidget>
-          </Box>
-        )}
 
         {/* Financial Overview Section */}
         <Typography
@@ -724,7 +683,7 @@ const Home: React.FC = () => {
         
         {/* Render additional widgets that were added from catalog */}
         {visibleWidgets
-          .filter(widgetId => !['welcome-card', 'accounts-card', 'account-opening', 'combispaar-stats', 'settings-widget', 'chart-widget'].includes(widgetId))
+          .filter(widgetId => !['welcome-card', 'accounts-card', 'solidextra-card', 'combispaar-stats', 'chart-widget'].includes(widgetId))
           .map((widgetId, index) => {
             const actualIndex = visibleWidgets.indexOf(widgetId);
             return (

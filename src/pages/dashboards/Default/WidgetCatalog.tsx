@@ -181,6 +181,8 @@ const DropZone = styled(Box)`
   }
 `;
 
+
+
 interface WidgetType {
   id: string;
   name: string;
@@ -213,6 +215,13 @@ const availableWidgets: WidgetType[] = [
     description: 'Secondary account information',
     icon: <StatsIcon />,
     component: 'AccountsCard'
+  },
+  {
+    id: 'solidextra-card',
+    name: 'SolidExtra Card',
+    description: 'SolidExtra account with higher interest',
+    icon: <StatsIcon />,
+    component: 'SolidExtraCard'
   },
   {
     id: 'account-opening',
