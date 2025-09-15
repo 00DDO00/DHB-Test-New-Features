@@ -29,7 +29,6 @@ interface FilterModalProps {
   amountFilter: boolean;
   minAmount: AmountObject;
   maxAmount: AmountObject;
-  transactionsCount: string;
   debitTransactions: boolean;
   creditTransactions: boolean;
   
@@ -39,7 +38,6 @@ interface FilterModalProps {
   setAmountFilter: (value: boolean) => void;
   setMinAmount: (value: AmountObject) => void;
   setMaxAmount: (value: AmountObject) => void;
-  setTransactionsCount: (value: string) => void;
   setDebitTransactions: (value: boolean) => void;
   setCreditTransactions: (value: boolean) => void;
 }
@@ -54,7 +52,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   amountFilter,
   minAmount,
   maxAmount,
-  transactionsCount,
   debitTransactions,
   creditTransactions,
   
@@ -63,7 +60,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   setAmountFilter,
   setMinAmount,
   setMaxAmount,
-  setTransactionsCount,
   setDebitTransactions,
   setCreditTransactions
 }) => {
@@ -422,39 +418,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
             )}
           </Box>
 
-          {/* Show transactions Section */}
-          <Box sx={{ mb: 6 }}>
-            <Typography variant="h6" fontWeight="bold" color="#333" sx={{ mb: 2 }}>
-              Show transactions
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {['5', '10', '20', '30'].map((count) => (
-                <Button
-                  key={count}
-                  variant={transactionsCount === count ? 'contained' : 'outlined'}
-                  onClick={() => setTransactionsCount(count)}
-                  sx={{
-                    flex: 1,
-                    height: 36,
-                    lineHeight: '36px',
-                    backgroundColor: transactionsCount === count ? '#004996' : 'transparent',
-                    color: transactionsCount === count ? 'white' : '#333',
-                    borderColor: '#004996',
-                    textTransform: 'none',
-                    fontSize: '0.75rem',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    '&:hover': {
-                      backgroundColor: transactionsCount === count ? '#004996' : 'rgba(0, 73, 150, 0.1)',
-                    }
-                  }}
-                >
-                  {count} Transfers
-                </Button>
-              ))}
-            </Box>
-          </Box>
 
           {/* Type of transaction Section */}
           <Box sx={{ mb: 6 }}>

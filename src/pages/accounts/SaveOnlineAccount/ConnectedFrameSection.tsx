@@ -57,6 +57,7 @@ interface ConnectedFrameSectionProps {
   calculateCompletedPayments: (startDate: string, period: string) => number;
   getPaymentStatus: (transfer: TransferData) => { previous: string; next: string };
   toggleScheduledTransfer: (id: string) => void;
+  onTransferClick: (transfer: TransferData) => void;
 }
 
 const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
@@ -71,7 +72,8 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
   quickActions,
   calculateCompletedPayments,
   getPaymentStatus,
-  toggleScheduledTransfer
+  toggleScheduledTransfer,
+  onTransferClick
 }) => {
   return (
     <Box sx={{ 
@@ -127,6 +129,173 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
             >
               Make New Transfer
             </Button>
+          </Box>
+
+          {/* Completed Transfers Table */}
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+              Completed Transfers
+            </Typography>
+            <TableContainer component={Paper} variant="outlined">
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      EXECUTION DATE
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      RECIPIENT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      AMOUNT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      STATUS
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {scheduledTransfers.filter(transfer => {
+                    const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+                    
+                    // Parse date components directly to avoid timezone issues
+                    const [day, month, year] = transfer.startDate.split('/').map(Number);
+                    const startDate = new Date(year, month - 1, day); // month is 0-indexed
+                    
+                    const today = new Date();
+                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    
+                    const endDate = transfer.endDate ? (() => {
+                      const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
+                      return new Date(endYear, endMonth - 1, endDay);
+                    })() : null;
+                    
+                    // Debug logging
+                    console.log('=== COMPLETED TRANSFERS FILTER DEBUG ===');
+                    console.log('Transfer:', transfer.description);
+                    console.log('Period:', transfer.period);
+                    console.log('Start date string:', transfer.startDate);
+                    console.log('Parsed startDate:', startDate);
+                    console.log('Today date:', todayDate);
+                    console.log('Completed payments:', completedPayments);
+                    console.log('Start === Today?', startDate.getTime() === todayDate.getTime());
+                    console.log('Completed payments > 0?', completedPayments > 0);
+                    console.log('End date <= today?', endDate && endDate <= todayDate);
+                    
+                    // Show in completed if:
+                    // 1. Start date is today (payment has been made), OR
+                    // 2. Any payments have been completed (for past start dates), OR
+                    // 3. Transfer is fully completed (endDate <= today)
+                    const shouldShow = startDate.getTime() === todayDate.getTime() || 
+                           completedPayments > 0 || 
+                           (endDate && endDate <= todayDate);
+                    
+                    console.log('Should show in completed?', shouldShow);
+                    console.log('=== END COMPLETED TRANSFERS FILTER DEBUG ===');
+                    
+                    return shouldShow;
+                  }).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                        No completed transfers found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    scheduledTransfers.filter(transfer => {
+                      const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+                      
+                      // Parse date components directly to avoid timezone issues
+                      const [day, month, year] = transfer.startDate.split('/').map(Number);
+                      const startDate = new Date(year, month - 1, day); // month is 0-indexed
+                      
+                      const today = new Date();
+                      const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                      
+                      const endDate = transfer.endDate ? (() => {
+                        const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
+                        return new Date(endYear, endMonth - 1, endDay);
+                      })() : null;
+                      
+                      return startDate.getTime() === todayDate.getTime() || 
+                             completedPayments > 0 || 
+                             (endDate && endDate <= todayDate);
+                    }).map((transfer) => {
+                      // Format execution date to match image format (DD-MMM-YYYY)
+                      const executionDate = new Date(transfer.executionDate);
+                      const formattedDate = executionDate.toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      }).toUpperCase();
+
+                      return (
+                        <TableRow 
+                          key={`completed-${transfer.id}`} 
+                          sx={{ 
+                            '&:hover': { backgroundColor: '#f9f9f9' },
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => onTransferClick(transfer)}
+                        >
+                          <TableCell sx={{ color: '#333' }}>
+                            {formattedDate}
+                          </TableCell>
+                          <TableCell>
+                            <Box>
+                              <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
+                                {transfer.recipient.accountNumber}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                {transfer.recipient.name}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ color: '#4caf50', fontWeight: 'bold' }}>
+                            {transfer.amount}
+                          </TableCell>
+                          <TableCell>
+                            <Box
+                              sx={{
+                                display: 'inline-block',
+                                px: 1.5,
+                                py: 0.5,
+                                borderRadius: '12px',
+                                backgroundColor: '#e8f5e8',
+                                color: '#2e7d32',
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                textTransform: 'capitalize'
+                              }}
+                            >
+                              Completed
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            
+            {/* See All Button */}
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <MuiLink
+                component={Link}
+                to="/accounts/saveonline/statement"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  textDecoration: 'none',
+                  color: '#FC9F15',
+                  fontWeight: 'bold',
+                  '&:hover': { textDecoration: 'underline' }
+                }}
+              >
+                See All
+                <ArrowForwardIcon sx={{ ml: 0.5, fontSize: '1rem' }} />
+              </MuiLink>
+            </Box>
           </Box>
         </TabPanel>
 
@@ -202,85 +371,154 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
               })}
             </Box>
           )}
-        </TabPanel>
 
-        {/* Account Transfers Table - Inside the same frame */}
-        <Box sx={{ mt: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">Account transfers</Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <IconButton size="small" onClick={onDownloadStatement}>
-                  <DownloadIcon />
-                </IconButton>
-                <Typography variant="caption" color="text.secondary">
-                  Download
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <IconButton size="small" onClick={onOpenFilter}>
-                  <FilterIcon />
-                </IconButton>
-                <Typography variant="caption" color="text.secondary">
-                  Filter
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell><strong>Date</strong></TableCell>
-                  <TableCell><strong>Description</strong></TableCell>
-                  <TableCell align="right"><strong>Balance</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
-                  <TableRow key={transaction.id || index}>
-                    <TableCell>{transaction.date}</TableCell>
-                    <TableCell>
-                      {transaction.description}
-                      <br />
-                      <Typography variant="caption" color="text.secondary">
-                        {transaction.account}
-                      </Typography>
+          {/* Scheduled Transfers Table */}
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+              Scheduled Transfers
+            </Typography>
+            <TableContainer component={Paper} variant="outlined">
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      EXECUTION DATE
                     </TableCell>
-                    <TableCell 
-                      align="right"
-                      sx={{ 
-                        color: transaction.type === 'debit' ? 'error.main' : 'success.main',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {transaction.balance}
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      RECIPIENT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      AMOUNT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      STATUS
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {scheduledTransfers.filter(transfer => {
+                    const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+                    
+                    // Parse date components directly to avoid timezone issues
+                    const [day, month, year] = transfer.startDate.split('/').map(Number);
+                    const startDate = new Date(year, month - 1, day); // month is 0-indexed
+                    
+                    const today = new Date();
+                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    
+                    const endDate = transfer.endDate ? (() => {
+                      const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
+                      return new Date(endYear, endMonth - 1, endDay);
+                    })() : null;
+                    
+                    // Show in scheduled if:
+                    // 1. Start date is in the future, OR
+                    // 2. It's recurring and not all payments are completed (even if it has started)
+                    return startDate > todayDate || (transfer.period !== 'one-time' && completedPayments < transfer.totalPayments);
+                  }).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                        No scheduled transfers found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    scheduledTransfers.filter(transfer => {
+                      const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
+                      
+                      // Parse date components directly to avoid timezone issues
+                      const [day, month, year] = transfer.startDate.split('/').map(Number);
+                      const startDate = new Date(year, month - 1, day); // month is 0-indexed
+                      
+                      const today = new Date();
+                      const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                      
+                      const endDate = transfer.endDate ? (() => {
+                        const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
+                        return new Date(endYear, endMonth - 1, endDay);
+                      })() : null;
+                      
+                      return startDate > todayDate || (transfer.period !== 'one-time' && completedPayments < transfer.totalPayments);
+                    }).map((transfer) => {
+                      // Format execution date to match image format (DD-MMM-YYYY)
+                      const executionDate = new Date(transfer.executionDate);
+                      const formattedDate = executionDate.toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      }).toUpperCase();
 
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <MuiLink
-              component={Link}
-              to="/accounts/saveonline/statement"
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                textDecoration: 'none',
-                color: '#FC9F15',
-                fontWeight: 'bold',
-                '&:hover': { textDecoration: 'underline' }
-              }}
-            >
-              See All
-              <ArrowForwardIcon sx={{ ml: 0.5, fontSize: '1rem' }} />
-            </MuiLink>
+                      // Determine status badge styling
+                      const getStatusBadge = (status: string) => {
+                        if (status === 'recurring') {
+                          return {
+                            backgroundColor: '#e8f5e8',
+                            color: '#2e7d32',
+                            text: 'Recurring'
+                          };
+                        } else {
+                          return {
+                            backgroundColor: '#e3f2fd',
+                            color: '#1976d2',
+                            text: 'Scheduled'
+                          };
+                        }
+                      };
+
+                      const statusBadge = getStatusBadge(transfer.status);
+
+                      return (
+                        <TableRow 
+                          key={`scheduled-${transfer.id}`} 
+                          sx={{ 
+                            '&:hover': { backgroundColor: '#f9f9f9' },
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => onTransferClick(transfer)}
+                        >
+                          <TableCell sx={{ color: '#333' }}>
+                            {formattedDate}
+                          </TableCell>
+                          <TableCell>
+                            <Box>
+                              <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
+                                {transfer.recipient.accountNumber}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                {transfer.recipient.name}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ color: '#4caf50', fontWeight: 'bold' }}>
+                            {transfer.amount}
+                          </TableCell>
+                          <TableCell>
+                            <Box
+                              sx={{
+                                display: 'inline-block',
+                                px: 1.5,
+                                py: 0.5,
+                                borderRadius: '12px',
+                                backgroundColor: statusBadge.backgroundColor,
+                                color: statusBadge.color,
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                textTransform: 'capitalize'
+                              }}
+                            >
+                              {statusBadge.text}
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
-        </Box>
+        </TabPanel>
+
+
       </Box>
 
       {/* Quick Actions - Right Side */}

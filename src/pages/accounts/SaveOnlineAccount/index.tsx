@@ -22,6 +22,8 @@ import ConnectedFrameSection from './ConnectedFrameSection';
 import TransferModal from './TransferModal';
 import FilterModal from './FilterModal';
 import SavingsGoalModals from './SavingsGoalModals';
+import TransferDetailsPopup from './TransferDetailsPopup';
+import DownloadStatementPopup from './DownloadStatementPopup';
 
 // Import types
 import { SavingsGoal, AccountData, TransferData, Transaction, DateObject, AmountObject } from './types';
@@ -58,7 +60,6 @@ const SaveOnlineAccount: React.FC = () => {
   const [amountFilter, setAmountFilter] = useState(false);
   const [minAmount, setMinAmount] = useState<AmountObject>({ whole: '', decimal: '' });
   const [maxAmount, setMaxAmount] = useState<AmountObject>({ whole: '', decimal: '' });
-  const [transactionsCount, setTransactionsCount] = useState('5');
   const [debitTransactions, setDebitTransactions] = useState(true);
   const [creditTransactions, setCreditTransactions] = useState(true);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
@@ -77,6 +78,11 @@ const SaveOnlineAccount: React.FC = () => {
   const [mockTransactions, setMockTransactions] = useState<Transaction[]>([]);
   const [accountData, setAccountData] = useState<AccountData | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  
+  // Transfer Details Popup state
+  const [transferDetailsOpen, setTransferDetailsOpen] = useState(false);
+  const [selectedTransfer, setSelectedTransfer] = useState<TransferData | null>(null);
+  const [downloadStatementOpen, setDownloadStatementOpen] = useState(false);
 
   // Mock transactions data
   useEffect(() => {
@@ -311,8 +317,8 @@ const SaveOnlineAccount: React.FC = () => {
       });
     }
     
-    // Add to scheduled transfers if it's recurring OR if it's one-time with future date
-    if (period !== 'one-time' || !shouldBeCompleted) {
+    // Always add to scheduled transfers (both recurring and one-time)
+    {
       const transferEndDate = endDate.day ? new Date(parseInt(endDate.year), parseInt(endDate.month) - 1, parseInt(endDate.day)) : undefined;
       
       const newScheduledTransfer = {
@@ -322,10 +328,16 @@ const SaveOnlineAccount: React.FC = () => {
         period: period,
         startDate: transferStartDate.toLocaleDateString('en-GB'),
         endDate: transferEndDate?.toLocaleDateString('en-GB'),
-        status: 'scheduled' as const,
+        status: period === 'one-time' ? 'scheduled' as const : 'recurring' as const,
         completedPayments: shouldBeCompleted ? 1 : 0, // If start date has passed, mark as 1 completed payment
         totalPayments: period === 'one-time' ? 1 : calculateTotalPayments(transferStartDate, transferEndDate, period),
-        isExpanded: false
+        isExpanded: false,
+        // New fields for table display
+        executionDate: transferStartDate.toISOString(),
+        recipient: {
+          accountNumber: beneficiaryAccount || 'NL24 DHBN 2018 4705 78',
+          name: explanation || 'Recipient name'
+        }
       };
       
       setScheduledTransfers(prev => [...prev, newScheduledTransfer]);
@@ -423,9 +435,6 @@ const SaveOnlineAccount: React.FC = () => {
       });
     }
 
-    // Filter by transaction count
-    const count = parseInt(transactionsCount);
-    filtered = filtered.slice(0, count);
 
     setFilteredTransactions(filtered);
     setFilterPopupOpen(false);
@@ -549,6 +558,10 @@ const SaveOnlineAccount: React.FC = () => {
 
   const selectedAccountData = accounts.find(acc => acc.id === selectedAccount) || accounts[0];
 
+  const handleDownloadStatement = () => {
+    setDownloadStatementOpen(true);
+  };
+
   // Quick Actions data
   const quickActions = [
     {
@@ -562,9 +575,9 @@ const SaveOnlineAccount: React.FC = () => {
       onClick: () => console.log('Counteraccount change')
     },
     {
-      label: 'Transcript download',
+      label: 'Download statement',
       icon: <FileUploadIcon sx={{ fontSize: '1rem' }} />,
-      onClick: downloadAccountStatement
+      onClick: handleDownloadStatement
     },
     {
       label: 'Set savings target',
@@ -585,31 +598,62 @@ const SaveOnlineAccount: React.FC = () => {
 
   // Helper functions for scheduled transfers - EXACT from original
   const calculateCompletedPayments = (startDate: string, period: string): number => {
-    const start = new Date(startDate.split('/').reverse().join('-'));
+    console.log('=== CALCULATE COMPLETED PAYMENTS DEBUG ===');
+    console.log('Input startDate:', startDate);
+    console.log('Input period:', period);
+    
+    // Parse date components directly to avoid timezone issues
+    const [day, month, year] = startDate.split('/').map(Number);
+    const start = new Date(year, month - 1, day); // month is 0-indexed
+    
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     
-    if (start > today) return 0;
+    console.log('Parsed start:', start);
+    console.log('Today date:', todayDate);
+    console.log('Start > Today?', start > todayDate);
     
-    const timeDiff = today.getTime() - start.getTime();
+    // Compare only the date part, not time
+    if (start > todayDate) {
+      console.log('Start is in future, returning 0');
+      return 0;
+    }
+    
+    const timeDiff = todayDate.getTime() - start.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
     
+    console.log('Time diff:', timeDiff);
+    console.log('Days diff:', daysDiff);
+    
+    let result = 0;
     switch (period) {
       case 'daily':
       case 'every-day':
-        return Math.min(Math.floor(daysDiff) + 1, 999); // Cap at reasonable number
+        result = Math.min(Math.floor(daysDiff) + 1, 999); // Cap at reasonable number
+        break;
       case 'weekly':
       case 'every-week':
-        return Math.min(Math.floor(daysDiff / 7) + 1, 999);
+        result = Math.min(Math.floor(daysDiff / 7) + 1, 999);
+        break;
       case 'monthly':
       case 'every-month':
-        return Math.min(Math.floor(daysDiff / 30) + 1, 999);
+        result = Math.min(Math.floor(daysDiff / 30) + 1, 999);
+        break;
       case 'yearly':
       case 'every-year':
-        return Math.min(Math.floor(daysDiff / 365) + 1, 999);
+        result = Math.min(Math.floor(daysDiff / 365) + 1, 999);
+        break;
+      case 'one-time':
+        // For one-time transfers, if start date is today or in the past, it's completed
+        result = daysDiff >= 0 ? 1 : 0;
+        break;
       default:
-        return 0;
+        result = 0;
     }
+    
+    console.log('Final result:', result);
+    console.log('=== END CALCULATE COMPLETED PAYMENTS DEBUG ===');
+    return result;
   };
 
   const getPaymentStatus = (transfer: TransferData): { previous: string; next: string } => {
@@ -675,6 +719,35 @@ const SaveOnlineAccount: React.FC = () => {
     );
   };
 
+  // Transfer Details Popup handlers
+  const handleTransferClick = (transfer: TransferData) => {
+    setSelectedTransfer(transfer);
+    setTransferDetailsOpen(true);
+  };
+
+  const handleCloseTransferDetails = () => {
+    setTransferDetailsOpen(false);
+    setSelectedTransfer(null);
+  };
+
+  const handleEditTransfer = () => {
+    // TODO: Implement edit transfer functionality
+    console.log('Edit transfer:', selectedTransfer);
+    handleCloseTransferDetails();
+  };
+
+  const handleConfirmTransferDetails = () => {
+    // TODO: Implement confirm transfer functionality
+    console.log('Confirm transfer:', selectedTransfer);
+    handleCloseTransferDetails();
+  };
+
+  const handleCancelTransfer = () => {
+    // TODO: Implement cancel transfer functionality
+    console.log('Cancel transfer:', selectedTransfer);
+    handleCloseTransferDetails();
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       {/* Page heading */}
@@ -710,7 +783,7 @@ const SaveOnlineAccount: React.FC = () => {
         onTabChange={handleTabChange}
         onOpenModal={handleOpenModal}
         onOpenFilter={() => setFilterPopupOpen(true)}
-        onDownloadStatement={downloadAccountStatement}
+        onDownloadStatement={handleDownloadStatement}
         scheduledTransfers={scheduledTransfers}
         filteredTransactions={filteredTransactions}
         mockTransactions={mockTransactions}
@@ -718,6 +791,7 @@ const SaveOnlineAccount: React.FC = () => {
         calculateCompletedPayments={calculateCompletedPayments}
         getPaymentStatus={getPaymentStatus}
         toggleScheduledTransfer={toggleScheduledTransfer}
+        onTransferClick={handleTransferClick}
       />
 
       {/* Transfer Modal */}
@@ -1054,7 +1128,6 @@ const SaveOnlineAccount: React.FC = () => {
         amountFilter={amountFilter}
         minAmount={minAmount}
         maxAmount={maxAmount}
-        transactionsCount={transactionsCount}
         debitTransactions={debitTransactions}
         creditTransactions={creditTransactions}
         setPeriodFilter={setPeriodFilter}
@@ -1062,7 +1135,6 @@ const SaveOnlineAccount: React.FC = () => {
         setAmountFilter={setAmountFilter}
         setMinAmount={setMinAmount}
         setMaxAmount={setMaxAmount}
-        setTransactionsCount={setTransactionsCount}
         setDebitTransactions={setDebitTransactions}
         setCreditTransactions={setCreditTransactions}
       />
@@ -1088,6 +1160,24 @@ const SaveOnlineAccount: React.FC = () => {
         setAmountDecimal={setAmountDecimal}
         setAmountError={setAmountError}
         savingsGoalOptions={savingsGoalOptions}
+      />
+
+      {/* Transfer Details Popup */}
+      <TransferDetailsPopup
+        open={transferDetailsOpen}
+        onClose={handleCloseTransferDetails}
+        transfer={selectedTransfer}
+        onEditTransfer={handleEditTransfer}
+        onConfirmTransfer={handleConfirmTransferDetails}
+        onCancelTransfer={handleCancelTransfer}
+        calculateCompletedPayments={calculateCompletedPayments}
+        allTransfers={scheduledTransfers}
+      />
+
+      {/* Download Statement Popup */}
+      <DownloadStatementPopup
+        open={downloadStatementOpen}
+        onClose={() => setDownloadStatementOpen(false)}
       />
     </Box>
   );

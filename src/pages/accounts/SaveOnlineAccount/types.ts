@@ -37,10 +37,16 @@ export interface TransferData {
   period: string;
   startDate: string;
   endDate?: string;
-  status: 'scheduled' | 'completed';
+  status: 'scheduled' | 'completed' | 'recurring';
   completedPayments: number;
   totalPayments: number;
   isExpanded?: boolean;
+  // New fields for table display
+  executionDate: string;
+  recipient: {
+    accountNumber: string;
+    name: string;
+  };
 }
 
 export interface DateObject {
