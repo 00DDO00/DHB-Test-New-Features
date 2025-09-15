@@ -21,6 +21,13 @@ const GlobalStyle = (props: any) => (
         outline-offset: 2px;
       }
 
+      /* Override focus styles for drag handles */
+      [data-rbd-drag-handle-draggable-id]:focus,
+      [data-rbd-drag-handle-draggable-id] *:focus {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
       /* Prefer :focus-visible where supported for better UX */
       :focus-visible,
       .Mui-focusVisible {

@@ -1,13 +1,11 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { 
-  Drawer, 
   Box, 
   Typography, 
   Card, 
   CardContent, 
   IconButton,
-  Divider,
   Chip
 } from "@mui/material";
 import { 
@@ -22,36 +20,90 @@ import {
 } from "@mui/icons-material";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
-const StyledDrawer = styled(Drawer)`
-  .MuiDrawer-paper {
-    width: 320px;
-    background: ${({ theme }) => theme.palette.background.paper};
-    border-left: 1px solid ${({ theme }) => theme.palette.divider};
+const DeckContainer = styled(Box)`
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DeckStack = styled(Box)`
+  position: relative;
+  width: 200px;
+  max-height: 400px;
+  perspective: 1000px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 73, 150, 0.5);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 73, 150, 0.7);
   }
 `;
 
-const CatalogHeader = styled(Box)`
-  padding: 24px;
-  border-bottom: 1px solid ${({ theme }) => theme.palette.divider};
+const CardStack = styled(Box)`
+  position: relative;
+  width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 4px;
+  transform-style: preserve-3d;
+  padding: 8px;
 `;
 
-const WidgetItem = styled(Card)<{ isUsed: boolean }>`
-  margin: 8px 16px;
+const WidgetCard = styled(Card)<{ 
+  isUsed: boolean; 
+  index: number; 
+  isHovered: boolean;
+  totalCards: number;
+}>`
+  position: relative;
+  width: 200px;
+  height: 120px;
   cursor: ${({ isUsed }) => isUsed ? 'not-allowed' : 'grab'};
   opacity: ${({ isUsed }) => isUsed ? 0.5 : 1};
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  transform: ${({ index, isHovered }) => {
+    if (isHovered) {
+      return `translateY(-8px) translateZ(20px) rotateY(2deg) scale(1.05)`;
+    }
+    return `translateY(0) translateZ(${index * 2}px) rotateY(${index * 0.5}deg)`;
+  }};
+  z-index: ${({ index, isHovered }) => isHovered ? 100 : 10 - index};
+  box-shadow: ${({ index, isHovered, theme }) => {
+    const baseShadow = theme.shadows[2];
+    const hoverShadow = theme.shadows[8];
+    return isHovered ? hoverShadow : baseShadow;
+  }};
   
   &:hover {
-    transform: ${({ isUsed }) => isUsed ? 'none' : 'translateY(-2px)'};
+    transform: ${({ isUsed }) => 
+      isUsed ? 'none' : `translateY(-8px) translateZ(20px) rotateY(2deg) scale(1.05)`
+    };
     box-shadow: ${({ isUsed, theme }) => 
-      isUsed ? 'none' : theme.shadows[4]
+      isUsed ? 'none' : theme.shadows[8]
     };
   }
   
@@ -68,23 +120,65 @@ const WidgetItem = styled(Card)<{ isUsed: boolean }>`
   }
 `;
 
-const WidgetContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)`
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 16px !important;
+  height: 100%;
+  text-align: center;
   
   .widget-icon {
-    margin-right: 12px;
+    margin-bottom: 8px;
     color: ${({ theme }) => theme.palette.primary.main};
+    font-size: 24px;
   }
   
-  .widget-info {
-    flex: 1;
+  .widget-title {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  
+  .widget-description {
+    font-size: 10px;
+    opacity: 0.7;
+    line-height: 1.2;
   }
 `;
 
 const UsedChip = styled(Chip)`
-  margin-left: 8px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  height: 20px;
+`;
+
+const DeckLabel = styled(Typography)`
+  color: ${({ theme }) => theme.palette.text.secondary};
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 8px;
+`;
+
+const DropZone = styled(Box)`
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border: 2px dashed transparent;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  
+  &.isDraggingOver {
+    border-color: #d32f2f;
+    background: rgba(255, 0, 0, 0.05);
+  }
 `;
 
 interface WidgetType {
@@ -101,6 +195,8 @@ interface WidgetCatalogProps {
   usedWidgets: string[];
   onWidgetRemove?: (widgetId: string) => void;
   isDragActive?: boolean;
+  onNativeDrop?: (event: React.DragEvent) => void;
+  onNativeDragOver?: (event: React.DragEvent) => void;
 }
 
 const availableWidgets: WidgetType[] = [
@@ -183,71 +279,80 @@ const availableWidgets: WidgetType[] = [
   }
 ];
 
-const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidgets, onWidgetRemove, isDragActive = false }) => {
+const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ 
+  isOpen, 
+  onClose, 
+  usedWidgets, 
+  onWidgetRemove, 
+  isDragActive = false,
+  onNativeDrop,
+  onNativeDragOver
+}) => {
+  const [hoveredCard, setHoveredCard] = React.useState<number | null>(null);
+
+  // Debug logging
+  React.useEffect(() => {
+    if (isOpen) {
+      console.log('Widget Catalog opened:', {
+        usedWidgets,
+        availableWidgets: availableWidgets.map(w => w.id),
+        availableCount: availableWidgets.filter(w => !usedWidgets.includes(w.id)).length
+      });
+    }
+  }, [isOpen, usedWidgets]);
+
+  if (!isOpen) return null;
+
   return (
-    <StyledDrawer
-        anchor="right"
-        open={isOpen}
-        onClose={onClose}
-        variant="persistent"
-      >
-      <CatalogHeader>
-        <Typography variant="h6" component="h2">
-          Widget Catalog
-        </Typography>
-        <IconButton onClick={onClose} size="small">
-          <CloseIcon />
-        </IconButton>
-      </CatalogHeader>
-      
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
-        <Box sx={{ p: 2 }}>
-          <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-            Drag widgets to your dashboard. Drag existing widgets here to remove them.
-          </Typography>
-        </Box>
-        
-        <Divider />
-        
+    <DeckContainer
+      onDrop={onNativeDrop}
+      onDragOver={onNativeDragOver}
+    >
+      <DeckStack>
         <Droppable droppableId="catalog" direction="vertical">
           {(provided, snapshot) => (
-            <Box 
+            <CardStack 
               ref={provided.innerRef} 
               {...provided.droppableProps}
-              sx={{
-                flex: 1,
-                overflow: 'auto',
-                backgroundColor: snapshot.isDraggingOver ? 'rgba(255, 0, 0, 0.1)' : 'transparent',
-                border: snapshot.isDraggingOver ? '2px dashed #d32f2f' : '2px dashed transparent',
-                borderRadius: 1,
-                minHeight: '200px',
-                position: 'relative',
-                transition: 'all 0.2s ease'
-              }}
             >
-              {snapshot.isDraggingOver && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    color: '#d32f2f',
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    textAlign: 'center',
-                    zIndex: 10,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    border: '1px solid #d32f2f'
-                  }}
-                >
-                  Drop here to remove
-                </Box>
-              )}
+              <DropZone className={snapshot.isDraggingOver ? 'isDraggingOver' : ''}>
+                {snapshot.isDraggingOver && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      color: '#d32f2f',
+                      fontWeight: 'bold',
+                      fontSize: '12px',
+                      textAlign: 'center',
+                      zIndex: 100,
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid #d32f2f',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    Drop to remove
+                  </Box>
+                )}
+              </DropZone>
+              
               {availableWidgets.map((widget, index) => {
                 const isUsed = usedWidgets.includes(widget.id);
+                const isHovered = hoveredCard === index;
+                
+                // Debug logging
+                if (widget.id === 'welcome-card') {
+                  console.log('Welcome card in catalog:', { 
+                    widgetId: widget.id, 
+                    isUsed, 
+                    usedWidgets, 
+                    index 
+                  });
+                }
                 
                 return (
                   <Draggable
@@ -258,30 +363,34 @@ const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidg
                   >
                     {(provided, snapshot) => {
                       return (
-                        <WidgetItem
+                        <WidgetCard
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           isUsed={isUsed}
+                          index={index}
+                          isHovered={isHovered}
+                          totalCards={availableWidgets.length}
+                          onMouseEnter={() => setHoveredCard(index)}
+                          onMouseLeave={() => setHoveredCard(null)}
                           style={{
                             ...provided.draggableProps.style,
                             ...(snapshot.isDragging && {
-                              opacity: 0.3 // Make original item semi-transparent
+                              opacity: 0.3
                             })
                           }}
                         >
-                        <WidgetContent>
-                          <div className="widget-icon">
-                            {widget.icon}
-                          </div>
-                          <div className="widget-info">
-                            <Typography variant="subtitle1" component="div">
+                          <StyledCardContent>
+                            <div className="widget-icon">
+                              {widget.icon}
+                            </div>
+                            <Typography className="widget-title">
                               {widget.name}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography className="widget-description">
                               {widget.description}
                             </Typography>
-                          </div>
+                          </StyledCardContent>
                           {isUsed && (
                             <UsedChip 
                               label="Used" 
@@ -290,19 +399,22 @@ const WidgetCatalog: React.FC<WidgetCatalogProps> = ({ isOpen, onClose, usedWidg
                               variant="outlined"
                             />
                           )}
-                        </WidgetContent>
-                      </WidgetItem>
+                        </WidgetCard>
                       );
                     }}
                   </Draggable>
                 );
               })}
               {provided.placeholder}
-            </Box>
+            </CardStack>
           )}
         </Droppable>
-      </Box>
-    </StyledDrawer>
+      </DeckStack>
+      
+      <DeckLabel>
+        Widget Deck ({availableWidgets.filter(w => !usedWidgets.includes(w.id)).length} available)
+      </DeckLabel>
+    </DeckContainer>
   );
 };
 

@@ -21,6 +21,14 @@ const WidgetDragPreview: React.FC<WidgetDragPreviewProps> = ({ widgetId, isDragg
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, [isDragging]);
 
+  // Cleanup effect to ensure drag state is reset
+  useEffect(() => {
+    if (!isDragging) {
+      // Reset mouse position when not dragging
+      setMousePosition({ x: 0, y: 0 });
+    }
+  }, [isDragging]);
+
   if (!isDragging) return null;
 
   const renderPreview = () => {

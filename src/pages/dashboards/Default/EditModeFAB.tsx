@@ -6,9 +6,9 @@ import { useTheme } from "@mui/material/styles";
 
 const StyledFab = styled(Fab)<{ isEditMode: boolean }>`
   position: fixed;
-  bottom: 24px;
+  bottom: ${({ isEditMode }) => isEditMode ? '200px' : '24px'};
   right: 24px;
-  z-index: 1000;
+  z-index: 1001;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   ${({ isEditMode, theme }) => isEditMode && `

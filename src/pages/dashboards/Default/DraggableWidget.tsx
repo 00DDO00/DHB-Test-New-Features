@@ -1,40 +1,62 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Card, CardContent, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { DragIndicator as DragIcon } from "@mui/icons-material";
 import { Draggable } from "react-beautiful-dnd";
 
+// Use the exact same structure as WidgetCard from catalog
 const DraggableCard = styled(Box)<{ isEditMode: boolean; isDragging: boolean }>`
   position: relative;
-  transition: all 0.2s ease;
+  cursor: ${({ isEditMode }) => isEditMode ? 'grab' : 'default'};
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-select: none;
   
-  ${({ isDragging }) => isDragging && `
-    transform: rotate(2deg);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    z-index: 1000;
-  `}
+  /* Apply flex constraints to maintain layout */
+  flex: 0 0 calc(50% - 8px);
+  
+  &:active {
+    cursor: ${({ isEditMode }) => isEditMode ? 'grabbing' : 'default'};
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  
+  /* Prevent text selection on all child elements */
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 `;
 
 const DragHandle = styled(Box)`
   position: absolute;
   top: 8px;
   left: 8px;
-  cursor: grab;
   color: ${({ theme }) => theme.palette.primary.main};
   z-index: 10;
-  
-  &:active {
-    cursor: grabbing;
-  }
+  pointer-events: none; // Make it non-interactive since drag is on the whole card
 `;
 
 const EditModeIndicator = styled(Box)`
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: transparent;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border: 2px dashed ${({ theme }) => theme.palette.primary.main};
   border-radius: 8px;
   pointer-events: none;
@@ -43,18 +65,19 @@ const EditModeIndicator = styled(Box)`
 
 const RemoveHint = styled(Box)`
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255, 0, 0, 0.1);
-  color: #d32f2f;
-  padding: 4px 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(211, 47, 47, 0.9);
+  color: white;
+  padding: 8px 16px;
   border-radius: 4px;
   font-size: 12px;
-  font-weight: 500;
-  z-index: 10;
-  pointer-events: none;
+  font-weight: bold;
   opacity: 0;
   transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 100;
   
   &.visible {
     opacity: 1;
@@ -75,34 +98,44 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({
   children
 }) => {
   return (
-    <Draggable draggableId={widgetId} index={index} isDragDisabled={!isEditMode}>
-      {(provided, snapshot) => (
-        <DraggableCard
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          isEditMode={isEditMode}
-          isDragging={snapshot.isDragging}
-          style={{
-            ...provided.draggableProps.style,
-            transform: provided.draggableProps.style?.transform,
-          }}
-        >
-          {isEditMode && (
-            <>
-              <EditModeIndicator />
-              <DragHandle {...provided.dragHandleProps}>
-                <DragIcon />
-              </DragHandle>
-              <RemoveHint className={snapshot.isDragging ? 'visible' : ''}>
-                Drag to catalog to remove
-              </RemoveHint>
-            </>
-          )}
-          <Box sx={{ position: 'relative', zIndex: 2 }}>
-            {children}
-          </Box>
-        </DraggableCard>
-      )}
+    <Draggable 
+      key={widgetId}
+      draggableId={widgetId} 
+      index={index} 
+      isDragDisabled={!isEditMode}
+    >
+      {(provided, snapshot) => {
+        return (
+          <DraggableCard
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            isEditMode={isEditMode}
+            isDragging={snapshot.isDragging}
+            style={{
+              ...provided.draggableProps.style,
+              ...(snapshot.isDragging && {
+                opacity: 0.3
+              })
+            }}
+          >
+            {isEditMode && (
+              <>
+                <EditModeIndicator />
+                <DragHandle>
+                  <DragIcon />
+                </DragHandle>
+                <RemoveHint className={snapshot.isDragging ? 'visible' : ''}>
+                  Drag to catalog to remove
+                </RemoveHint>
+              </>
+            )}
+            <Box sx={{ position: 'relative', zIndex: 2 }}>
+              {children}
+            </Box>
+          </DraggableCard>
+        );
+      }}
     </Draggable>
   );
 };

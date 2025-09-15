@@ -10,6 +10,7 @@ import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 import { flushSync } from 'react-dom';
 import EditModeFAB from '../dashboards/Default/EditModeFAB';
 import WidgetCatalog from '../dashboards/Default/WidgetCatalog';
+import NativeDraggableWidget from '../dashboards/Default/NativeDraggableWidget';
 import DraggableWidget from '../dashboards/Default/DraggableWidget';
 import WidgetDragPreview from '../dashboards/Default/WidgetDragPreview';
 
@@ -334,6 +335,48 @@ const Home: React.FC = () => {
   const saveOnlineAccount = accounts.find(acc => acc.name === "DHB SaveOnline");
   const maxiSpaarAccount = accounts.find(acc => acc.name === "DHB MaxiSpaar");
 
+  // Native drag handlers
+  const handleNativeDragStart = (widgetId: string, event: React.DragEvent) => {
+    console.log('Native drag start:', widgetId);
+    setIsDragActive(true);
+    setDraggedWidget(widgetId);
+  };
+
+  const handleNativeDragEnd = (widgetId: string, event: React.DragEvent) => {
+    console.log('Native drag end:', widgetId);
+    setIsDragActive(false);
+    setDraggedWidget(null);
+    
+    // Force cleanup of any stuck drag previews
+    setTimeout(() => {
+      setIsDragActive(false);
+      setDraggedWidget(null);
+    }, 100);
+  };
+
+  const handleNativeDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const widgetId = event.dataTransfer.getData('text/plain');
+    console.log('Native drop on catalog:', widgetId);
+    console.log('Current visibleWidgets before removal:', visibleWidgets);
+    
+    // Remove widget from dashboard
+    setVisibleWidgets(prev => {
+      const newWidgets = prev.filter(id => id !== widgetId);
+      console.log('New visibleWidgets after removal:', newWidgets);
+      return newWidgets;
+    });
+    
+    // Force cleanup of drag state
+    setIsDragActive(false);
+    setDraggedWidget(null);
+  };
+
+  const handleNativeDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  };
+
   const handleDragStart = (start: any) => {
     setIsDragActive(true);
     // Only set dragged widget if it's from catalog
@@ -352,9 +395,7 @@ const Home: React.FC = () => {
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <Box 
         sx={{ 
-          p: 1,
-          marginRight: isEditMode ? '320px' : '0',
-          transition: 'margin-right 0.3s ease'
+          p: 1
         }}
       >
       {/* Main page heading - hidden visually but available to screen readers */}
@@ -425,27 +466,12 @@ const Home: React.FC = () => {
         {/* Welcome Card - DHB SaveOnline */}
         {visibleWidgets.includes('welcome-card') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="welcome-card"
-                index={visibleWidgets.indexOf('welcome-card')}
-                isEditMode={isEditMode}
-              >
-                <AccountWidget
-                  accountName={`${t('welcome')}, ${userName}`}
-                  accountType={t('saveOnline')}
-                  balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
-                  iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
-                  interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
-                  primaryAction={{
-                    label: "Make Transfer",
-                    onClick: () => navigate('/accounts'),
-                    color: 'orange'
-                  }}
-                  onAccountTypeClick={() => navigate('/accounts')}
-                />
-              </DraggableWidget>
-            ) : (
+            <NativeDraggableWidget
+              widgetId="welcome-card"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <AccountWidget
                 accountName={`${t('welcome')}, ${userName}`}
                 accountType={t('saveOnline')}
@@ -459,34 +485,19 @@ const Home: React.FC = () => {
                 }}
                 onAccountTypeClick={() => navigate('/accounts')}
               />
-            )}
+            </NativeDraggableWidget>
           </Box>
         )}
 
         {/* Accounts Card - DHB MaxiSpaar */}
         {visibleWidgets.includes('accounts-card') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="accounts-card"
-                index={visibleWidgets.indexOf('accounts-card')}
-                isEditMode={isEditMode}
-              >
-                <AccountWidget
-                  accountName={t('accounts.title')}
-                  accountType={t('maxiSpaar')}
-                  balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
-                  iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
-                  interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
-                  primaryAction={{
-                    label: "Open account",
-                    onClick: () => navigate('/accounts/maxispaar'),
-                    color: 'primary'
-                  }}
-                  onAccountTypeClick={() => navigate('/accounts/maxispaar')}
-                />
-              </DraggableWidget>
-            ) : (
+            <NativeDraggableWidget
+              widgetId="accounts-card"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <AccountWidget
                 accountName={t('accounts.title')}
                 accountType={t('maxiSpaar')}
@@ -500,19 +511,19 @@ const Home: React.FC = () => {
                 }}
                 onAccountTypeClick={() => navigate('/accounts/maxispaar')}
               />
-            )}
+            </NativeDraggableWidget>
           </Box>
         )}
 
         {/* Account Opening Card */}
         {visibleWidgets.includes('account-opening') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="account-opening"
-                index={visibleWidgets.indexOf('account-opening')}
-                isEditMode={isEditMode}
-              >
+            <NativeDraggableWidget
+              widgetId="account-opening"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <Widget
                 title={t('accounts.title') || 'Accounts (missing key)'}
                 /*subtitle="DHB Accounts"*/
@@ -564,72 +575,19 @@ const Home: React.FC = () => {
                   </Typography>
                 </Box>
               </Widget>
-            </DraggableWidget>
-          ) : (
-            <Widget
-              title={t('accounts.title') || 'Accounts (missing key)'}
-              /*subtitle="DHB Accounts"*/
-              onMenuClick={() => console.log('Menu clicked')}
-              actions={
-                <Button
-                  variant="outlined"
-                  endIcon={<Add />}
-                  onClick={() => navigate('/accounts/open')}
-                  sx={{
-                    background: 'transparent',
-                    color: '#004996',
-                    border: '1px solid #004996',
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 24px',
-                    width: '100%',
-                    fontWeight: 500,
-                    '&:hover': { 
-                      background: 'rgba(0, 73, 150, 0.1)',
-                      border: '1px solid #004996'
-                    }
-                  }}
-                >
-                  Open account
-                </Button>
-              }
-            >
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Typography 
-                  variant="h3" 
-                  color="#004996" 
-                  fontWeight="bold"
-                  sx={{
-                    cursor: 'pointer',
-                    fontSize: '1.5rem',
-                    lineHeight: 1.2,
-                    '&:hover': {
-                      textDecoration: 'underline',
-                      opacity: 0.8
-                    }
-                  }}
-                  onClick={() => navigate('/accounts/open')}
-                >
-                  {t('accounts.dhb') || 'DHB Accounts (missing key)'}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {t('account_opening.maxispaar-description') || 'Your fixed-term deposit with a guaranteed high interest rate:'}
-                </Typography>
-              </Box>
-            </Widget>
-          )}
+            </NativeDraggableWidget>
           </Box>
         )}
 
         {/* Combispaar Accounts Card */}
         {visibleWidgets.includes('combispaar-stats') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="combispaar-stats"
-                index={visibleWidgets.indexOf('combispaar-stats')}
-                isEditMode={isEditMode}
-              >
+            <NativeDraggableWidget
+              widgetId="combispaar-stats"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <StatsWidget
                 title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
                 value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
@@ -693,72 +651,7 @@ const Home: React.FC = () => {
                   </Box>
                 }
               />
-            </DraggableWidget>
-          ) : (
-            <StatsWidget
-              title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
-              value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
-              subtitle={
-                <Typography 
-                  variant="h3" 
-                  color="#004996" 
-                  fontWeight="bold"
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                      opacity: 0.8
-                    }
-                  }}
-                  onClick={() => navigate('/accounts/combispaar')}
-                >
-                  {`Total ${t('combiSpaar')} Balances`}
-                </Typography>
-              }
-              actions={
-                <Box display="flex" gap={1}>
-                  <Button
-                    variant="contained"
-                    endIcon={<ArrowForward />}
-                    onClick={() => navigate('/accounts/saveonline')}
-                    sx={{
-                      background: '#FF6B35',
-                      color: 'white',
-                      textTransform: 'none',
-                      borderRadius: '8px',
-                      padding: '12px 24px',
-                      flex: 1,
-                      fontWeight: 500,
-                      '&:hover': { background: '#e55a2b' }
-                    }}
-                  >
-                    {t('payments.title')}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    endIcon={<Add />}
-                    onClick={() => navigate('/accounts/combispaar')}
-                    sx={{
-                      background: 'transparent',
-                      color: '#004996',
-                      border: '1px solid #004996',
-                      textTransform: 'none',
-                      borderRadius: '8px',
-                      padding: '12px 24px',
-                      flex: 1,
-                      fontWeight: 500,
-                      '&:hover': { 
-                        background: 'rgba(0, 73, 150, 0.1)',
-                        border: '1px solid #004996'
-                      }
-                    }}
-                  >
-                    {t('accounts.open-account')}
-                  </Button>
-                </Box>
-              }
-            />
-          )}
+            </NativeDraggableWidget>
           </Box>
         )}
 
@@ -780,17 +673,14 @@ const Home: React.FC = () => {
         {/* Settings Card */}
         {visibleWidgets.includes('settings-widget') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Quick settings and actions">
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="settings-widget"
-                index={visibleWidgets.indexOf('settings-widget')}
-                isEditMode={isEditMode}
-              >
-                <SettingsWidget items={settingsItems} />
-              </DraggableWidget>
-            ) : (
+            <NativeDraggableWidget
+              widgetId="settings-widget"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <SettingsWidget items={settingsItems} />
-            )}
+            </NativeDraggableWidget>
           </Box>
         )}
 
@@ -812,24 +702,12 @@ const Home: React.FC = () => {
         {/* Financial Overview Card */}
         {visibleWidgets.includes('chart-widget') && (
           <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId="chart-widget"
-                index={visibleWidgets.indexOf('chart-widget')}
-                isEditMode={isEditMode}
-              >
-                <ChartWidget
-                  title={t('accounts')}
-                  filterLabel="Filter"
-                  filterValue="last year"
-                  chartData={chartData.map(item => ({
-                    label: item.label,
-                    value: formatCurrency(item.value),
-                    color: item.color
-                  }))}
-                />
-              </DraggableWidget>
-            ) : (
+            <NativeDraggableWidget
+              widgetId="chart-widget"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
               <ChartWidget
                 title={t('accounts')}
                 filterLabel="Filter"
@@ -840,7 +718,7 @@ const Home: React.FC = () => {
                   color: item.color
                 }))}
               />
-            )}
+            </NativeDraggableWidget>
           </Box>
         )}
         
@@ -883,12 +761,14 @@ const Home: React.FC = () => {
         onToggleEditMode={handleToggleEditMode}
       />
 
-      <WidgetCatalog
-        isOpen={isEditMode}
-        onClose={() => setIsEditMode(false)}
-        usedWidgets={visibleWidgets}
-        isDragActive={isDragActive}
-      />
+              <WidgetCatalog
+                isOpen={isEditMode}
+                onClose={() => setIsEditMode(false)}
+                usedWidgets={visibleWidgets}
+                isDragActive={isDragActive}
+                onNativeDrop={handleNativeDrop}
+                onNativeDragOver={handleNativeDragOver}
+              />
 
       <WidgetDragPreview 
         widgetId={draggedWidget || ''} 
