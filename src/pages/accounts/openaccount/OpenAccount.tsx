@@ -121,7 +121,7 @@ const OpenAccount: React.FC = () => {
       {/* Account Cards Grid */}
       <Grid container spacing={3} sx={{ maxWidth: 1020, mx: 'auto' }}>
         {accountTypes.map((account, index) => (
-          <Grid item xs={12} md={6} lg={4} key={account.id}>
+          <Grid item xs={12} md={6} key={account.id}>
             <Card sx={{ 
               borderRadius: 3, 
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',

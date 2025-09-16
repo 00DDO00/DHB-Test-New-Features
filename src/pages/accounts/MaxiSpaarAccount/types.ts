@@ -58,10 +58,13 @@ export interface AccountOpeningModalSectionProps {
   selectedIban: string;
   setSelectedIban: (value: string) => void;
   showSummary: boolean;
+  show2FATypeSelection: boolean;
   show2FA: boolean;
   showFinalConfirmation: boolean;
   termsAccepted: boolean;
   setTermsAccepted: (value: boolean) => void;
+  selected2FAType: 'email' | 'sms';
+  setSelected2FAType: (type: 'email' | 'sms') => void;
   errors: {[key: string]: string};
   ibanOptions: IbanOption[];
   verificationCode: string[];
@@ -70,6 +73,8 @@ export interface AccountOpeningModalSectionProps {
   onProceed: () => void;
   onEditTransaction: () => void;
   onConfirmTransaction: () => void;
+  onSendCodeFromTypeSelection: () => void;
+  onBackToSummary: () => void;
   onVerifyCode: () => void;
   onFinalDone: () => void;
   onResendCode: () => void;

@@ -199,6 +199,51 @@ mock_accounts = {
                 "interestRate": 1.1,
                 "holderName": "Lucy Lavender"
             }
+        },
+        {
+            "customerName": "Lucy Lavender",
+            "accountName": "DHB SolidExtra",
+            "IBAN": "NL24DHBN2018470580",
+            "accountNumber": "2018470580",
+            "accountNumberLabel": "SolidExtra Account",
+            "BIC": "DHBNNL2R",
+            "minPaymentDate": "2025-01-15T00:00:00Z",
+            "status": "active",
+            "branch": {
+                "code": "AMS",
+                "name": "Amsterdam Branch"
+            },
+            "address": "GRONINGEN, STR. VONDELLAAN 172",
+            "productGroup": {
+                "code": "solidExtra",
+                "name": "SolidExtra"
+            },
+            "moduleType": {
+                "code": "SAV",
+                "name": "Savings"
+            },
+            "productType": {
+                "code": "SAV_SOLID",
+                "name": "Solid Savings"
+            },
+            "productClass": {
+                "code": "SAVINGS",
+                "name": "Savings Account"
+            },
+            "currencyCode": "EUR",
+            "operationProfile": {
+                "allowModification": True,
+                "allowClosing": True,
+                "allowSourceForOpening": True,
+                "allowPaymentOrderOut": True,
+                "allowOwnTransferOut": True,
+                "allowPrintStatement": True
+            },
+            "detail": {
+                "balance": 25000.00,
+                "interestRate": 1.8,
+                "holderName": "Lucy Lavender"
+            }
         }
     ]
 }
@@ -1140,6 +1185,24 @@ def legacy_get_maxispaar_page_data():
             "title": "Many choices of different terms",
             "description": "Do you want to benefit from a higher interest rate by fixing your savings for a certain period? With a DHB MaxiSpaar account, you can easily choose from different terms, from three months up to 5 years.",
             "additional": "If you already have a DHB SaveOnline account, you can immediately open a DHB MaxiSpaar account online. That is free."
+        },
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/solidextra/page-data', methods=['GET'])
+def legacy_get_solidextra_page_data():
+    """Legacy endpoint for solidextra page data"""
+    return jsonify({
+        "success": True,
+        "data": {
+            "balance": 25000.00,
+            "interest_rate": 1.8,
+            "maturity_date": "31-12-2027",
+            "value_date": "15-01-2025",
+            "iban": "NL24DHBN2018470580",
+            "title": "Higher interest with longer terms",
+            "description": "Get a higher interest rate by choosing longer terms with DHB SolidExtra. Perfect for long-term savings goals with guaranteed returns.",
+            "additional": "SolidExtra offers competitive rates for terms from 2 to 5 years with guaranteed base rates."
         },
         "timestamp": datetime.now().isoformat()
     })

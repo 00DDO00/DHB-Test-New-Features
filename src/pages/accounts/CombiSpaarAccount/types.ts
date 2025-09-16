@@ -64,8 +64,6 @@ export interface AccountOpeningModalSectionProps {
   accountOptions: AccountOption[];
   amount: AmountState;
   setAmount: (amount: AmountState) => void;
-  noticePeriodDestination: string;
-  setNoticePeriodDestination: (value: string) => void;
   showSummary: boolean;
   showFinalConfirmation: boolean;
   termsAccepted: boolean;

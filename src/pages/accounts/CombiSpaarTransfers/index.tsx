@@ -39,7 +39,7 @@ import {
   Tune as TuneIcon
 } from '@mui/icons-material';
 
-const SaveOnlineAccount: React.FC = () => {
+const CombiSpaarTransfers: React.FC = () => {
   // All the original state variables
   const [tabValue, setTabValue] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -95,7 +95,7 @@ const SaveOnlineAccount: React.FC = () => {
       {
         id: '1',
         date: '15-Jan-2024',
-        description: 'Holder name NL24DHBN2018470578',
+        description: 'Holder name NL24DHBN2018470581',
         account: 'From: DHB SaveOnline',
         balance: '€ 1.250,00',
         type: 'credit'
@@ -103,15 +103,15 @@ const SaveOnlineAccount: React.FC = () => {
       {
         id: '2',
         date: '28-Dec-2023',
-        description: 'Holder name NL24DHBN2018470578',
-        account: 'To: DHB MaxiSpaar',
+        description: 'Holder name NL24DHBN2018470581',
+        account: 'To: DHB SaveOnline',
         balance: '- € 500,00',
         type: 'debit'
       },
       {
         id: '3',
         date: '15-Dec-2023',
-        description: 'Holder name NL24DHBN2018470578',
+        description: 'Holder name NL24DHBN2018470581',
         account: 'From: External Transfer',
         balance: '€ 2.000,00',
         type: 'credit'
@@ -119,7 +119,7 @@ const SaveOnlineAccount: React.FC = () => {
       {
         id: '4',
         date: '01-Dec-2023',
-        description: 'Holder name NL24DHBN2018470578',
+        description: 'Holder name NL24DHBN2018470581',
         account: 'To: Monthly Savings',
         balance: '- € 750,00',
         type: 'debit'
@@ -127,7 +127,7 @@ const SaveOnlineAccount: React.FC = () => {
       {
         id: '5',
         date: '01-Nov-2023',
-        description: 'Holder name NL24DHBN2018470578',
+        description: 'Holder name NL24DHBN2018470581',
         account: 'From: Salary Deposit',
         balance: '€ 3.200,00',
         type: 'credit'
@@ -139,8 +139,8 @@ const SaveOnlineAccount: React.FC = () => {
   useEffect(() => {
     const fetchAccountData = async () => {
       try {
-        // Use the IBAN from the SaveOnline account
-        const data = await apiService.getAccountByIban('NL24DHBN2018470578');
+        // Use the IBAN from the CombiSpaar account
+        const data = await apiService.getAccountByIban('NL24DHBN2018470581');
         setAccountData(data);
       } catch (error) {
         console.error('Failed to fetch account data:', error);
@@ -1203,4 +1203,4 @@ const SaveOnlineAccount: React.FC = () => {
   );
 };
 
-export default SaveOnlineAccount;
+export default CombiSpaarTransfers;

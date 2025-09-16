@@ -92,9 +92,11 @@ import Home from "./pages/home";
 import SaveOnlineAccount from "./pages/accounts/SaveOnlineAccount/SaveOnlineAccount";
 import OpenAccount from "./pages/accounts/openaccount/OpenAccount";
 import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount/CombiSpaarAccount";
+import CombiSpaarTransfers from "./pages/accounts/CombiSpaarTransfers";
 import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount/MaxiSpaarAccount";
 import SolidExtraAccount from "./pages/accounts/SolidExtraAccount/SolidExtraAccount";
 import AccountStatement from "./pages/accounts/AccountStatement/AccountStatement";
+import AccountsDashboard from "./pages/accounts/AccountsDashboard";
 import ChangeCounterAccount from "./pages/settings/ChangeCounterAccount";
 import Documents from "./pages/settings/Documents";
 import PersonalDetails from "./pages/settings/PersonalDetails";
@@ -157,7 +159,7 @@ const routes = [
     children: [
       {
         path: "",
-        element: <SaveOnlineAccount />,
+        element: <AccountsDashboard />,
       },
       {
         path: "saveonline",
@@ -170,6 +172,10 @@ const routes = [
       {
         path: "combispaar",
         element: <CombiSpaarAccount />,
+      },
+      {
+        path: "combispaar/transfers",
+        element: <CombiSpaarTransfers />,
       },
       {
         path: "maxispaar",

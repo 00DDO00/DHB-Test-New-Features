@@ -567,6 +567,12 @@ export class ApiService {
     return response.data;
   }
 
+  async getSolidExtraPageData(): Promise<any> {
+    // LEGACY: /api/solidextra/page-data - No YAML equivalent
+    const response = await this.fetchApi<{ success: boolean; data: any; timestamp: string }>('/api/solidextra/page-data');
+    return response.data;
+  }
+
 
 
   async getDashboardData(): Promise<DashboardData> {

@@ -32,8 +32,6 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
   accountOptions,
   amount,
   setAmount,
-  noticePeriodDestination,
-  setNoticePeriodDestination,
   showSummary,
   showFinalConfirmation,
   termsAccepted,
@@ -219,74 +217,6 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
               </Box>
             </Box>
 
-            {/* Account destination Options */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="body2" color="#004996" fontWeight="medium" sx={{ mb: 2 }}>
-                Account destination
-              </Typography>
-              <RadioGroup
-                value={noticePeriodDestination}
-                onChange={(e) => setNoticePeriodDestination(e.target.value)}
-              >
-                <Box sx={{ 
-                  border: '1px solid #004996', 
-                  borderRadius: 1, 
-                  p: 1.5,
-                  backgroundColor: '#F9F9F9',
-                  mb: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer'
-                }} onClick={() => setNoticePeriodDestination('combispaar')}>
-                  <Typography variant="body1">
-                    To my CombiSpaar Account
-                  </Typography>
-                  <Box sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    border: '2px solid #004996',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: noticePeriodDestination === 'combispaar' ? '#004996' : 'transparent'
-                  }}>
-                    {noticePeriodDestination === 'combispaar' && (
-                      <Check sx={{ color: 'white', fontSize: 14 }} />
-                    )}
-                  </Box>
-                </Box>
-                <Box sx={{ 
-                  border: '1px solid #004996', 
-                  borderRadius: 1, 
-                  p: 1.5,
-                  backgroundColor: '#F9F9F9',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer'
-                }} onClick={() => setNoticePeriodDestination('counter')}>
-                  <Typography variant="body1">
-                    To my Counter Account
-                  </Typography>
-                  <Box sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    border: '2px solid #004996',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: noticePeriodDestination === 'counter' ? '#004996' : 'transparent'
-                  }}>
-                    {noticePeriodDestination === 'counter' && (
-                      <Check sx={{ color: 'white', fontSize: 14 }} />
-                    )}
-                  </Box>
-                </Box>
-              </RadioGroup>
-            </Box>
               {/* Proceed Button */}
               <Button
                 variant="contained"

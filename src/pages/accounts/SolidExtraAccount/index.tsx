@@ -29,10 +29,12 @@ const SolidExtraAccount: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<SolidExtraOption | null>(null);
   const [amount, setAmount] = useState<AmountState>({ whole: '', decimal: '' });
   const [showSummary, setShowSummary] = useState(false);
+  const [show2FATypeSelection, setShow2FATypeSelection] = useState(false);
   const [show2FA, setShow2FA] = useState(false);
   const [showFinalConfirmation, setShowFinalConfirmation] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [selectedIban, setSelectedIban] = useState('NL24DHBN2018470578');
+  const [selected2FAType, setSelected2FAType] = useState<'email' | 'sms'>('email');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
   // 2FA states
@@ -228,9 +230,11 @@ const SolidExtraAccount: React.FC = () => {
     setSelectedOption(null);
     setAmount({ whole: '', decimal: '' });
     setShowSummary(false);
+    setShow2FATypeSelection(false);
     setShow2FA(false);
     setShowFinalConfirmation(false);
     setTermsAccepted(false);
+    setSelected2FAType('email');
     setVerificationCode(['', '', '', '', '', '']);
     setIsCodeSent(false);
     setGeneratedCode('');
@@ -275,13 +279,27 @@ const SolidExtraAccount: React.FC = () => {
       setErrors({ terms: 'Please accept the Terms and Conditions' });
       return;
     }
-    console.log('Terms accepted, proceeding to 2FA');
+    console.log('Terms accepted, proceeding to 2FA type selection');
     
     setShowSummary(false);
+    setShow2FATypeSelection(true);
+  };
+
+  const handleSendCodeFromTypeSelection = async () => {
+    console.log('handleSendCodeFromTypeSelection called with type:', selected2FAType);
+    setShow2FATypeSelection(false);
     setShow2FA(true);
     // Reset verification code state
     setVerificationCode(['', '', '', '', '', '']);
     setIsCodeSent(false);
+    setGeneratedCode('');
+    // Call the existing send code function
+    await handleSendCode();
+  };
+
+  const handleBackToSummary = () => {
+    setShow2FATypeSelection(false);
+    setShowSummary(true);
   };
 
   const handleFinalDone = () => {
@@ -417,10 +435,13 @@ const SolidExtraAccount: React.FC = () => {
         selectedIban={selectedIban}
         setSelectedIban={setSelectedIban}
         showSummary={showSummary}
+        show2FATypeSelection={show2FATypeSelection}
         show2FA={show2FA}
         showFinalConfirmation={showFinalConfirmation}
         termsAccepted={termsAccepted}
         setTermsAccepted={setTermsAccepted}
+        selected2FAType={selected2FAType}
+        setSelected2FAType={setSelected2FAType}
         errors={errors}
         ibanOptions={ibanOptions}
         verificationCode={verificationCode}
@@ -429,6 +450,8 @@ const SolidExtraAccount: React.FC = () => {
         onProceed={handleProceed}
         onEditTransaction={handleEditTransaction}
         onConfirmTransaction={handleConfirmTransaction}
+        onSendCodeFromTypeSelection={handleSendCodeFromTypeSelection}
+        onBackToSummary={handleBackToSummary}
         onVerifyCode={handleVerifyCode}
         onFinalDone={handleFinalDone}
         onResendCode={handleResendCode}

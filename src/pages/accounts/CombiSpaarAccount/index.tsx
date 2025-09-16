@@ -15,7 +15,6 @@ const CombiSpaarAccount: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<AccountOption | null>(null);
   const [amount, setAmount] = useState<AmountState>({ whole: '', decimal: '' });
-  const [noticePeriodDestination, setNoticePeriodDestination] = useState('combispaar');
   const [showSummary, setShowSummary] = useState(false);
   const [showFinalConfirmation, setShowFinalConfirmation] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -97,7 +96,6 @@ const CombiSpaarAccount: React.FC = () => {
     setShowFinalConfirmation(false);
     setSelectedOption(null);
     setAmount({ whole: '', decimal: '' });
-    setNoticePeriodDestination('combispaar');
     setTermsAccepted(false);
     setSelectedIban('');
     setErrors({});
@@ -147,8 +145,7 @@ const CombiSpaarAccount: React.FC = () => {
     console.log('Transaction confirmed:', {
       selectedOption,
       amount,
-      selectedIban,
-      noticePeriodDestination
+      selectedIban
     });
     
     // Close modal and reset state
@@ -268,8 +265,6 @@ const CombiSpaarAccount: React.FC = () => {
         accountOptions={accountOptions}
         amount={amount}
         setAmount={setAmount}
-        noticePeriodDestination={noticePeriodDestination}
-        setNoticePeriodDestination={setNoticePeriodDestination}
         showSummary={showSummary}
         showFinalConfirmation={showFinalConfirmation}
         termsAccepted={termsAccepted}

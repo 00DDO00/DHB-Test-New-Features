@@ -30,10 +30,13 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
   selectedIban,
   setSelectedIban,
   showSummary,
+  show2FATypeSelection,
   show2FA,
   showFinalConfirmation,
   termsAccepted,
   setTermsAccepted,
+  selected2FAType,
+  setSelected2FAType,
   errors,
   ibanOptions,
   verificationCode,
@@ -42,6 +45,8 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
   onProceed,
   onEditTransaction,
   onConfirmTransaction,
+  onSendCodeFromTypeSelection,
+  onBackToSummary,
   onVerifyCode,
   onFinalDone,
   onResendCode,
@@ -107,7 +112,7 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
 
         {/* Modal Content */}
         <Box sx={{ p: 3, flex: 1 }}>
-          {!showSummary && !show2FA && !showFinalConfirmation ? (
+          {!showSummary && !show2FATypeSelection && !show2FA && !showFinalConfirmation ? (
             /* Form Content */
             <Card sx={{ backgroundColor: 'white', borderRadius: 2, p: 3 }}>
               {/* IBAN Section */}
@@ -239,7 +244,7 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
                 </Typography>
               )}
             </Card>
-          ) : showSummary && !show2FA && !showFinalConfirmation ? (
+          ) : showSummary && !show2FATypeSelection && !show2FA && !showFinalConfirmation ? (
             /* Summary Content */
             <Box>
               <Typography variant="h5" fontWeight="bold" sx={{ mb: 3, color: '#333' }}>
@@ -319,6 +324,149 @@ const AccountOpeningModalSection: React.FC<AccountOpeningModalSectionProps> = ({
                   {errors.terms}
                 </Typography>
               )}
+            </Box>
+          ) : show2FATypeSelection && !show2FA && !showFinalConfirmation ? (
+            /* 2FA Type Selection Content */
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', p: 4 }}>
+              <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, color: '#333', px: 2 }}>
+                Enter Verification Code
+              </Typography>
+              
+              <Card sx={{ backgroundColor: 'white', borderRadius: 2, p: 4, mb: 4, mx: 2 }}>
+                <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
+                  Please choose how you would like to receive your verification code
+                </Typography>
+
+                {/* Email Option */}
+                <Box 
+                  sx={{ 
+                    border: selected2FAType === 'email' ? '2px solid #004996' : '2px solid #E0E0E0',
+                    borderRadius: 2,
+                    p: 2,
+                    mb: 2,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: 'white',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      borderColor: selected2FAType === 'email' ? '#004996' : '#BDBDBD'
+                    }
+                  }}
+                  onClick={() => setSelected2FAType('email')}
+                >
+                  <Box>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: '#333', mb: 0.5 }}>
+                      Email
+                    </Typography>
+                    <Typography variant="body2" color="#666">
+                      Receive code via email (****@example.com)
+                    </Typography>
+                  </Box>
+                  <Box sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    border: '2px solid #004996',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: selected2FAType === 'email' ? '#004996' : 'transparent'
+                  }}>
+                    {selected2FAType === 'email' && (
+                      <Check sx={{ color: 'white', fontSize: 16 }} />
+                    )}
+                  </Box>
+                </Box>
+
+                {/* SMS Option */}
+                <Box 
+                  sx={{ 
+                    border: selected2FAType === 'sms' ? '2px solid #004996' : '2px solid #E0E0E0',
+                    borderRadius: 2,
+                    p: 2,
+                    mb: 3,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: 'white',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      borderColor: selected2FAType === 'sms' ? '#004996' : '#BDBDBD'
+                    }
+                  }}
+                  onClick={() => setSelected2FAType('sms')}
+                >
+                  <Box>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: '#333', mb: 0.5 }}>
+                      SMS
+                    </Typography>
+                    <Typography variant="body2" color="#666">
+                      Receive code via SMS (+31 6****1234)
+                    </Typography>
+                  </Box>
+                  <Box sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    border: '2px solid #E0E0E0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: selected2FAType === 'sms' ? '#004996' : 'transparent'
+                  }}>
+                    {selected2FAType === 'sms' && (
+                      <Check sx={{ color: 'white', fontSize: 16 }} />
+                    )}
+                  </Box>
+                </Box>
+
+              </Card>
+
+              {/* Action Buttons - Positioned at bottom */}
+              <Box sx={{ mt: 'auto', px: 2 }}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={onSendCodeFromTypeSelection}
+                  sx={{
+                    backgroundColor: '#FC9F15',
+                    color: 'white',
+                    textTransform: 'none',
+                    borderRadius: 2,
+                    py: 1.5,
+                    mb: 2,
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: '#e58a0d'
+                    }
+                  }}
+                >
+                  Send code →
+                </Button>
+                
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={onBackToSummary}
+                  sx={{
+                    borderColor: '#004996',
+                    color: '#004996',
+                    textTransform: 'none',
+                    borderRadius: 2,
+                    py: 1.5,
+                    fontWeight: 500,
+                    '&:hover': {
+                      borderColor: '#004996',
+                      backgroundColor: 'rgba(0, 73, 150, 0.1)'
+                    }
+                  }}
+                >
+                  Back
+                </Button>
+              </Box>
             </Box>
           ) : show2FA && !showFinalConfirmation ? (
             /* 2FA Verification Content */
