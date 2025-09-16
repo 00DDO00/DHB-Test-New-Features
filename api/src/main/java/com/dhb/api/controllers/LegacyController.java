@@ -136,6 +136,170 @@ public class LegacyController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/maxispaar/accounts")
+    public ResponseEntity<?> getMaxiSpaarAccounts(@RequestHeader HttpHeaders headers) {
+        // Validate required headers
+        HeaderValidator.ValidationResult validation = HeaderValidator.validateRequiredHeaders(headers);
+        if (!validation.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("495", "Missing required headers: " + String.join(", ", validation.getMissingHeaders())));
+        }
+
+        // Mock response with 5 different MaxiSpaar accounts
+        List<Map<String, Object>> accounts = List.of(
+            Map.of(
+                "id", "maxispaar_001",
+                "name", "DHB MaxiSpaar - Short Term",
+                "type", "maxispaar",
+                "balance", 40000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470591",
+                "interest_rate", 2.1,
+                "holder_name", "Lucy Lavender",
+                "term", "3 months",
+                "maturity_date", "2025-04-15"
+            ),
+            Map.of(
+                "id", "maxispaar_002",
+                "name", "DHB MaxiSpaar - Medium Term",
+                "type", "maxispaar",
+                "balance", 55000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470592",
+                "interest_rate", 2.3,
+                "holder_name", "Lucy Lavender",
+                "term", "1 year",
+                "maturity_date", "2026-01-15"
+            ),
+            Map.of(
+                "id", "maxispaar_003",
+                "name", "DHB MaxiSpaar - Long Term",
+                "type", "maxispaar",
+                "balance", 70000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470593",
+                "interest_rate", 2.5,
+                "holder_name", "Lucy Lavender",
+                "term", "2 years",
+                "maturity_date", "2027-01-15"
+            ),
+            Map.of(
+                "id", "maxispaar_004",
+                "name", "DHB MaxiSpaar - Premium",
+                "type", "maxispaar",
+                "balance", 60000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470594",
+                "interest_rate", 2.4,
+                "holder_name", "Lucy Lavender",
+                "term", "18 months",
+                "maturity_date", "2026-07-15"
+            ),
+            Map.of(
+                "id", "maxispaar_005",
+                "name", "DHB MaxiSpaar - Extended",
+                "type", "maxispaar",
+                "balance", 35000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470595",
+                "interest_rate", 2.2,
+                "holder_name", "Lucy Lavender",
+                "term", "6 months",
+                "maturity_date", "2025-07-15"
+            )
+        );
+
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", accounts,
+            "timestamp", LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/solidextra/accounts")
+    public ResponseEntity<?> getSolidExtraAccounts(@RequestHeader HttpHeaders headers) {
+        // Validate required headers
+        HeaderValidator.ValidationResult validation = HeaderValidator.validateRequiredHeaders(headers);
+        if (!validation.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("495", "Missing required headers: " + String.join(", ", validation.getMissingHeaders())));
+        }
+
+        // Mock response with 5 different SolidExtra accounts
+        List<Map<String, Object>> accounts = List.of(
+            Map.of(
+                "id", "solidextra_001",
+                "name", "DHB SolidExtra - Short Term",
+                "type", "solidextra",
+                "balance", 30000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470601",
+                "interest_rate", 1.8,
+                "holder_name", "Lucy Lavender",
+                "term", "3 months",
+                "maturity_date", "2025-04-15"
+            ),
+            Map.of(
+                "id", "solidextra_002",
+                "name", "DHB SolidExtra - Medium Term",
+                "type", "solidextra",
+                "balance", 45000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470602",
+                "interest_rate", 2.0,
+                "holder_name", "Lucy Lavender",
+                "term", "1 year",
+                "maturity_date", "2026-01-15"
+            ),
+            Map.of(
+                "id", "solidextra_003",
+                "name", "DHB SolidExtra - Long Term",
+                "type", "solidextra",
+                "balance", 60000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470603",
+                "interest_rate", 2.2,
+                "holder_name", "Lucy Lavender",
+                "term", "2 years",
+                "maturity_date", "2027-01-15"
+            ),
+            Map.of(
+                "id", "solidextra_004",
+                "name", "DHB SolidExtra - Premium",
+                "type", "solidextra",
+                "balance", 50000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470604",
+                "interest_rate", 2.1,
+                "holder_name", "Lucy Lavender",
+                "term", "18 months",
+                "maturity_date", "2026-07-15"
+            ),
+            Map.of(
+                "id", "solidextra_005",
+                "name", "DHB SolidExtra - Extended",
+                "type", "solidextra",
+                "balance", 25000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470605",
+                "interest_rate", 1.9,
+                "holder_name", "Lucy Lavender",
+                "term", "6 months",
+                "maturity_date", "2025-07-15"
+            )
+        );
+
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", accounts,
+            "timestamp", LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/combispaar/page-data")
     public ResponseEntity<?> getCombispaarPageData(@RequestHeader HttpHeaders headers) {
         // Validate required headers

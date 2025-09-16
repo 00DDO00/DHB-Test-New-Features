@@ -94,6 +94,10 @@ import OpenAccount from "./pages/accounts/openaccount/OpenAccount";
 import CombiSpaarAccount from "./pages/accounts/CombiSpaarAccount/CombiSpaarAccount";
 import CombiSpaarDashboard from "./pages/accounts/CombiSpaarDashboard";
 import CombiSpaarTransfers from "./pages/accounts/CombiSpaarTransfers";
+import MaxiSpaarDashboard from "./pages/accounts/MaxiSpaarDashboard";
+import MaxiSpaarTransfers from "./pages/accounts/MaxiSpaarTransfers";
+import SolidExtraDashboard from "./pages/accounts/SolidExtraDashboard";
+import SolidExtraTransfers from "./pages/accounts/SolidExtraTransfers";
 import MaxiSpaarAccount from "./pages/accounts/MaxiSpaarAccount/MaxiSpaarAccount";
 import SolidExtraAccount from "./pages/accounts/SolidExtraAccount/SolidExtraAccount";
 import AccountStatement from "./pages/accounts/AccountStatement/AccountStatement";
@@ -187,8 +191,24 @@ const routes = [
         element: <MaxiSpaarAccount />,
       },
       {
+        path: "maxispaar/dashboard",
+        element: <MaxiSpaarDashboard />,
+      },
+      {
+        path: "maxispaar/transfers",
+        element: <MaxiSpaarTransfers />,
+      },
+      {
         path: "solidextra",
         element: <SolidExtraAccount />,
+      },
+      {
+        path: "solidextra/dashboard",
+        element: <SolidExtraDashboard />,
+      },
+      {
+        path: "solidextra/transfers",
+        element: <SolidExtraTransfers />,
       },
       {
         path: "saveonline/statement",

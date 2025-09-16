@@ -559,6 +559,26 @@ export class ApiService {
     return response.data;
   }
 
+  async getMaxiSpaarAccountsList(): Promise<Account[]> {
+    // LEGACY: /api/maxispaar/accounts - Get list of all MaxiSpaar accounts
+    const response = await this.fetchApi<{
+      success: boolean;
+      data: Account[];
+      timestamp: string;
+    }>('/api/maxispaar/accounts');
+    return response.data;
+  }
+
+  async getSolidExtraAccountsList(): Promise<Account[]> {
+    // LEGACY: /api/solidextra/accounts - Get list of all SolidExtra accounts
+    const response = await this.fetchApi<{
+      success: boolean;
+      data: Account[];
+      timestamp: string;
+    }>('/api/solidextra/accounts');
+    return response.data;
+  }
+
   async getChartData(): Promise<ChartData[]> {
     // LEGACY: /api/chart-data - No YAML equivalent
     const response = await this.fetchApi<{ success: boolean; data: ChartData[]; timestamp: string }>('/api/chart-data');

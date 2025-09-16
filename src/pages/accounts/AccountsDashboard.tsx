@@ -15,6 +15,8 @@ const AccountsDashboard: React.FC = () => {
   const [maxiSpaarAccount, setMaxiSpaarAccount] = useState<Account | null>(null);
   const [solidExtraAccount, setSolidExtraAccount] = useState<Account | null>(null);
   const [combispaarData, setCombispaarData] = useState<any>(null);
+  const [maxiSpaarData, setMaxiSpaarData] = useState<any>(null);
+  const [solidExtraData, setSolidExtraData] = useState<any>(null);
   const [userName, setUserName] = useState("Lucy Lavender");
 
   useEffect(() => {
@@ -97,13 +99,39 @@ const AccountsDashboard: React.FC = () => {
         setSolidExtraAccount(solidExtraAccount);
         setCombispaarData(combispaarData);
         setUserName(userData.name);
+
+        // Fetch MaxiSpaar accounts data
+        const maxiSpaarAccounts = await apiService.getMaxiSpaarAccountsList();
+        const maxiSpaarTotalBalance = maxiSpaarAccounts.reduce((sum, acc) => sum + acc.balance, 0);
+        setMaxiSpaarData({
+          accounts: maxiSpaarAccounts,
+          total_balance: maxiSpaarTotalBalance,
+          count: maxiSpaarAccounts.length
+        });
+
+        // Fetch SolidExtra accounts data
+        const solidExtraAccounts = await apiService.getSolidExtraAccountsList();
+        const solidExtraTotalBalance = solidExtraAccounts.reduce((sum, acc) => sum + acc.balance, 0);
+        setSolidExtraData({
+          accounts: solidExtraAccounts,
+          total_balance: solidExtraTotalBalance,
+          count: solidExtraAccounts.length
+        });
         
       } catch (error) {
         console.error('Error fetching accounts:', error);
         // Set fallback data on error
         setCombispaarData({
-          count: 1,
+          count: 5,
           total_balance: 150000
+        });
+        setMaxiSpaarData({
+          count: 5,
+          total_balance: 260000
+        });
+        setSolidExtraData({
+          count: 5,
+          total_balance: 210000
         });
       } finally {
         setLoading(false);
@@ -172,7 +200,7 @@ const AccountsDashboard: React.FC = () => {
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Primary account summary">
           <AccountWidget
             accountName={`${t('welcome')}, ${userName}`}
-            accountType={t('saveOnline')}
+            accountType="DHB SaveOnline"
             balance={saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--"}
             iban={saveOnlineAccount?.iban || "NL24DHBN2018470578"}
             interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
@@ -185,37 +213,99 @@ const AccountsDashboard: React.FC = () => {
           />
         </Box>
 
-        {/* Accounts Card - DHB MaxiSpaar */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="MaxiSpaar account summary">
-          <AccountWidget
-            accountName={t('accounts.title')}
-            accountType={t('maxiSpaar')}
-            balance={maxiSpaarAccount ? formatCurrency(maxiSpaarAccount.balance) : "€ --.---,--"}
-            iban={maxiSpaarAccount?.iban || "NL24DHBN2018470579"}
-            interestRate={maxiSpaarAccount ? formatInterestRate(maxiSpaarAccount.interest_rate) : "1.1%"}
-            primaryAction={{
-              label: "Open account",
-              onClick: () => navigate('/accounts/maxispaar'),
-              color: 'primary'
-            }}
-            onAccountTypeClick={() => navigate('/accounts/maxispaar')}
+        {/* MaxiSpaar Accounts Card */}
+        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+          <StatsWidget
+            title={`You have ${maxiSpaarData?.count || 5} ${t('maxiSpaar')}`}
+            value={maxiSpaarData && maxiSpaarData.total_balance !== undefined ? formatCurrency(maxiSpaarData.total_balance) : "€ --.---,--"}
+            subtitle={
+              <Typography 
+                variant="h3" 
+                color="#004996" 
+                fontWeight="bold"
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    opacity: 0.8
+                  }
+                }}
+                onClick={() => navigate('/accounts/maxispaar/dashboard')}
+              >
+                DHB MaxiSpaar
+              </Typography>
+            }
+            actions={
+              <Button
+                variant="outlined"
+                endIcon={<Add />}
+                onClick={() => navigate('/accounts/maxispaar')}
+                sx={{
+                  background: 'transparent',
+                  color: '#004996',
+                  border: '1px solid #004996',
+                  textTransform: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  width: '100%',
+                  fontWeight: 500,
+                  '&:hover': { 
+                    background: 'rgba(0, 73, 150, 0.1)',
+                    border: '1px solid #004996'
+                  }
+                }}
+              >
+                {t('accounts.open-account')}
+              </Button>
+            }
           />
         </Box>
 
-        {/* SolidExtra Account Card */}
-        <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="SolidExtra account summary">
-          <AccountWidget
-            accountName={t('solidExtra') || 'DHB SolidExtra'}
-            accountType={t('solidExtra') || 'SolidExtra'}
-            balance={solidExtraAccount ? formatCurrency(solidExtraAccount.balance) : "€ --.---,--"}
-            iban={solidExtraAccount?.iban || "NL24DHBN2018470580"}
-            interestRate={solidExtraAccount ? formatInterestRate(solidExtraAccount.interest_rate) : "1.8%"}
-            primaryAction={{
-              label: "Open account",
-              onClick: () => navigate('/accounts/solidextra'),
-              color: 'primary'
-            }}
-            onAccountTypeClick={() => navigate('/accounts/solidextra')}
+        {/* SolidExtra Accounts Card */}
+        <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+          <StatsWidget
+            title={`You have ${solidExtraData?.count || 5} ${t('solidExtra') || 'SolidExtra'}`}
+            value={solidExtraData && solidExtraData.total_balance !== undefined ? formatCurrency(solidExtraData.total_balance) : "€ --.---,--"}
+            subtitle={
+              <Typography 
+                variant="h3" 
+                color="#004996" 
+                fontWeight="bold"
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    opacity: 0.8
+                  }
+                }}
+                onClick={() => navigate('/accounts/solidextra/dashboard')}
+              >
+                DHB SolidExtra
+              </Typography>
+            }
+            actions={
+              <Button
+                variant="outlined"
+                endIcon={<Add />}
+                onClick={() => navigate('/accounts/solidextra')}
+                sx={{
+                  background: 'transparent',
+                  color: '#004996',
+                  border: '1px solid #004996',
+                  textTransform: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  width: '100%',
+                  fontWeight: 500,
+                  '&:hover': { 
+                    background: 'rgba(0, 73, 150, 0.1)',
+                    border: '1px solid #004996'
+                  }
+                }}
+              >
+                {t('accounts.open-account')}
+              </Button>
+            }
           />
         </Box>
 
