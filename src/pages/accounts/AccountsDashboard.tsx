@@ -222,7 +222,7 @@ const AccountsDashboard: React.FC = () => {
         {/* Combispaar Accounts Card */}
         <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
           <StatsWidget
-            title={`You have ${combispaarData?.count || 1} ${t('combiSpaar')}`}
+            title={`You have ${combispaarData?.count || 5} ${t('combiSpaar')}`}
             value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
             subtitle={
               <Typography 
@@ -236,7 +236,7 @@ const AccountsDashboard: React.FC = () => {
                     opacity: 0.8
                   }
                 }}
-                onClick={() => navigate('/accounts/combispaar/transfers')}
+                onClick={() => navigate('/accounts/combispaar/dashboard')}
               >
                 {`Total ${t('combiSpaar')} Balances`}
               </Typography>
@@ -246,7 +246,7 @@ const AccountsDashboard: React.FC = () => {
                 <Button
                   variant="contained"
                   endIcon={<ArrowForward />}
-                  onClick={() => navigate('/accounts/combispaar/transfers')}
+                  onClick={() => navigate('/accounts/combispaar/dashboard')}
                   sx={{
                     background: '#FF6B35',
                     color: 'white',

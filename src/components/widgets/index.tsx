@@ -115,7 +115,7 @@ interface AccountWidgetProps {
   balance: string;
   iban: string;
   interestRate: string;
-  primaryAction: {
+  primaryAction?: {
     label: string;
     onClick: () => void;
     color: 'primary' | 'secondary' | 'orange';
@@ -152,18 +152,20 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
       title={accountName}
       onMenuClick={() => console.log('Menu clicked')}
       actions={
-        <ActionButton
-          variant="contained"
-          endIcon={<ArrowForward />}
-          onClick={primaryAction.onClick}
-          color={primaryAction.color === 'orange' ? 'primary' : primaryAction.color}
-          customColor={primaryAction.color}
-          fullWidth
-          aria-label={`${primaryAction.label} for ${accountType} account with balance ${balance}`}
-          role="button"
-        >
-          {primaryAction.label}
-        </ActionButton>
+        primaryAction ? (
+          <ActionButton
+            variant="contained"
+            endIcon={<ArrowForward />}
+            onClick={primaryAction.onClick}
+            color={primaryAction.color === 'orange' ? 'primary' : primaryAction.color}
+            customColor={primaryAction.color}
+            fullWidth
+            aria-label={`${primaryAction.label} for ${accountType} account with balance ${balance}`}
+            role="button"
+          >
+            {primaryAction.label}
+          </ActionButton>
+        ) : null
       }
     >
         {/* Account Details Section */}
@@ -318,7 +320,7 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
 
   return (
     <Widget
-      title={t('settings')}
+      title={t('settings') as string}
       onMenuClick={() => console.log('Menu clicked')}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

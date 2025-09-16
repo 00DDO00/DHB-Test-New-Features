@@ -47,7 +47,89 @@ public class LegacyController {
                 )
             ),
             "total_balance", 150000.00,
-            "count", 1,
+            "count", 5,
+            "timestamp", LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/combispaar/accounts")
+    public ResponseEntity<?> getCombispaarAccounts(@RequestHeader HttpHeaders headers) {
+        // Validate required headers
+        HeaderValidator.ValidationResult validation = HeaderValidator.validateRequiredHeaders(headers);
+        if (!validation.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("495", "Missing required headers: " + String.join(", ", validation.getMissingHeaders())));
+        }
+
+        // Mock response with 5 different CombiSpaar accounts
+        List<Map<String, Object>> accounts = List.of(
+            Map.of(
+                "id", "combispaar_001",
+                "name", "DHB Combispaar - Short Term",
+                "type", "combispaar",
+                "balance", 25000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470581",
+                "interest_rate", 1.1,
+                "holder_name", "Lucy Lavender",
+                "term", "3 months",
+                "maturity_date", "2025-04-15"
+            ),
+            Map.of(
+                "id", "combispaar_002",
+                "name", "DHB Combispaar - Medium Term",
+                "type", "combispaar",
+                "balance", 35000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470582",
+                "interest_rate", 1.3,
+                "holder_name", "Lucy Lavender",
+                "term", "1 year",
+                "maturity_date", "2026-01-15"
+            ),
+            Map.of(
+                "id", "combispaar_003",
+                "name", "DHB Combispaar - Long Term",
+                "type", "combispaar",
+                "balance", 45000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470583",
+                "interest_rate", 1.5,
+                "holder_name", "Lucy Lavender",
+                "term", "2 years",
+                "maturity_date", "2027-01-15"
+            ),
+            Map.of(
+                "id", "combispaar_004",
+                "name", "DHB Combispaar - Premium",
+                "type", "combispaar",
+                "balance", 30000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470584",
+                "interest_rate", 1.4,
+                "holder_name", "Lucy Lavender",
+                "term", "18 months",
+                "maturity_date", "2026-07-15"
+            ),
+            Map.of(
+                "id", "combispaar_005",
+                "name", "DHB Combispaar - Extended",
+                "type", "combispaar",
+                "balance", 15000.00,
+                "currency", "EUR",
+                "iban", "NL24DHBN2018470585",
+                "interest_rate", 1.2,
+                "holder_name", "Lucy Lavender",
+                "term", "6 months",
+                "maturity_date", "2025-07-15"
+            )
+        );
+
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", accounts,
             "timestamp", LocalDateTime.now()
         );
 

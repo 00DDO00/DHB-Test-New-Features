@@ -12,6 +12,7 @@ import {
   ArrowForward as ArrowForwardIcon,
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
+import { useLocation } from 'react-router-dom';
 import { apiService } from '../../../services/api';
 
 // Import section components
@@ -40,6 +41,14 @@ import {
 } from '@mui/icons-material';
 
 const CombiSpaarTransfers: React.FC = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  
+  // Get account data from URL parameters
+  const accountId = searchParams.get('accountId');
+  const accountIban = searchParams.get('iban');
+  const accountBalance = searchParams.get('balance');
+  
   // All the original state variables
   const [tabValue, setTabValue] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -139,8 +148,9 @@ const CombiSpaarTransfers: React.FC = () => {
   useEffect(() => {
     const fetchAccountData = async () => {
       try {
-        // Use the IBAN from the CombiSpaar account
-        const data = await apiService.getAccountByIban('NL24DHBN2018470581');
+        // Use the IBAN from URL parameters or fallback to default
+        const ibanToUse = accountIban || 'NL24DHBN2018470581';
+        const data = await apiService.getAccountByIban(ibanToUse);
         setAccountData(data);
       } catch (error) {
         console.error('Failed to fetch account data:', error);
@@ -159,7 +169,7 @@ const CombiSpaarTransfers: React.FC = () => {
     };
 
     fetchAccountData();
-  }, []);
+  }, [accountIban]);
 
   // Event handlers
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -780,7 +790,11 @@ const CombiSpaarTransfers: React.FC = () => {
       />
 
       {/* Account Summary - Full Width Blue Card */}
-      <AccountSummarySection accountData={accountData} />
+        <AccountSummarySection 
+          accountData={accountData} 
+          accountIban={accountIban}
+          accountBalance={accountBalance}
+        />
 
       {/* Connected Frame: Transfer Section + Quick Actions */}
       <ConnectedFrameSection

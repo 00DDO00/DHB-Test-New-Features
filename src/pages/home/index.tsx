@@ -561,7 +561,7 @@ const Home: React.FC = () => {
               onDragEnd={handleNativeDragEnd}
             >
               <StatsWidget
-                title={`You have ${combispaarData?.count || 10} ${t('combiSpaar')}`}
+                title={`You have ${combispaarData?.count || 5} ${t('combiSpaar')}`}
                 value={combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--"}
                 subtitle={
                   <Typography 
@@ -574,10 +574,10 @@ const Home: React.FC = () => {
                         textDecoration: 'underline',
                         opacity: 0.8
                       }
-                    }}
-                    onClick={() => navigate('/accounts/combispaar')}
-                  >
-                    {`Total ${t('combiSpaar')} Balances`}
+                }}
+                onClick={() => navigate('/accounts/combispaar/dashboard')}
+              >
+                {`Total ${t('combiSpaar')} Balances`}
                   </Typography>
                 }
                 actions={
@@ -602,7 +602,7 @@ const Home: React.FC = () => {
                     <Button
                       variant="outlined"
                       endIcon={<Add />}
-                      onClick={() => navigate('/accounts/combispaar')}
+                      onClick={() => navigate('/accounts/combispaar/dashboard')}
                       sx={{
                         background: 'transparent',
                         color: '#004996',

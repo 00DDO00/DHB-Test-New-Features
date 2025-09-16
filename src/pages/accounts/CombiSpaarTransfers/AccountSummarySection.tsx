@@ -4,9 +4,11 @@ import { AccountData } from './types';
 
 interface AccountSummarySectionProps {
   accountData?: AccountData;
+  accountIban?: string;
+  accountBalance?: string;
 }
 
-const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountData }) => {
+const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountData, accountIban, accountBalance }) => {
   return (
     <Card sx={{ mb: 0, backgroundColor: '#004996', color: 'white', borderRadius: '12px 12px 0 0' }}>
       <CardContent>
@@ -17,14 +19,14 @@ const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountDa
               {accountData?.holder_name || 'Loading...'}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.8 }}>
-              NL24DHBN2018470581
+              {accountIban || 'NL24DHBN2018470581'}
             </Typography>
           </Grid>
           
           {/* Center - Balance */}
           <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-              € 150.000,00
+              {accountBalance ? `€ ${parseFloat(accountBalance).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '€ 150.000,00'}
             </Typography>
           </Grid>
           

@@ -549,6 +549,16 @@ export class ApiService {
     };
   }
 
+  async getCombispaarAccountsList(): Promise<CombispaarAccount[]> {
+    // LEGACY: /api/combispaar/accounts - Get list of all CombiSpaar accounts
+    const response = await this.fetchApi<{
+      success: boolean;
+      data: CombispaarAccount[];
+      timestamp: string;
+    }>('/api/combispaar/accounts');
+    return response.data;
+  }
+
   async getChartData(): Promise<ChartData[]> {
     // LEGACY: /api/chart-data - No YAML equivalent
     const response = await this.fetchApi<{ success: boolean; data: ChartData[]; timestamp: string }>('/api/chart-data');
