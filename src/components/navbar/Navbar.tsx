@@ -412,6 +412,9 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     if (path === "/private") {
       return location.pathname === "/private" || location.pathname === "/";
     }
+    if (path === "/settings") {
+      return location.pathname === "/settings";
+    }
     return location.pathname.startsWith(path);
   };
 
@@ -718,6 +721,9 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                   </NavButton>
                   <NavButton onClick={() => (window.location.href = "/settings")} active={isActive("/settings")} aria-current={isActive("/settings") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('settings')}>
                     <NavText active={isActive("/settings")}>{t('settings')}</NavText>
+                  </NavButton>
+                  <NavButton onClick={() => (window.location.href = "/settings/documents")} active={isActive("/settings/documents")} aria-current={isActive("/settings/documents") ? "page" : undefined} disableRipple tabIndex={0} aria-label="Documents">
+                    <NavText active={isActive("/settings/documents")}>Documents</NavText>
                   </NavButton>
                   <NavButton
                     onClick={() => (window.location.href = "/pages/profile")}

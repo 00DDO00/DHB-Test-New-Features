@@ -761,11 +761,32 @@ const Home: React.FC = () => {
                 title={t('accounts')}
                 filterLabel="Filter"
                 filterValue="last year"
-                chartData={chartData.map(item => ({
-                  label: item.label,
-                  value: formatCurrency(item.value),
-                  color: item.color
-                }))}
+                chartData={[
+                  {
+                    label: "DHB SaveOnline",
+                    value: saveOnlineAccount ? formatCurrency(saveOnlineAccount.balance) : "€ --.---,--",
+                    color: "#004996",
+                    onClick: () => navigate('/accounts/saveonline')
+                  },
+                  {
+                    label: `DHB CombiSpaar (${combispaarData?.count || 5} accounts)`,
+                    value: combispaarData && combispaarData.total_balance !== undefined ? formatCurrency(combispaarData.total_balance) : "€ --.---,--",
+                    color: "#FF6B35",
+                    onClick: () => navigate('/accounts/combispaar/dashboard')
+                  },
+                  {
+                    label: `DHB MaxiSpaar (${maxiSpaarData?.count || 5} accounts)`,
+                    value: maxiSpaarData && maxiSpaarData.total_balance !== undefined ? formatCurrency(maxiSpaarData.total_balance) : "€ --.---,--",
+                    color: "#28a745",
+                    onClick: () => navigate('/accounts/maxispaar/dashboard')
+                  },
+                  {
+                    label: `DHB SolidExtra (${solidExtraData?.count || 5} accounts)`,
+                    value: solidExtraData && solidExtraData.total_balance !== undefined ? formatCurrency(solidExtraData.total_balance) : "€ --.---,--",
+                    color: "#6f42c1",
+                    onClick: () => navigate('/accounts/solidextra/dashboard')
+                  }
+                ]}
               />
             </NativeDraggableWidget>
           </Box>

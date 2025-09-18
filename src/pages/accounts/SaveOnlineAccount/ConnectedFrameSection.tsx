@@ -133,9 +133,29 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
 
           {/* Completed Transfers Table */}
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Completed Transfers
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Completed Transfers
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onDownloadStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onOpenFilter}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
             <TableContainer component={Paper} variant="outlined">
               <Table>
                 <TableHead>
@@ -374,9 +394,29 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
 
           {/* Scheduled Transfers Table */}
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Scheduled Transfers
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Scheduled Transfers
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onDownloadStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onOpenFilter}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
             <TableContainer component={Paper} variant="outlined">
               <Table>
                 <TableHead>

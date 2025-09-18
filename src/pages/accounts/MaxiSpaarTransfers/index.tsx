@@ -800,7 +800,6 @@ const MaxiSpaarTransfers: React.FC = () => {
       <ConnectedFrameSection
         tabValue={tabValue}
         onTabChange={handleTabChange}
-        onOpenModal={handleOpenModal}
         onOpenFilter={() => setFilterPopupOpen(true)}
         onDownloadStatement={handleDownloadStatement}
         scheduledTransfers={scheduledTransfers}

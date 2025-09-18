@@ -43,7 +43,6 @@ function TabPanel(props: TabPanelProps) {
 interface ConnectedFrameSectionProps {
   tabValue: number;
   onTabChange: (event: React.SyntheticEvent, newValue: number) => void;
-  onOpenModal: () => void;
   onOpenFilter: () => void;
   onDownloadStatement: () => void;
   scheduledTransfers: TransferData[];
@@ -63,7 +62,6 @@ interface ConnectedFrameSectionProps {
 const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
   tabValue,
   onTabChange,
-  onOpenModal,
   onOpenFilter,
   onDownloadStatement,
   scheduledTransfers,
@@ -112,30 +110,32 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
             the next working day.
           </Typography>
           
-          <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={onOpenModal}
-              sx={{
-                backgroundColor: '#FC9F15',
-                '&:hover': { backgroundColor: '#e88a0a' },
-                px: 4,
-                py: 2,
-                fontSize: '1.1rem',
-                width: '100%'
-              }}
-              endIcon={<ArrowForwardIcon />}
-            >
-              Make New Transfer
-            </Button>
-          </Box>
 
           {/* Completed Transfers Table */}
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Completed Transfers
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Completed Transfers
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onDownloadStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onOpenFilter}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
             <TableContainer component={Paper} variant="outlined">
               <Table>
                 <TableHead>
@@ -374,9 +374,29 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
 
           {/* Scheduled Transfers Table */}
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Scheduled Transfers
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Scheduled Transfers
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onDownloadStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onOpenFilter}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
             <TableContainer component={Paper} variant="outlined">
               <Table>
                 <TableHead>

@@ -526,6 +526,7 @@ interface ChartWidgetProps {
     label: string;
     value: string;
     color: string;
+    onClick?: () => void;
   }>;
 }
 
@@ -535,42 +536,30 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({
   filterValue,
   chartData
 }) => {
+  // Calculate total value and percentages
+  const totalValue = chartData.reduce((sum, item) => {
+    const numericValue = parseFloat(item.value.replace(/[€,.\s]/g, '').replace(',', '.')) || 0;
+    return sum + numericValue;
+  }, 0);
+
+  const calculatePercentage = (value: string) => {
+    const numericValue = parseFloat(value.replace(/[€,.\s]/g, '').replace(',', '.')) || 0;
+    return totalValue > 0 ? (numericValue / totalValue) * 100 : 0;
+  };
+
+  const calculateRotation = (index: number) => {
+    let rotation = 0;
+    for (let i = 0; i < index; i++) {
+      rotation += calculatePercentage(chartData[i].value);
+    }
+    return rotation;
+  };
+
   const PieChartContainer = styled(Box)`
     position: relative;
     width: 120px;
     height: 120px;
     margin: 0 auto;
-    
-    .pie-segment {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      clip: rect(0, 60px, 120px, 0);
-    }
-    
-    .segment-1 {
-      background: #e9ecef;
-      transform: rotate(0deg);
-    }
-    
-    .segment-2 {
-      background: #6c757d;
-      transform: rotate(120deg);
-    }
-    
-    .segment-3 {
-      background: #adb5bd;
-      transform: rotate(240deg);
-    }
-    
-    .center-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #6c757d;
-    }
   `;
 
   return (
@@ -586,18 +575,88 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({
       
       <Box display="flex" alignItems="center" gap={3}>
         <PieChartContainer>
-          <div className="pie-segment segment-1"></div>
-          <div className="pie-segment segment-2"></div>
-          <div className="pie-segment segment-3"></div>
-          <AccountBalance className="center-icon" />
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke="#e9ecef"
+              strokeWidth="20"
+            />
+            {chartData.map((item, index) => {
+              const percentage = calculatePercentage(item.value);
+              if (percentage === 0) return null;
+              
+              const circumference = 2 * Math.PI * 50;
+              const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
+              const strokeDashoffset = -calculateRotation(index) * circumference / 100;
+              
+              return (
+                <circle
+                  key={index}
+                  cx="60"
+                  cy="60"
+                  r="50"
+                  fill="none"
+                  stroke={item.color}
+                  strokeWidth="20"
+                  strokeDasharray={strokeDasharray}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  transform="rotate(-90 60 60)"
+                />
+              );
+            })}
+          </svg>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <AccountBalance sx={{ color: '#6c757d', fontSize: '24px' }} />
+          </Box>
         </PieChartContainer>
         
         <Box flex={1}>
           {chartData.map((item, index) => (
-            <Box key={index} display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+            <Box 
+              key={index} 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="center" 
+              mb={1}
+              sx={{
+                cursor: item.onClick ? 'pointer' : 'default',
+                '&:hover': item.onClick ? {
+                  backgroundColor: 'rgba(0, 73, 150, 0.05)',
+                  borderRadius: '4px',
+                  padding: '4px 8px',
+                  margin: '-4px -8px'
+                } : {}
+              }}
+              onClick={item.onClick}
+            >
               <Box display="flex" alignItems="center" gap={1}>
                 <Box width={12} height={12} bgcolor={item.color} borderRadius="50%" />
-                <Typography variant="body2">{item.label}</Typography>
+                <Typography 
+                  variant="body2"
+                  sx={{
+                    color: item.onClick ? '#004996' : 'text.primary',
+                    fontWeight: item.onClick ? 600 : 400,
+                    '&:hover': item.onClick ? {
+                      textDecoration: 'underline'
+                    } : {}
+                  }}
+                >
+                  {item.label}
+                </Typography>
               </Box>
               <Typography variant="body2" fontWeight="bold">
                 {item.value}
