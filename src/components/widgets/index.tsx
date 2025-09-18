@@ -25,6 +25,7 @@ interface WidgetProps {
   children: React.ReactNode;
   actions?: React.ReactNode;
   onMenuClick?: () => void;
+  onClick?: () => void;
 }
 
 const StyledCard = styled(Card)`
@@ -45,7 +46,8 @@ export const Widget: React.FC<WidgetProps> = ({
   subtitle, 
   children, 
   actions, 
-  onMenuClick 
+  onMenuClick,
+  onClick
 }) => {
   const widgetId = `widget-${title?.toLowerCase().replace(/\s+/g, '-') || 'untitled'}`;
   
@@ -54,6 +56,15 @@ export const Widget: React.FC<WidgetProps> = ({
       role="region" 
       aria-labelledby={title ? `${widgetId}-title` : undefined}
       aria-label={title ? undefined : "Widget"}
+      onClick={onClick}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      } : undefined}
+      sx={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3 }}>
         {(title || onMenuClick) && (
@@ -98,7 +109,7 @@ export const Widget: React.FC<WidgetProps> = ({
           </Box>
           
           {actions && (
-            <Box mt={3} role="group" aria-label="Widget actions">
+            <Box mt={3} role="group" aria-label="Widget actions" onClick={(e) => e.stopPropagation()}>
               {actions}
             </Box>
           )}
@@ -151,6 +162,7 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
     <Widget
       title={accountName}
       onMenuClick={() => console.log('Menu clicked')}
+      onClick={onAccountTypeClick}
       actions={
         primaryAction ? (
           <ActionButton
@@ -247,18 +259,21 @@ interface StatsWidgetProps {
   value: string;
   subtitle: React.ReactNode;
   actions?: React.ReactNode;
+  onClick?: () => void;
 }
 
 export const StatsWidget: React.FC<StatsWidgetProps> = ({
   title,
   value,
   subtitle,
-  actions
+  actions,
+  onClick
 }) => {
   return (
     <Widget
       title={title}
       onMenuClick={() => console.log('Menu clicked')}
+      onClick={onClick}
       actions={actions}
     >
          {/* Combispaar section */}

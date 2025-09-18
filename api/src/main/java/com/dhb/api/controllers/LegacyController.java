@@ -300,6 +300,150 @@ public class LegacyController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/solidextra/options")
+    public ResponseEntity<?> getSolidExtraOptions(@RequestHeader HttpHeaders headers) {
+        // Validate required headers
+        HeaderValidator.ValidationResult validation = HeaderValidator.validateRequiredHeaders(headers);
+        if (!validation.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("495", "Missing required headers: " + String.join(", ", validation.getMissingHeaders())));
+        }
+
+        // Mock response with SolidExtra account options
+        List<Map<String, Object>> options = List.of(
+            Map.of(
+                "id", "2-years",
+                "term", "2 years",
+                "interest", "3 months Euribor + 0.05%",
+                "validFrom", "11.06.2025",
+                "balanceClass", "EUR 0,00 t/m EUR 100.000,00",
+                "days", 730,
+                "guaranteedRate", "1.50%"
+            ),
+            Map.of(
+                "id", "3-years",
+                "term", "3 years", 
+                "interest", "3 months Euribor + 0.05%",
+                "validFrom", "11.06.2025",
+                "balanceClass", "EUR 0,00 t/m EUR 100.000,00",
+                "days", 1095,
+                "guaranteedRate", "2.00%"
+            ),
+            Map.of(
+                "id", "4-years",
+                "term", "4 years",
+                "interest", "3 months Euribor + 0.05%", 
+                "validFrom", "11.06.2025",
+                "balanceClass", "EUR 0,00 t/m EUR 100.000,00",
+                "days", 1460,
+                "guaranteedRate", "2.25%"
+            ),
+            Map.of(
+                "id", "5-years",
+                "term", "5 years",
+                "interest", "3 months Euribor + 0.05%",
+                "validFrom", "11.06.2025", 
+                "balanceClass", "EUR 0,00 t/m EUR 100.000,00",
+                "days", 1825,
+                "guaranteedRate", "2.50%"
+            )
+        );
+
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", options,
+            "timestamp", LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/maxispaar/options")
+    public ResponseEntity<?> getMaxiSpaarOptions(@RequestHeader HttpHeaders headers) {
+        // Validate required headers
+        HeaderValidator.ValidationResult validation = HeaderValidator.validateRequiredHeaders(headers);
+        if (!validation.isValid()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("495", "Missing required headers: " + String.join(", ", validation.getMissingHeaders())));
+        }
+
+        // Mock response with MaxiSpaar account options
+        List<Map<String, Object>> options = List.of(
+            Map.of(
+                "id", "3-months",
+                "term", "3 months",
+                "interest", "1,85%",
+                "validFrom", "11.06.2025",
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 90
+            ),
+            Map.of(
+                "id", "6-months",
+                "term", "6 months", 
+                "interest", "1,90%",
+                "validFrom", "18.07.2025",
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 180
+            ),
+            Map.of(
+                "id", "9-months",
+                "term", "9 months",
+                "interest", "1,95%", 
+                "validFrom", "18.07.2025",
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 270
+            ),
+            Map.of(
+                "id", "12-months",
+                "term", "12 months",
+                "interest", "2,05%",
+                "validFrom", "11.06.2025", 
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 365
+            ),
+            Map.of(
+                "id", "2-years",
+                "term", "2 years",
+                "interest", "2,10%",
+                "validFrom", "11.06.2025", 
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 730
+            ),
+            Map.of(
+                "id", "3-years",
+                "term", "3 years",
+                "interest", "2,20%",
+                "validFrom", "18.07.2025", 
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 1095
+            ),
+            Map.of(
+                "id", "4-years",
+                "term", "4 years",
+                "interest", "2,25%",
+                "validFrom", "11.06.2025", 
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 1460
+            ),
+            Map.of(
+                "id", "5-years",
+                "term", "5 years",
+                "interest", "2,30%",
+                "validFrom", "18.07.2025", 
+                "balanceClass", "€ 500 to € 500,000",
+                "days", 1825
+            )
+        );
+
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", options,
+            "timestamp", LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/combispaar/page-data")
     public ResponseEntity<?> getCombispaarPageData(@RequestHeader HttpHeaders headers) {
         // Validate required headers

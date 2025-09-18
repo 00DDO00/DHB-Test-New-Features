@@ -277,25 +277,6 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
                 </TableBody>
               </Table>
             </TableContainer>
-            
-            {/* See All Button */}
-            <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <MuiLink
-                component={Link}
-                to="/accounts/saveonline/statement"
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  textDecoration: 'none',
-                  color: '#FC9F15',
-                  fontWeight: 'bold',
-                  '&:hover': { textDecoration: 'underline' }
-                }}
-              >
-                See All
-                <ArrowForwardIcon sx={{ ml: 0.5, fontSize: '1rem' }} />
-              </MuiLink>
-            </Box>
           </Box>
         </TabPanel>
 

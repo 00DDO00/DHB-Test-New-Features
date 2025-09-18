@@ -17,7 +17,7 @@ const SavingsOptionsSection: React.FC<SavingsOptionsSectionProps> = ({
   solidExtraOptions,
   onOpenAccount
 }) => {
-  const [selectedCard, setSelectedCard] = useState<string>('2-years'); // Default to first card
+  const [selectedCard, setSelectedCard] = useState<string>('');
 
   return (
     <Box sx={{ width: '100%' }}>

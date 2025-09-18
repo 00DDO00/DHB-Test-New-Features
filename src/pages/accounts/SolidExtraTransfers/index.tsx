@@ -10,7 +10,9 @@ import {
 import {
   Close as CloseIcon,
   ArrowForward as ArrowForwardIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
+  TrendingUp as TrendingUpIcon,
+  Add as AddIcon
 } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
 import { apiService } from '../../../services/api';
@@ -27,6 +29,9 @@ import TransferDetailsPopup from './TransferDetailsPopup';
 import DownloadStatementPopup from './DownloadStatementPopup';
 import AccountClosurePopup from './AccountClosurePopup';
 import AccountClosureCongratulationsPopup from './AccountClosureCongratulationsPopup';
+import HistoricalRateModal from './HistoricalRateModal';
+import ExtendAccountModal from './ExtendAccountModal';
+import ExtendAccountCongratulationsModal from './ExtendAccountCongratulationsModal';
 
 // Import types
 import { SavingsGoal, AccountData, TransferData, Transaction, DateObject, AmountObject } from './types';
@@ -97,6 +102,12 @@ const SolidExtraTransfers: React.FC = () => {
   const [accountClosureOpen, setAccountClosureOpen] = useState(false);
   const [accountClosureCongratulationsOpen, setAccountClosureCongratulationsOpen] = useState(false);
   const [closedAccountNumber, setClosedAccountNumber] = useState('');
+  
+  // New state variables for SolidExtra specific modals
+  const [historicalRateModalOpen, setHistoricalRateModalOpen] = useState(false);
+  const [extendAccountModalOpen, setExtendAccountModalOpen] = useState(false);
+  const [extendAccountCongratulationsOpen, setExtendAccountCongratulationsOpen] = useState(false);
+  const [selectedExtensionPeriod, setSelectedExtensionPeriod] = useState('');
 
   // Mock transactions data
   useEffect(() => {
@@ -577,37 +588,24 @@ const SolidExtraTransfers: React.FC = () => {
     setDownloadStatementOpen(true);
   };
 
+  // New handlers for SolidExtra specific modals
+  const handleExtendAccountConfirm = (selectedPeriod: string) => {
+    setSelectedExtensionPeriod(selectedPeriod);
+    setExtendAccountModalOpen(false);
+    setExtendAccountCongratulationsOpen(true);
+  };
+
   // Quick Actions data
   const quickActions = [
     {
-      label: 'Savings Goal Setting',
-      icon: <SettingsIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setSavingsGoalModalOpen(true)
+      label: 'Historical rate change',
+      icon: <TrendingUpIcon sx={{ fontSize: '1rem' }} />,
+      onClick: () => setHistoricalRateModalOpen(true)
     },
     {
-      label: 'Counteraccount change',
-      icon: <PeopleIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Counteraccount change')
-    },
-    {
-      label: 'Download statement',
-      icon: <FileUploadIcon sx={{ fontSize: '1rem' }} />,
-      onClick: handleDownloadStatement
-    },
-    {
-      label: 'Set savings target',
-      icon: <TrackChangesIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setSavingsTargetModalOpen(true)
-    },
-    {
-      label: 'Adjustment',
-      icon: <TuneIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Adjustment')
-    },
-    {
-      label: 'Account Closure',
-      icon: <CloseIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setAccountClosureOpen(true)
+      label: 'Extend account',
+      icon: <AddIcon sx={{ fontSize: '1rem' }} />,
+      onClick: () => setExtendAccountModalOpen(true)
     }
   ];
 
@@ -792,8 +790,8 @@ const SolidExtraTransfers: React.FC = () => {
       {/* Account Summary - Full Width Blue Card */}
         <AccountSummarySection 
           accountData={accountData} 
-          accountIban={accountIban}
-          accountBalance={accountBalance}
+          accountIban={accountIban || undefined}
+          accountBalance={accountBalance || undefined}
         />
 
       {/* Connected Frame: Transfer Section + Quick Actions */}
@@ -1211,6 +1209,26 @@ const SolidExtraTransfers: React.FC = () => {
         open={accountClosureCongratulationsOpen}
         onClose={() => setAccountClosureCongratulationsOpen(false)}
         accountNumber={closedAccountNumber}
+      />
+
+      {/* Historical Rate Modal */}
+      <HistoricalRateModal
+        open={historicalRateModalOpen}
+        onClose={() => setHistoricalRateModalOpen(false)}
+      />
+
+      {/* Extend Account Modal */}
+      <ExtendAccountModal
+        open={extendAccountModalOpen}
+        onClose={() => setExtendAccountModalOpen(false)}
+        onConfirm={handleExtendAccountConfirm}
+      />
+
+      {/* Extend Account Congratulations Modal */}
+      <ExtendAccountCongratulationsModal
+        open={extendAccountCongratulationsOpen}
+        onClose={() => setExtendAccountCongratulationsOpen(false)}
+        selectedPeriod={selectedExtensionPeriod}
       />
     </Box>
   );

@@ -577,18 +577,8 @@ const CombiSpaarTransfers: React.FC = () => {
     setDownloadStatementOpen(true);
   };
 
-  // Quick Actions data
+  // Quick Actions data (only keep Set savings target and Download statement)
   const quickActions = [
-    {
-      label: 'Savings Goal Setting',
-      icon: <SettingsIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setSavingsGoalModalOpen(true)
-    },
-    {
-      label: 'Counteraccount change',
-      icon: <PeopleIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Counteraccount change')
-    },
     {
       label: 'Download statement',
       icon: <FileUploadIcon sx={{ fontSize: '1rem' }} />,
@@ -598,16 +588,6 @@ const CombiSpaarTransfers: React.FC = () => {
       label: 'Set savings target',
       icon: <TrackChangesIcon sx={{ fontSize: '1rem' }} />,
       onClick: () => setSavingsTargetModalOpen(true)
-    },
-    {
-      label: 'Adjustment',
-      icon: <TuneIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Adjustment')
-    },
-    {
-      label: 'Account Closure',
-      icon: <CloseIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setAccountClosureOpen(true)
     }
   ];
 

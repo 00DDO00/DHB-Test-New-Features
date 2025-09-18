@@ -235,6 +235,7 @@ const AccountsDashboard: React.FC = () => {
                 DHB MaxiSpaar
               </Typography>
             }
+            onClick={() => navigate('/accounts/maxispaar/dashboard')}
             actions={
               <Button
                 variant="outlined"
@@ -283,6 +284,7 @@ const AccountsDashboard: React.FC = () => {
                 DHB SolidExtra
               </Typography>
             }
+            onClick={() => navigate('/accounts/solidextra/dashboard')}
             actions={
               <Button
                 variant="outlined"
@@ -331,6 +333,7 @@ const AccountsDashboard: React.FC = () => {
                 {`Total ${t('combiSpaar')} Balances`}
               </Typography>
             }
+            onClick={() => navigate('/accounts/combispaar/dashboard')}
             actions={
               <Box display="flex" gap={1}>
                 <Button

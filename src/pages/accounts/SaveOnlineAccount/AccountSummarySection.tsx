@@ -7,8 +7,17 @@ interface AccountSummarySectionProps {
 }
 
 const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountData }) => {
+  const parseEuroToNumber = (value: string) => {
+    const cleaned = value.replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(/,(\d{2})$/, '.$1');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  };
+  const formatEuro = (value: number) => `€ ${value.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const balanceNumber = parseEuroToNumber('€ 2.000,00');
+  const ratePct = 2.2;
+  const accrued = balanceNumber * (ratePct / 100);
   return (
-    <Card sx={{ mb: 0, backgroundColor: '#004996', color: 'white', borderRadius: '12px 12px 0 0' }}>
+      <Card sx={{ mb: 0, backgroundColor: '#004996', color: 'white', borderRadius: '12px 12px 0 0' }}>
       <CardContent>
         <Grid container alignItems="center">
           {/* Left Side - Holder Name and IBAN */}
@@ -28,37 +37,24 @@ const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountDa
             </Typography>
           </Grid>
           
-          {/* Right Side - Balance Classes and Rates Table */}
+          {/* Right Side - Cumulative and Accrued interest */}
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
               <Box sx={{ width: '100%', maxWidth: '400px' }}>
-                {/* Header Row */}
                 <Box sx={{ display: 'flex', mb: 1, justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', flex: 1, mr: 0.5 }}>
-                    Balance class
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', flex: 1, mr: 0.5, color: 'white' }}>
+                    Cumulative interest rate
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', minWidth: '60px', textAlign: 'right' }}>
-                    Rente
+                  <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right', color: 'white' }}>
+                    {ratePct.toFixed(1)}%
                   </Typography>
                 </Box>
-                
-                {/* Data Row 1 */}
-                <Box sx={{ display: 'flex', mb: 1, justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ flex: 1, mr: 0.5, whiteSpace: 'nowrap' }}>
-                    EUR 0,00 t/m EUR 100.000,00
-                  </Typography>
-                  <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right' }}>
-                    1.7 %
-                  </Typography>
-                </Box>
-                
-                {/* Data Row 2 */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ flex: 1, mr: 0.5, whiteSpace: 'nowrap' }}>
-                    EUR 100.000,01 t/m EUR 500.000,00
+                  <Typography variant="body2" sx={{ flex: 1, mr: 0.5, color: 'white' }}>
+                    Accrued interest
                   </Typography>
-                  <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right' }}>
-                    1.7 %
+                  <Typography variant="body2" sx={{ minWidth: '60px', textAlign: 'right', color: 'white' }}>
+                    {formatEuro(accrued)}
                   </Typography>
                 </Box>
               </Box>

@@ -556,6 +556,7 @@ const Home: React.FC = () => {
                     {`Total ${t('maxiSpaar')} Balances`}
                   </Typography>
                 }
+                onClick={() => navigate('/accounts/maxispaar/dashboard')}
                 actions={
                   <Button
                     variant="outlined"
@@ -613,6 +614,7 @@ const Home: React.FC = () => {
                     {`Total ${t('solidExtra') || 'SolidExtra'} Balances`}
                   </Typography>
                 }
+                onClick={() => navigate('/accounts/solidextra/dashboard')}
                 actions={
                   <Button
                     variant="outlined"
@@ -670,6 +672,7 @@ const Home: React.FC = () => {
                 {`Total ${t('combiSpaar')} Balances`}
                   </Typography>
                 }
+                onClick={() => navigate('/accounts/combispaar/dashboard')}
                 actions={
                   <Box display="flex" gap={1}>
                     <Button

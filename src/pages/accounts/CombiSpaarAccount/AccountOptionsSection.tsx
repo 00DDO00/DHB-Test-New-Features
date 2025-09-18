@@ -17,7 +17,7 @@ const AccountOptionsSection: React.FC<AccountOptionsSectionProps> = ({
   accountOptions,
   onOpenAccount
 }) => {
-  const [selectedCard, setSelectedCard] = useState<string>('1'); // Default to first card
+  const [selectedCard, setSelectedCard] = useState<string>('');
 
   return (
     <>

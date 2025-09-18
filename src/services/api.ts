@@ -603,6 +603,18 @@ export class ApiService {
     return response.data;
   }
 
+  async getSolidExtraOptions(): Promise<any[]> {
+    // LEGACY: /api/solidextra/options - Get SolidExtra account options
+    const response = await this.fetchApi<{ success: boolean; data: any[]; timestamp: string }>('/api/solidextra/options');
+    return response.data;
+  }
+
+  async getMaxiSpaarOptions(): Promise<any[]> {
+    // LEGACY: /api/maxispaar/options - Get MaxiSpaar account options
+    const response = await this.fetchApi<{ success: boolean; data: any[]; timestamp: string }>('/api/maxispaar/options');
+    return response.data;
+  }
+
 
 
   async getDashboardData(): Promise<DashboardData> {

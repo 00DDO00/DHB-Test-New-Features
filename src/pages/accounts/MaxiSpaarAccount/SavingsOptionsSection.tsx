@@ -22,7 +22,7 @@ const SavingsOptionsSection: React.FC<SavingsOptionsSectionWithDataProps> = ({
   accountData,
   onOpenAccount
 }) => {
-  const [selectedCard, setSelectedCard] = useState<string>('3-months');
+  const [selectedCard, setSelectedCard] = useState<string>('');
 
   const maxiSpaarOptions: MaxiSpaarOption[] = accountData?.account_options || [
     {
