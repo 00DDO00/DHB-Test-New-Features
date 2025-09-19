@@ -119,7 +119,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       const tokenUrl = `${auth0Config.domain}/token`;
       const clientId = auth0Config.clientId;
       const clientSecret = auth0Config.clientSecret;
-      const redirectUri = auth0Config.redirectUri;
+      //const redirectUri = auth0Config.redirectUri;
+      const redirectUri = 'https://dhb-test.vercel.app'; 
 
       const params = new URLSearchParams();
       params.append("grant_type", "authorization_code");
