@@ -276,7 +276,6 @@ const auth0Config = useMemo(() => {
   >
     {children}
   </AuthContext.Provider>
-);
   ) : (
     <Typography textAlign="center" fontSize={96} color="gray" marginTop="20%">
       Initializing...
