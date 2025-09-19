@@ -8,7 +8,8 @@ import {
   IconButton,
   Select,
   MenuItem,
-  FormControl
+  FormControl,
+  TextField
 } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -26,8 +27,10 @@ const DownloadStatementPopup: React.FC<DownloadStatementPopupProps> = ({
 }) => {
   const navigate = useNavigate();
   const [selectedAccount, setSelectedAccount] = useState('SaveOnline');
-  const [selectedMonth, setSelectedMonth] = useState('January');
-  const [selectedYear, setSelectedYear] = useState('2024');
+  const [fromMonth, setFromMonth] = useState('');
+  const [fromYear, setFromYear] = useState('');
+  const [toMonth, setToMonth] = useState('');
+  const [toYear, setToYear] = useState('');
 
   const months = [
     '--', 'January', 'February', 'March', 'April', 'May', 'June',
@@ -40,8 +43,10 @@ const DownloadStatementPopup: React.FC<DownloadStatementPopupProps> = ({
     // Navigate to AccountStatement page with search parameters
     const searchParams = new URLSearchParams({
       account: selectedAccount,
-      month: selectedMonth,
-      year: selectedYear
+      fromMonth: fromMonth,
+      fromYear: fromYear,
+      toMonth: toMonth,
+      toYear: toYear
     });
     
     navigate(`/accounts/saveonline/statement?${searchParams.toString()}`);
@@ -152,83 +157,170 @@ const DownloadStatementPopup: React.FC<DownloadStatementPopupProps> = ({
               </FormControl>
             </Box>
 
-            {/* Select Month and Year */}
+            {/* Select Date Range */}
             <Box sx={{ mb: 0 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontWeight: 500 }}>
-                Select month and year
+                Select date range
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                {/* Month Selector */}
-                <FormControl sx={{ flex: 1 }}>
-                  <Select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    displayEmpty
-                    sx={{
-                      '& .MuiSelect-select': {
-                        py: 1.5,
-                        px: 2
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E0E0E0'
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1976d2'
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1976d2'
-                      }
-                    }}
-                    IconComponent={KeyboardArrowDownIcon}
-                  >
-                    <MenuItem value="" disabled>
-                      <Typography variant="body2" color="text.secondary">
-                        May
-                      </Typography>
-                    </MenuItem>
-                    {months.map((month) => (
-                      <MenuItem key={month} value={month}>
-                        <Typography variant="body2">{month}</Typography>
+              
+              {/* From Date Row */}
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.875rem' }}>
+                  From
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  {/* From Month */}
+                  <FormControl sx={{ flex: 1 }}>
+                    <Select
+                      value={fromMonth}
+                      onChange={(e) => setFromMonth(e.target.value)}
+                      displayEmpty
+                      sx={{
+                        '& .MuiSelect-select': {
+                          py: 1.5,
+                          px: 2
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E0E0E0'
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        }
+                      }}
+                      IconComponent={KeyboardArrowDownIcon}
+                    >
+                      <MenuItem value="" disabled>
+                        <Typography variant="body2" color="text.secondary">
+                          Month
+                        </Typography>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      {months.map((month) => (
+                        <MenuItem key={month} value={month}>
+                          <Typography variant="body2">{month}</Typography>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
 
-                {/* Year Selector */}
-                <FormControl sx={{ flex: 1 }}>
-                  <Select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    displayEmpty
-                    sx={{
-                      '& .MuiSelect-select': {
-                        py: 1.5,
-                        px: 2
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E0E0E0'
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1976d2'
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1976d2'
-                      }
-                    }}
-                    IconComponent={KeyboardArrowDownIcon}
-                  >
-                    <MenuItem value="" disabled>
-                      <Typography variant="body2" color="text.secondary">
-                        2025
-                      </Typography>
-                    </MenuItem>
-                    {years.map((year) => (
-                      <MenuItem key={year} value={year.toString()}>
-                        <Typography variant="body2">{year}</Typography>
+                  {/* From Year */}
+                  <FormControl sx={{ flex: 1 }}>
+                    <Select
+                      value={fromYear}
+                      onChange={(e) => setFromYear(e.target.value)}
+                      displayEmpty
+                      sx={{
+                        '& .MuiSelect-select': {
+                          py: 1.5,
+                          px: 2
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E0E0E0'
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        }
+                      }}
+                      IconComponent={KeyboardArrowDownIcon}
+                    >
+                      <MenuItem value="" disabled>
+                        <Typography variant="body2" color="text.secondary">
+                          Year
+                        </Typography>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      {years.map((year) => (
+                        <MenuItem key={year} value={year.toString()}>
+                          <Typography variant="body2">{year}</Typography>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Box>
+
+              {/* To Date Row */}
+              <Box sx={{ mb: 0 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.875rem' }}>
+                  To
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  {/* To Month */}
+                  <FormControl sx={{ flex: 1 }}>
+                    <Select
+                      value={toMonth}
+                      onChange={(e) => setToMonth(e.target.value)}
+                      displayEmpty
+                      sx={{
+                        '& .MuiSelect-select': {
+                          py: 1.5,
+                          px: 2
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E0E0E0'
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        }
+                      }}
+                      IconComponent={KeyboardArrowDownIcon}
+                    >
+                      <MenuItem value="" disabled>
+                        <Typography variant="body2" color="text.secondary">
+                          Month
+                        </Typography>
+                      </MenuItem>
+                      {months.map((month) => (
+                        <MenuItem key={month} value={month}>
+                          <Typography variant="body2">{month}</Typography>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {/* To Year */}
+                  <FormControl sx={{ flex: 1 }}>
+                    <Select
+                      value={toYear}
+                      onChange={(e) => setToYear(e.target.value)}
+                      displayEmpty
+                      sx={{
+                        '& .MuiSelect-select': {
+                          py: 1.5,
+                          px: 2
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E0E0E0'
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#1976d2'
+                        }
+                      }}
+                      IconComponent={KeyboardArrowDownIcon}
+                    >
+                      <MenuItem value="" disabled>
+                        <Typography variant="body2" color="text.secondary">
+                          Year
+                        </Typography>
+                      </MenuItem>
+                      {years.map((year) => (
+                        <MenuItem key={year} value={year.toString()}>
+                          <Typography variant="body2">{year}</Typography>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
               </Box>
             </Box>
           </Box>

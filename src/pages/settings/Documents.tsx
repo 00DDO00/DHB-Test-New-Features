@@ -1,5 +1,4 @@
 import React from 'react';
-import { apiService } from '../../services/api';
 import {
   Box,
   Typography,
@@ -9,145 +8,86 @@ import {
   Breadcrumbs,
   Link as MuiLink,
   Fab,
+  IconButton,
 } from '@mui/material';
 import {
-  Link as LinkIcon,
   ArrowForward,
   HeadsetMic,
   Home as HomeIcon,
+  Visibility as PreviewIcon,
+  Download as DownloadIcon,
 } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Documents: React.FC = () => {
-  const [documents, setDocuments] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
 
-  // Load documents from YAML API
-  React.useEffect(() => {
-    const loadDocuments = async () => {
-      try {
-        // Use YAML endpoints to get documents
-        const [financialDocs, contracts] = await Promise.all([
-          apiService.getFinancialAnnualOverview(),
-          apiService.getCustomerContracts()
-        ]);
+  // Document data matching the first image
+  const documents = [
+    {
+      id: 'terms-conditions',
+      title: 'Terms & Conditions',
+      subtitle: 'Main rules, tax and deposit information, and reference documents',
+      isClickable: true,
+      hasPreview: false,
+      hasDownload: false,
+    },
+    {
+      id: 'depositor-template',
+      title: 'Depositor Information Template',
+      subtitle: 'Forms for account changes, contact updates, and cancellations',
+      isClickable: false,
+      hasPreview: true,
+      hasDownload: true,
+    },
+    {
+      id: 'financial-overview',
+      title: 'Financial Annual Overview',
+      subtitle: 'Terms for accounts, deposits, and online services',
+      isClickable: false,
+      hasPreview: true,
+      hasDownload: true,
+    },
+    {
+      id: 'account-statements',
+      title: 'Account Statements',
+      subtitle: 'Terms for accounts, deposits, and online services',
+      isClickable: false,
+      hasPreview: true,
+      hasDownload: true,
+    },
+    {
+      id: 'contracts',
+      title: 'Your contracts',
+      subtitle: 'Terms for accounts, deposits, and online services',
+      isClickable: false,
+      hasPreview: true,
+      hasDownload: true,
+    },
+    {
+      id: 'faq',
+      title: 'Frequently Asked Questions',
+      subtitle: 'A section that provides quick and easy access to answers',
+      isClickable: false,
+      hasPreview: true,
+      hasDownload: true,
+    },
+  ];
 
-        // Transform YAML data to documents array
-        const transformedDocs = [
-          {
-            id: 'terms-conditions',
-            title: 'Terms & Conditions',
-            downloadUrl: '/documents/terms-conditions.pdf',
-          },
-          {
-            id: 'depositor-template',
-            title: 'Depositor Information Template',
-            downloadUrl: '/documents/depositor-template.pdf',
-          },
-          ...financialDocs.map((doc: any) => ({
-            id: doc.id,
-            title: doc.name,
-            downloadUrl: `/documents/${doc.id}.pdf`,
-          })),
-          ...contracts.map((contract: any) => ({
-            id: contract.id,
-            title: contract.name,
-            downloadUrl: `/documents/${contract.id}.pdf`,
-          }))
-        ];
-
-        setDocuments(transformedDocs);
-      } catch (error) {
-        console.error('Failed to load documents:', error);
-        // Fallback to static documents
-        setDocuments([
-          {
-            id: 'terms-conditions',
-            title: 'Terms & Conditions',
-            downloadUrl: '/documents/terms-conditions.pdf',
-          },
-          {
-            id: 'depositor-template',
-            title: 'Depositor Information Template',
-            downloadUrl: '/documents/depositor-template.pdf',
-          },
-          {
-            id: 'financial-overview',
-            title: 'Financial Annual Overview',
-            downloadUrl: '/documents/financial-overview.pdf',
-          },
-          {
-            id: 'account-statements',
-            title: 'Account Statements',
-            downloadUrl: '/documents/account-statements.pdf',
-          },
-          {
-            id: 'contracts',
-            title: 'Your contracts',
-            downloadUrl: '/documents/contracts.pdf',
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDocuments();
-  }, []);
-
-  const handleDownload = async (documentId: string, downloadUrl: string) => {
-    try {
-      console.log(`Downloading ${documentId}: ${downloadUrl}`);
-      
-      // Make API call with proper headers
-      const headers = {
-        'Content-Type': 'application/json',
-        'channelCode': 'WEB',
-        'username': 'testuser',
-        'lang': 'en',
-        'countryCode': 'NL',
-        'sessionId': 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        'customerId': 'CUST001'
-      };
-      
-      const response = await fetch(`http://localhost:5003/api/documents/download?type=${documentId}`, {
-        method: 'GET',
-        headers
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // Get the filename from the Content-Disposition header
-      const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = `${documentId}.txt`;
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        if (filenameMatch && filenameMatch[1]) {
-          filename = filenameMatch[1].replace(/['"]/g, '');
-        }
-      }
-      
-      // Convert response to blob and create download link
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      
-      // Append to body, click, and remove
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the URL object
-      window.URL.revokeObjectURL(url);
-      
-    } catch (error) {
-      console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+  const handleCardClick = (documentId: string) => {
+    if (documentId === 'terms-conditions') {
+      navigate('/settings/documents/terms-conditions');
     }
+  };
+
+  const handlePreview = (documentId: string) => {
+    console.log(`Preview ${documentId}`);
+    // Implement preview functionality
+  };
+
+  const handleDownload = (documentId: string) => {
+    console.log(`Download ${documentId}`);
+    // Implement download functionality
   };
 
   return (
@@ -164,69 +104,101 @@ const Documents: React.FC = () => {
           <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
           Home
         </MuiLink>
-        <MuiLink 
-          component={Link}
-          to="/settings" 
-          color="inherit" 
-          underline="hover"
-          sx={{ cursor: 'pointer' }}
-        >
-          Settings
-        </MuiLink>
         <Typography color="text.primary" fontWeight="bold">
           Documents
         </Typography>
       </Breadcrumbs>
 
-      {/* Documents Grid */}
-      <Grid container spacing={4}>
+      {/* Main Heading */}
+      <Typography 
+        variant="h4" 
+        fontWeight="bold" 
+        sx={{ mb: 4, color: '#333' }}
+      >
+        Below please find the conditions regarding out internet services.
+      </Typography>
+
+      {/* Documents Grid - 3 rows of 2 columns */}
+      <Grid container spacing={3}>
         {documents.map((document) => (
-          <Grid item xs={12} sm={6} md={4} key={document.id}>
+          <Grid item xs={12} sm={6} key={document.id}>
             <Card 
               sx={{ 
                 borderRadius: 2,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                border: '1px solid #e0e0e0',
                 transition: 'all 0.2s ease-in-out',
-                '&:hover': {
+                cursor: document.isClickable ? 'pointer' : 'default',
+                minHeight: 'auto', // Allow natural sizing
+                position: 'relative',
+                '&:hover': document.isClickable ? {
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   transform: 'translateY(-2px)',
-                }
+                } : {}
               }}
+              onClick={() => handleCardClick(document.id)}
             >
-              <CardContent sx={{ p: 3, textAlign: 'center', minHeight: '160px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <CardContent sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', position: 'relative' }}>
                 {/* Title */}
                 <Typography 
                   variant="h6" 
                   fontWeight="bold" 
-                  color="#333" 
-                  sx={{ mb: 3 }}
+                  color="#333"
+                  sx={{ mb: 1 }}
                 >
                   {document.title}
                 </Typography>
 
-                {/* Download Link */}
-                <MuiLink
-                  component="button"
-                  onClick={() => handleDownload(document.id, document.downloadUrl)}
-                  sx={{
-                    color: '#1976d2',
-                    textDecoration: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 1,
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    margin: '0 auto',
-                    '&:hover': {
-                      color: '#1565c0',
-                    },
-                  }}
+                {/* Icons positioned at vertical center */}
+                <Box sx={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: 1, alignItems: 'center' }}>
+                    {document.isClickable && (
+                      <ArrowForward sx={{ color: '#1976d2', fontSize: 20 }} />
+                    )}
+
+                    {!document.isClickable && (
+                      <>
+                        {document.hasPreview && (
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePreview(document.id);
+                            }}
+                            sx={{ 
+                              color: '#1976d2',
+                              '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.1)' }
+                            }}
+                          >
+                            <PreviewIcon />
+                          </IconButton>
+                        )}
+                        {document.hasDownload && (
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(document.id);
+                            }}
+                            sx={{ 
+                              color: '#1976d2',
+                              '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.1)' }
+                            }}
+                          >
+                            <DownloadIcon />
+                          </IconButton>
+                        )}
+                      </>
+                    )}
+                  </Box>
+
+                {/* Subtitle */}
+                <Typography 
+                  variant="body2" 
+                  color="#666" 
+                  sx={{ lineHeight: 1.4 }}
                 >
-                  Download PDF
-                  <ArrowForward sx={{ fontSize: 16 }} />
-                </MuiLink>
+                  {document.subtitle}
+                </Typography>
               </CardContent>
             </Card>
           </Grid>

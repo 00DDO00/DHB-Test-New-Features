@@ -10,6 +10,8 @@ import AccountSummarySection from './AccountSummarySection';
 import IntroductoryTextSection from './IntroductoryTextSection';
 import SavingsOptionsSection from './SavingsOptionsSection';
 import AccountOpeningModalSection from './AccountOpeningModalSection';
+import InterestRatesModal from './InterestRatesModal';
+import CalculationResultsModal from './CalculationResultsModal';
 
 const MaxiSpaarAccount: React.FC = () => {
   const navigate = useNavigate();
@@ -52,6 +54,25 @@ const MaxiSpaarAccount: React.FC = () => {
       balance: '€ 8,750.25'
     }
   ]);
+
+  // Interest Rates Modal state
+  const [interestRatesModalOpen, setInterestRatesModalOpen] = useState(false);
+  const [calculationResultsModalOpen, setCalculationResultsModalOpen] = useState(false);
+  // Get current date for default calculation data
+  const getCurrentDateString = () => {
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = now.toLocaleString('default', { month: 'long' });
+    const year = now.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  };
+
+  const [calculationData, setCalculationData] = useState<any>({
+    amount: 0,
+    duration: '3-months',
+    interestRate: '2.40%',
+    valueDate: getCurrentDateString()
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -297,6 +318,17 @@ const MaxiSpaarAccount: React.FC = () => {
     });
   };
 
+  const handleInterestCalculation = (data: any) => {
+    setCalculationData(data);
+    setInterestRatesModalOpen(false);
+    setCalculationResultsModalOpen(true);
+  };
+
+  const handleOpenAccountFromCalculation = () => {
+    setCalculationResultsModalOpen(false);
+    setModalOpen(true);
+  };
+
   if (loading) {
     return (
       <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
@@ -313,9 +345,10 @@ const MaxiSpaarAccount: React.FC = () => {
 
       <IntroductoryTextSection accountData={accountData} />
 
-      <SavingsOptionsSection 
+      <SavingsOptionsSection
         accountData={accountData}
-        onOpenAccount={handleOpenAccount} 
+        onOpenAccount={handleOpenAccount}
+        onCalculate={() => setInterestRatesModalOpen(true)}
       />
 
       <AccountOpeningModalSection
@@ -350,6 +383,21 @@ const MaxiSpaarAccount: React.FC = () => {
         getSelectedIbanDetails={getSelectedIbanDetails}
         calculateMaturityDate={calculateMaturityDate}
         calculateValueDate={calculateValueDate}
+      />
+
+      {/* Interest Rates Modal */}
+      <InterestRatesModal
+        open={interestRatesModalOpen}
+        onClose={() => setInterestRatesModalOpen(false)}
+        onCalculate={handleInterestCalculation}
+      />
+
+      {/* Calculation Results Modal */}
+      <CalculationResultsModal
+        open={calculationResultsModalOpen}
+        onClose={() => setCalculationResultsModalOpen(false)}
+        onOpenAccount={handleOpenAccountFromCalculation}
+        calculationData={calculationData}
       />
     </Box>
   );

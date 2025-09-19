@@ -11,16 +11,19 @@ import {
   Add,
   CheckCircle,
   RadioButtonUnchecked,
+  Calculate as CalculateIcon,
 } from '@mui/icons-material';
 import { SavingsOptionsSectionProps, MaxiSpaarOption, AccountData } from './types';
 
 interface SavingsOptionsSectionWithDataProps extends SavingsOptionsSectionProps {
   accountData: AccountData | null;
+  onCalculate?: () => void;
 }
 
 const SavingsOptionsSection: React.FC<SavingsOptionsSectionWithDataProps> = ({
   accountData,
-  onOpenAccount
+  onOpenAccount,
+  onCalculate
 }) => {
   const [selectedCard, setSelectedCard] = useState<string>('');
 
@@ -159,29 +162,31 @@ const SavingsOptionsSection: React.FC<SavingsOptionsSectionWithDataProps> = ({
         })}
       </Grid>
 
-      {/* Calculate Button */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+      {/* Calculate Button - Full Width Box */}
+      <Box sx={{ mb: 4 }}>
         <Button
-          variant="text"
+          variant="contained"
           onClick={() => {
-            const selectedOption = maxiSpaarOptions.find(option => option.id === selectedCard);
-            if (selectedOption) {
-              // Calculate action - could show a calculation popup or navigate to a calculator page
-              console.log('Calculate clicked for option:', selectedOption);
-              // For now, just log the selection - you can implement calculation logic here
+            if (onCalculate) {
+              onCalculate();
             }
           }}
+          fullWidth
           sx={{
-            color: '#004996',
+            backgroundColor: '#004996',
+            color: 'white',
             textTransform: 'none',
             fontSize: '1.1rem',
             fontWeight: 500,
+            py: 2,
+            borderRadius: 2,
             '&:hover': {
-              backgroundColor: 'rgba(0, 73, 150, 0.1)'
+              backgroundColor: '#003d7a'
             }
           }}
         >
-          Calculate →
+          <CalculateIcon sx={{ mr: 1 }} />
+          Calculate
         </Button>
       </Box>
     </Box>

@@ -104,6 +104,7 @@ import AccountStatement from "./pages/accounts/AccountStatement/AccountStatement
 import AccountsDashboard from "./pages/accounts/AccountsDashboard";
 import ChangeCounterAccount from "./pages/settings/ChangeCounterAccount";
 import Documents from "./pages/settings/Documents";
+import TermsConditions from "./pages/settings/TermsConditions";
 import PersonalDetails from "./pages/settings/PersonalDetails";
 import ChangePassword from "./pages/settings/ChangePassword";
 import OnlineIdentification from "./pages/settings/OnlineIdentification";
@@ -231,6 +232,10 @@ const routes = [
       {
         path: "documents",
         element: <Documents />,
+      },
+      {
+        path: "documents/terms-conditions",
+        element: <TermsConditions />,
       },
                       {
                   path: "personal-details",
