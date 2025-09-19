@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: dhb-java-api
+    env: java
+    buildCommand: cd api && mvn clean package -DskipTests
+    startCommand: cd api && java -jar target/dhb-api-1.0.0.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 5003
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+
+  - type: web
+    name: dhb-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://dhb-java-api.onrender.com/api/*
