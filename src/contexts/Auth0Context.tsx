@@ -70,7 +70,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
         auth0Client = new Auth0Client({
           client_id: auth0Config.clientId || "",
           domain: auth0Config.domain || "",
-          redirect_uri: window.location.origin,
+          //redirect_uri: window.location.origin,
+          redirect_uri: 'https://dhb-test.vercel.app',
         });
 
         await auth0Client.checkSession();
@@ -144,3 +145,4 @@ function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export { AuthContext, AuthProvider };
+
