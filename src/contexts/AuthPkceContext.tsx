@@ -101,15 +101,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
 
- const auth0Config = useMemo(() => {
-  // Always use the hardcoded config regardless of environment
-  return {
-    clientId: import.meta.env.VITE_APP_AUTH0_CLIENT_ID,
-    domain: 'https://ssotest.demirbank.kg',
-    clientSecret: import.meta.env.VITE_APP_AUTH_CLIENT_SECRET,
-    redirectUri: 'https://dhb-test.vercel.app'
-  };
-}, []);
+const auth0Config = useMemo(() => {
+    if (env === "prod") {
+      return auth0ConfigTestEnv;
+    } else if (env === "test") {
+      return auth0ConfigTestEnv;
+    } else {
+      return auth0ConfigLocalEnv;
+    }
+  }, []);
 
   const handleOAuthRedirect = useCallback(async () => {
     const code = new URLSearchParams(window.location.search).get("code");
