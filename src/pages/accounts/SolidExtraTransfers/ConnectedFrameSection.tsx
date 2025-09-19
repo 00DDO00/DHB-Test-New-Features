@@ -155,124 +155,61 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {scheduledTransfers.filter(transfer => {
-                    const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
-                    
-                    // Parse date components directly to avoid timezone issues
-                    const [day, month, year] = transfer.startDate.split('/').map(Number);
-                    const startDate = new Date(year, month - 1, day); // month is 0-indexed
-                    
-                    const today = new Date();
-                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    
-                    const endDate = transfer.endDate ? (() => {
-                      const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
-                      return new Date(endYear, endMonth - 1, endDay);
-                    })() : null;
-                    
-                    // Debug logging
-                    console.log('=== COMPLETED TRANSFERS FILTER DEBUG ===');
-                    console.log('Transfer:', transfer.description);
-                    console.log('Period:', transfer.period);
-                    console.log('Start date string:', transfer.startDate);
-                    console.log('Parsed startDate:', startDate);
-                    console.log('Today date:', todayDate);
-                    console.log('Completed payments:', completedPayments);
-                    console.log('Start === Today?', startDate.getTime() === todayDate.getTime());
-                    console.log('Completed payments > 0?', completedPayments > 0);
-                    console.log('End date <= today?', endDate && endDate <= todayDate);
-                    
-                    // Show in completed if:
-                    // 1. Start date is today (payment has been made), OR
-                    // 2. Any payments have been completed (for past start dates), OR
-                    // 3. Transfer is fully completed (endDate <= today)
-                    const shouldShow = startDate.getTime() === todayDate.getTime() || 
-                           completedPayments > 0 || 
-                           (endDate && endDate <= todayDate);
-                    
-                    console.log('Should show in completed?', shouldShow);
-                    console.log('=== END COMPLETED TRANSFERS FILTER DEBUG ===');
-                    
-                    return shouldShow;
-                  }).length === 0 ? (
+                  {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
                         No completed transfers found.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    scheduledTransfers.filter(transfer => {
-                      const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
-                      
-                      // Parse date components directly to avoid timezone issues
-                      const [day, month, year] = transfer.startDate.split('/').map(Number);
-                      const startDate = new Date(year, month - 1, day); // month is 0-indexed
-                      
-                      const today = new Date();
-                      const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                      
-                      const endDate = transfer.endDate ? (() => {
-                        const [endDay, endMonth, endYear] = transfer.endDate.split('/').map(Number);
-                        return new Date(endYear, endMonth - 1, endDay);
-                      })() : null;
-                      
-                      return startDate.getTime() === todayDate.getTime() || 
-                             completedPayments > 0 || 
-                             (endDate && endDate <= todayDate);
-                    }).map((transfer) => {
-                      // Format execution date to match image format (DD-MMM-YYYY)
-                      const executionDate = new Date(transfer.executionDate);
-                      const formattedDate = executionDate.toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      }).toUpperCase();
-
-                      return (
-                        <TableRow 
-                          key={`completed-${transfer.id}`} 
+                    (filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
+                      <TableRow 
+                        key={transaction.id || index}
+                        sx={{ 
+                          '&:hover': { backgroundColor: '#f9f9f9' },
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <TableCell sx={{ color: '#333' }}>
+                          {transaction.date}
+                        </TableCell>
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
+                              {transaction.description}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                              {transaction.account}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell 
                           sx={{ 
-                            '&:hover': { backgroundColor: '#f9f9f9' },
-                            cursor: 'pointer'
+                            color: transaction.type === 'debit' ? '#f44336' : '#4caf50', 
+                            fontWeight: 'bold' 
                           }}
-                          onClick={() => onTransferClick(transfer)}
                         >
-                          <TableCell sx={{ color: '#333' }}>
-                            {formattedDate}
-                          </TableCell>
-                          <TableCell>
-                            <Box>
-                              <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
-                                {transfer.recipient.accountNumber}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                {transfer.recipient.name}
-                              </Typography>
-                            </Box>
-                          </TableCell>
-                          <TableCell sx={{ color: '#4caf50', fontWeight: 'bold' }}>
-                            {transfer.amount}
-                          </TableCell>
-                          <TableCell>
-                            <Box
-                              sx={{
-                                display: 'inline-block',
-                                px: 1.5,
-                                py: 0.5,
-                                borderRadius: '12px',
-                                backgroundColor: '#e8f5e8',
-                                color: '#2e7d32',
-                                fontSize: '0.75rem',
-                                fontWeight: 500,
-                                textTransform: 'capitalize'
-                              }}
-                            >
-                              Completed
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
+                          {transaction.balance}
+                        </TableCell>
+                        <TableCell>
+                          <Box
+                            sx={{
+                              display: 'inline-block',
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: '12px',
+                              backgroundColor: '#e8f5e8',
+                              color: '#2e7d32',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              textTransform: 'capitalize'
+                            }}
+                          >
+                            Completed
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
@@ -295,12 +232,10 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
                 return (
                   <Box
                     key={transfer.id}
-                    onClick={() => toggleScheduledTransfer(transfer.id)}
                     sx={{
                       border: '1px solid #e0e0e0',
                       borderRadius: 1,
                       p: 2,
-                      cursor: 'pointer',
                       '&:hover': {
                         backgroundColor: '#f5f5f5'
                       }
@@ -323,30 +258,6 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
                       </Box>
                     </Box>
                     
-                    {transfer.isExpanded && (
-                      <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Payment Schedule:</strong> {transfer.period}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Start Date:</strong> {transfer.startDate}
-                        </Typography>
-                        {transfer.endDate && (
-                          <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>End Date:</strong> {transfer.endDate}
-                          </Typography>
-                        )}
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Amount per payment:</strong> {transfer.amount}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Previous payment:</strong> {paymentStatus.previous}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Next payment:</strong> {paymentStatus.next}
-                        </Typography>
-                      </Box>
-                    )}
                   </Box>
                 );
               })}

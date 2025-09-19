@@ -155,6 +155,92 @@ const MaxiSpaarTransfers: React.FC = () => {
     ]);
   }, []);
 
+  // Initialize dummy scheduled transfers
+  useEffect(() => {
+    setScheduledTransfers([
+      {
+        id: 'scheduled-1',
+        description: 'Monthly Savings Transfer',
+        amount: '€ 800,00',
+        period: 'every-month',
+        startDate: '01/10/2024',
+        endDate: '01/10/2025',
+        status: 'scheduled',
+        completedPayments: 0,
+        totalPayments: 12,
+        executionDate: '2024-10-01',
+        recipient: {
+          accountNumber: 'NL24DHBN2018470578',
+          name: 'DHB SaveOnline'
+        }
+      },
+      {
+        id: 'scheduled-2',
+        description: 'Bi-weekly Investment',
+        amount: '€ 400,00',
+        period: 'every-2-weeks',
+        startDate: '15/09/2024',
+        endDate: '15/12/2024',
+        status: 'scheduled',
+        completedPayments: 3,
+        totalPayments: 7,
+        executionDate: '2024-09-15',
+        recipient: {
+          accountNumber: 'NL91DHBN2018470579',
+          name: 'Investment Portfolio'
+        }
+      },
+      {
+        id: 'scheduled-3',
+        description: 'Quarterly High Yield Transfer',
+        amount: '€ 2.000,00',
+        period: 'every-3-months',
+        startDate: '01/01/2024',
+        endDate: '01/01/2026',
+        status: 'scheduled',
+        completedPayments: 3,
+        totalPayments: 8,
+        executionDate: '2024-01-01',
+        recipient: {
+          accountNumber: 'NL12DHBN2018470580',
+          name: 'High Yield Account'
+        }
+      },
+      {
+        id: 'scheduled-4',
+        description: 'Annual Bonus Allocation',
+        amount: '€ 5.000,00',
+        period: 'every-year',
+        startDate: '01/12/2024',
+        endDate: '01/12/2029',
+        status: 'scheduled',
+        completedPayments: 0,
+        totalPayments: 5,
+        executionDate: '2024-12-01',
+        recipient: {
+          accountNumber: 'NL34DHBN2018470581',
+          name: 'Bonus Savings'
+        }
+      },
+      {
+        id: 'scheduled-5',
+        description: 'Monthly Retirement Fund',
+        amount: '€ 1.000,00',
+        period: 'every-month',
+        startDate: '15/07/2024',
+        endDate: '15/07/2034',
+        status: 'scheduled',
+        completedPayments: 2,
+        totalPayments: 120,
+        executionDate: '2024-07-15',
+        recipient: {
+          accountNumber: 'NL56DHBN2018470582',
+          name: 'Retirement Fund'
+        }
+      }
+    ]);
+  }, []);
+
   // Fetch account data on component mount
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -357,7 +443,6 @@ const MaxiSpaarTransfers: React.FC = () => {
         status: period === 'one-time' ? 'scheduled' as const : 'recurring' as const,
         completedPayments: shouldBeCompleted ? 1 : 0, // If start date has passed, mark as 1 completed payment
         totalPayments: period === 'one-time' ? 1 : calculateTotalPayments(transferStartDate, transferEndDate, period),
-        isExpanded: false,
         // New fields for table display
         executionDate: transferStartDate.toISOString(),
         recipient: {
@@ -430,9 +515,12 @@ const MaxiSpaarTransfers: React.FC = () => {
         let balanceStr = transaction.balance;
         console.log(`Original balance: "${balanceStr}"`);
         
+        // Check if the balance is negative
+        const isNegative = balanceStr.includes('-');
+        
         // Remove €, spaces, and handle European number format (1.250,00 -> 1250.00)
-        balanceStr = balanceStr.replace(/[€\s]/g, '');
-        console.log(`After removing € and spaces: "${balanceStr}"`);
+        balanceStr = balanceStr.replace(/[€\s-]/g, '');
+        console.log(`After removing €, spaces, and minus: "${balanceStr}"`);
         
         // Handle European number format (1.250,00 -> 1250.00) or standard format (900.00 -> 900.00)
         if (balanceStr.includes(',')) {
@@ -445,8 +533,12 @@ const MaxiSpaarTransfers: React.FC = () => {
         const balanceValue = parseFloat(balanceStr);
         console.log(`Parsed balanceValue: ${balanceValue}`);
         
+        // Apply negative sign if original was negative
+        const finalValue = isNegative ? -balanceValue : balanceValue;
+        console.log(`Final value with sign: ${finalValue}`);
+        
         // Use absolute value for filtering (ignore positive/negative sign)
-        const absoluteValue = Math.abs(balanceValue);
+        const absoluteValue = Math.abs(finalValue);
         console.log(`Absolute value: ${absoluteValue}`);
         
         console.log(`Transaction: "${transaction.balance}", Final Absolute: ${absoluteValue}, Min: ${minAmountValue}, Max: ${maxAmountValue}, HasMin: ${hasMinAmount}, HasMax: ${hasMaxAmount}`);

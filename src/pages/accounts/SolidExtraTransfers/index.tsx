@@ -155,6 +155,92 @@ const SolidExtraTransfers: React.FC = () => {
     ]);
   }, []);
 
+  // Initialize dummy scheduled transfers
+  useEffect(() => {
+    setScheduledTransfers([
+      {
+        id: 'scheduled-1',
+        description: 'Monthly Fixed Deposit',
+        amount: '€ 1.500,00',
+        period: 'every-month',
+        startDate: '01/10/2024',
+        endDate: '01/10/2027',
+        status: 'scheduled',
+        completedPayments: 0,
+        totalPayments: 36,
+        executionDate: '2024-10-01',
+        recipient: {
+          accountNumber: 'NL24DHBN2018470578',
+          name: 'DHB SaveOnline'
+        }
+      },
+      {
+        id: 'scheduled-2',
+        description: 'Weekly Interest Compound',
+        amount: '€ 150,00',
+        period: 'every-week',
+        startDate: '01/09/2024',
+        endDate: '01/03/2025',
+        status: 'scheduled',
+        completedPayments: 4,
+        totalPayments: 26,
+        executionDate: '2024-09-01',
+        recipient: {
+          accountNumber: 'NL91DHBN2018470579',
+          name: 'Compound Interest Account'
+        }
+      },
+      {
+        id: 'scheduled-3',
+        description: 'Quarterly Euribor Adjustment',
+        amount: '€ 3.000,00',
+        period: 'every-3-months',
+        startDate: '01/01/2024',
+        endDate: '01/01/2027',
+        status: 'scheduled',
+        completedPayments: 3,
+        totalPayments: 12,
+        executionDate: '2024-01-01',
+        recipient: {
+          accountNumber: 'NL12DHBN2018470580',
+          name: 'Euribor Linked Account'
+        }
+      },
+      {
+        id: 'scheduled-4',
+        description: 'Annual Rate Optimization',
+        amount: '€ 8.000,00',
+        period: 'every-year',
+        startDate: '01/04/2024',
+        endDate: '01/04/2030',
+        status: 'scheduled',
+        completedPayments: 1,
+        totalPayments: 6,
+        executionDate: '2024-04-01',
+        recipient: {
+          accountNumber: 'NL34DHBN2018470581',
+          name: 'Rate Optimization Fund'
+        }
+      },
+      {
+        id: 'scheduled-5',
+        description: 'Monthly Stability Reserve',
+        amount: '€ 600,00',
+        period: 'every-month',
+        startDate: '15/08/2024',
+        endDate: '15/08/2029',
+        status: 'scheduled',
+        completedPayments: 1,
+        totalPayments: 60,
+        executionDate: '2024-08-15',
+        recipient: {
+          accountNumber: 'NL56DHBN2018470582',
+          name: 'Stability Reserve'
+        }
+      }
+    ]);
+  }, []);
+
   // Fetch account data on component mount
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -357,7 +443,6 @@ const SolidExtraTransfers: React.FC = () => {
         status: period === 'one-time' ? 'scheduled' as const : 'recurring' as const,
         completedPayments: shouldBeCompleted ? 1 : 0, // If start date has passed, mark as 1 completed payment
         totalPayments: period === 'one-time' ? 1 : calculateTotalPayments(transferStartDate, transferEndDate, period),
-        isExpanded: false,
         // New fields for table display
         executionDate: transferStartDate.toISOString(),
         recipient: {
@@ -430,9 +515,12 @@ const SolidExtraTransfers: React.FC = () => {
         let balanceStr = transaction.balance;
         console.log(`Original balance: "${balanceStr}"`);
         
+        // Check if the balance is negative
+        const isNegative = balanceStr.includes('-');
+        
         // Remove €, spaces, and handle European number format (1.250,00 -> 1250.00)
-        balanceStr = balanceStr.replace(/[€\s]/g, '');
-        console.log(`After removing € and spaces: "${balanceStr}"`);
+        balanceStr = balanceStr.replace(/[€\s-]/g, '');
+        console.log(`After removing €, spaces, and minus: "${balanceStr}"`);
         
         // Handle European number format (1.250,00 -> 1250.00) or standard format (900.00 -> 900.00)
         if (balanceStr.includes(',')) {
@@ -445,8 +533,12 @@ const SolidExtraTransfers: React.FC = () => {
         const balanceValue = parseFloat(balanceStr);
         console.log(`Parsed balanceValue: ${balanceValue}`);
         
+        // Apply negative sign if original was negative
+        const finalValue = isNegative ? -balanceValue : balanceValue;
+        console.log(`Final value with sign: ${finalValue}`);
+        
         // Use absolute value for filtering (ignore positive/negative sign)
-        const absoluteValue = Math.abs(balanceValue);
+        const absoluteValue = Math.abs(finalValue);
         console.log(`Absolute value: ${absoluteValue}`);
         
         console.log(`Transaction: "${transaction.balance}", Final Absolute: ${absoluteValue}, Min: ${minAmountValue}, Max: ${maxAmountValue}, HasMin: ${hasMinAmount}, HasMax: ${hasMaxAmount}`);
