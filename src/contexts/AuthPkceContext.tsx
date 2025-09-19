@@ -194,6 +194,7 @@ const auth0Config = useMemo(() => {
     // i18n.language,
   ]);
 
+  /*
   useEffect(() => {
     if (
       window.location.search.includes("code=") &&
@@ -219,16 +220,17 @@ const auth0Config = useMemo(() => {
           window.location.pathname.includes("/auth/logout");
         const hasLogoutReason = window.location.search.includes("tag=");
 
-        /*
+        
         if (!isOnLogoutPage || (isOnLogoutPage && !hasLogoutReason)) {
           signIn();
         } else {
           dispatch({ type: SIGN_OUT });
         }
-        */
+        
       }
     }
   }, [handleOAuthRedirect, signIn, state.isAuthenticated]);
+*/
 
   const signOut = () => {
     removeToken("accessToken", env);
@@ -253,29 +255,28 @@ const auth0Config = useMemo(() => {
   //     dispatch({ type: UPDATE, payload: { customer } });
   //   };
 
-  return state.isInitialized ? (
-    <AuthContext.Provider
-      value={{
-        ...state,
-         isAuthenticated: true,  // Force true
-      isInitialized: true, 
-        method: "auth0",
-        user: {
-          id: state?.user?.sub,
-          avatar: state?.user?.picture,
-          email: state?.user?.email,
-          displayName: state?.user?.name,
-          role: "user",
-          ...state.user,
-        },
-        signIn,
-        signOut,
-        resetPassword,
-        // setCustomer,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  return (
+  <AuthContext.Provider
+    value={{
+      ...state,
+      isAuthenticated: true,
+      isInitialized: true,
+      method: "auth0",
+      user: {
+        id: "demo-user",
+        avatar: null,
+        email: "demo@example.com",
+        displayName: "Lucy Lavender",
+        role: "user",
+      },
+      signIn: () => {},
+      signOut: () => {},
+      resetPassword: () => {},
+    }}
+  >
+    {children}
+  </AuthContext.Provider>
+);
   ) : (
     <Typography textAlign="center" fontSize={96} color="gray" marginTop="20%">
       Initializing...
