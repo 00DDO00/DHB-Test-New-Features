@@ -101,15 +101,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
 
-  const auth0Config = useMemo(() => {
-    if (env === "prod") {
-      return auth0ConfigTestEnv;
-    } else if (env === "test") {
-      return auth0ConfigTestEnv;
-    } else {
-      return auth0ConfigLocalEnv;
-    }
-  }, []);
+ const auth0Config = useMemo(() => {
+  // Always use the hardcoded config regardless of environment
+  return {
+    clientId: '',
+    domain: 'https://ssotest.demirbank.kg',
+    clientSecret: '',
+    redirectUri: 'https://dhb-test.vercel.app'
+  };
+}, []);
 
   const handleOAuthRedirect = useCallback(async () => {
     const code = new URLSearchParams(window.location.search).get("code");
