@@ -104,9 +104,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
  const auth0Config = useMemo(() => {
   // Always use the hardcoded config regardless of environment
   return {
-    clientId: '',
+    clientId: import.meta.env.VITE_APP_AUTH0_CLIENT_ID,
     domain: 'https://ssotest.demirbank.kg',
-    clientSecret: '',
+    clientSecret: import.meta.env.VITE_APP_AUTH_CLIENT_SECRET,
     redirectUri: 'https://dhb-test.vercel.app'
   };
 }, []);
