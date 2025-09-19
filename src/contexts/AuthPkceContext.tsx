@@ -219,11 +219,13 @@ const auth0Config = useMemo(() => {
           window.location.pathname.includes("/auth/logout");
         const hasLogoutReason = window.location.search.includes("tag=");
 
+        /*
         if (!isOnLogoutPage || (isOnLogoutPage && !hasLogoutReason)) {
           signIn();
         } else {
           dispatch({ type: SIGN_OUT });
         }
+        */
       }
     }
   }, [handleOAuthRedirect, signIn, state.isAuthenticated]);
@@ -255,6 +257,8 @@ const auth0Config = useMemo(() => {
     <AuthContext.Provider
       value={{
         ...state,
+         isAuthenticated: true,  // Force true
+      isInitialized: true, 
         method: "auth0",
         user: {
           id: state?.user?.sub,
