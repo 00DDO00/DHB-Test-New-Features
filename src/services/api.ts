@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5003'; // Changed to yaml-api.py port
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5003';
 
 export interface Account {
   id: string;
