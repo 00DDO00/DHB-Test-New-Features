@@ -194,6 +194,7 @@ type NavbarProps = {
 const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const [messagesOpen, setMessagesOpen] = React.useState(false);
@@ -379,10 +380,17 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     setSearchQuery("");
   };
 
+  /*
   const handleSearchSelect = (path: string) => {
     window.location.href = path;
     handleSearchClose();
   };
+  */
+
+  const handleSearchSelect = (path: string) => {
+  navigate(path);
+  handleSearchClose();
+};
 
   const handleLogout = async () => {
     try {
@@ -713,28 +721,28 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                     gap: "1px",
                   }}
                 >
-                  <NavButton onClick={() => (window.location.href = "/private")} active={isActive("/private")} aria-current={isActive("/private") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('home')}>
-                    <NavText active={isActive("/private")}>{t('home')}</NavText>
-                  </NavButton>
-                  <NavButton onClick={() => (window.location.href = "/accounts")} active={isActive("/accounts")} aria-current={isActive("/accounts") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('accounts.title')}>
-                    <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
-                  </NavButton>
-                  <NavButton onClick={() => (window.location.href = "/settings")} active={isActive("/settings")} aria-current={isActive("/settings") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('settings')}>
-                    <NavText active={isActive("/settings")}>{t('settings')}</NavText>
-                  </NavButton>
-                  <NavButton onClick={() => (window.location.href = "/settings/documents")} active={isActive("/settings/documents")} aria-current={isActive("/settings/documents") ? "page" : undefined} disableRipple tabIndex={0} aria-label="Documents">
-                    <NavText active={isActive("/settings/documents")}>Documents</NavText>
-                  </NavButton>
-                  <NavButton
-                    onClick={() => (window.location.href = "/pages/profile")}
-                    active={isActive("/pages/profile")}
-                    aria-current={isActive("/pages/profile") ? "page" : undefined}
-                    disableRipple
-                    tabIndex={0}
-                    aria-label={t('contact')}
-                  >
-                    <NavText active={isActive("/pages/profile")}>{t('contact')}</NavText>
-                  </NavButton>
+                 <NavButton onClick={() => navigate("/private")} active={isActive("/private")} aria-current={isActive("/private") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('home')}>
+  <NavText active={isActive("/private")}>{t('home')}</NavText>
+</NavButton>
+<NavButton onClick={() => navigate("/accounts")} active={isActive("/accounts")} aria-current={isActive("/accounts") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('accounts.title')}>
+  <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
+</NavButton>
+<NavButton onClick={() => navigate("/settings")} active={isActive("/settings")} aria-current={isActive("/settings") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('settings')}>
+  <NavText active={isActive("/settings")}>{t('settings')}</NavText>
+</NavButton>
+<NavButton onClick={() => navigate("/settings/documents")} active={isActive("/settings/documents")} aria-current={isActive("/settings/documents") ? "page" : undefined} disableRipple tabIndex={0} aria-label="Documents">
+  <NavText active={isActive("/settings/documents")}>Documents</NavText>
+</NavButton>
+<NavButton
+  onClick={() => navigate("/pages/profile")}
+  active={isActive("/pages/profile")}
+  aria-current={isActive("/pages/profile") ? "page" : undefined}
+  disableRipple
+  tabIndex={0}
+  aria-label={t('contact')}
+>
+  <NavText active={isActive("/pages/profile")}>{t('contact')}</NavText>
+</NavButton>
                 </Box>
               )}
             </Grid>
