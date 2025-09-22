@@ -707,12 +707,13 @@ interface AdvertisementWidgetProps {
 const AdvertisementCard = styled(Box)`
   background: linear-gradient(135deg, #004996 0%, #1976d2 100%);
   border-radius: 8px;
-  padding: 16px;
+  padding: 20px;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  min-height: 80px;
   
   &:hover {
     transform: translateY(-2px);
@@ -781,9 +782,10 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
         sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          gap: 2,
-          maxHeight: '180px',
+          gap: 3,
+          maxHeight: '200px',
           overflowY: 'auto',
+          paddingRight: '4px',
           '&::-webkit-scrollbar': {
             width: '6px',
           },
@@ -820,10 +822,10 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
               }
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
               <Box sx={{ 
-                width: 40, 
-                height: 40, 
+                width: 48, 
+                height: 48, 
                 borderRadius: '50%', 
                 bgcolor: 'rgba(255, 255, 255, 0.2)',
                 display: 'flex',

@@ -313,7 +313,7 @@ const Home: React.FC = () => {
                       id: 'credit-card',
                       title: 'Premium Credit Card',
                       description: 'Get up to €50 cashback bonus',
-                      icon: <CreditCard sx={{ color: 'white', fontSize: 20 }} />,
+                      icon: <CreditCard sx={{ color: 'white', fontSize: 24 }} />,
                       bonus: '€50 Bonus',
                       onClick: () => console.log('Credit card clicked')
                     },
@@ -321,7 +321,7 @@ const Home: React.FC = () => {
                       id: 'new-account',
                       title: 'Open New Account',
                       description: 'Earn €25 welcome bonus',
-                      icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
+                      icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 24 }} />,
                       bonus: '€25 Welcome',
                       onClick: () => console.log('New account clicked')
                     },
@@ -329,7 +329,7 @@ const Home: React.FC = () => {
                       id: 'investment',
                       title: 'Investment Portfolio',
                       description: 'Start with €100 minimum investment',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
                       bonus: 'No Fees',
                       onClick: () => console.log('Investment clicked')
                     },
@@ -337,7 +337,7 @@ const Home: React.FC = () => {
                       id: 'insurance',
                       title: 'Life Insurance',
                       description: 'Get 3 months free premium',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
                       bonus: '3 Months Free',
                       onClick: () => console.log('Insurance clicked')
                     },
@@ -345,7 +345,7 @@ const Home: React.FC = () => {
                       id: 'mortgage',
                       title: 'Home Mortgage',
                       description: 'Special rate: 2.5% APR',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
                       bonus: 'Low Rate',
                       onClick: () => console.log('Mortgage clicked')
                     }
