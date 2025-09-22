@@ -777,7 +777,35 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
       subtitle={subtitle}
       onMenuClick={() => console.log('Advertisement menu clicked')}
     >
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 2,
+          maxHeight: '180px',
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'rgba(0, 0, 0, 0.1)',
+            borderRadius: '3px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'rgba(0, 73, 150, 0.3)',
+            borderRadius: '3px',
+            '&:hover': {
+              background: 'rgba(0, 73, 150, 0.5)',
+            },
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: 'rgba(0, 73, 150, 0.5)',
+          },
+          // Firefox scrollbar styling
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0, 73, 150, 0.3) rgba(0, 0, 0, 0.1)',
+        }}
+      >
         {items.map((item, index) => (
           <AdvertisementCard
             key={item.id}

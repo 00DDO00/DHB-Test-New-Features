@@ -324,6 +324,30 @@ const Home: React.FC = () => {
                       icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
                       bonus: '€25 Welcome',
                       onClick: () => console.log('New account clicked')
+                    },
+                    {
+                      id: 'investment',
+                      title: 'Investment Portfolio',
+                      description: 'Start with €100 minimum investment',
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      bonus: 'No Fees',
+                      onClick: () => console.log('Investment clicked')
+                    },
+                    {
+                      id: 'insurance',
+                      title: 'Life Insurance',
+                      description: 'Get 3 months free premium',
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      bonus: '3 Months Free',
+                      onClick: () => console.log('Insurance clicked')
+                    },
+                    {
+                      id: 'mortgage',
+                      title: 'Home Mortgage',
+                      description: 'Special rate: 2.5% APR',
+                      icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                      bonus: 'Low Rate',
+                      onClick: () => console.log('Mortgage clicked')
                     }
                   ]}
                 />
@@ -348,6 +372,30 @@ const Home: React.FC = () => {
                     icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
                     bonus: '€25 Welcome',
                     onClick: () => console.log('New account clicked')
+                  },
+                  {
+                    id: 'investment',
+                    title: 'Investment Portfolio',
+                    description: 'Start with €100 minimum investment',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                    bonus: 'No Fees',
+                    onClick: () => console.log('Investment clicked')
+                  },
+                  {
+                    id: 'insurance',
+                    title: 'Life Insurance',
+                    description: 'Get 3 months free premium',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                    bonus: '3 Months Free',
+                    onClick: () => console.log('Insurance clicked')
+                  },
+                  {
+                    id: 'mortgage',
+                    title: 'Home Mortgage',
+                    description: 'Special rate: 2.5% APR',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
+                    bonus: 'Low Rate',
+                    onClick: () => console.log('Mortgage clicked')
                   }
                 ]}
               />
