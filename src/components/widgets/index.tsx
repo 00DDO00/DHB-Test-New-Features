@@ -707,13 +707,16 @@ interface AdvertisementWidgetProps {
 const AdvertisementCard = styled(Box)`
   background: linear-gradient(135deg, #004996 0%, #1976d2 100%);
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  min-height: 80px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   
   &:hover {
     transform: translateY(-2px);
@@ -782,8 +785,8 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
         sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          gap: 3,
-          maxHeight: '200px',
+          gap: 2,
+          maxHeight: '220px',
           overflowY: 'auto',
           paddingRight: '4px',
           '&::-webkit-scrollbar': {
@@ -822,7 +825,8 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
               }
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+            {/* Main content area */}
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3, flex: 1 }}>
               <Box sx={{ 
                 width: 48, 
                 height: 48, 
@@ -857,12 +861,6 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
                 >
                   {item.description}
                 </Typography>
-                {item.bonus && (
-                  <BonusBadge>
-                    <Star sx={{ fontSize: 14 }} />
-                    {item.bonus}
-                  </BonusBadge>
-                )}
               </Box>
               <ArrowForward sx={{ 
                 color: 'rgba(255, 255, 255, 0.8)', 
@@ -870,6 +868,16 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
                 flexShrink: 0
               }} />
             </Box>
+            
+            {/* Bonus badge at bottom */}
+            {item.bonus && (
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-start' }}>
+                <BonusBadge>
+                  <Star sx={{ fontSize: 14 }} />
+                  {item.bonus}
+                </BonusBadge>
+              </Box>
+            )}
           </AdvertisementCard>
         ))}
       </Box>
