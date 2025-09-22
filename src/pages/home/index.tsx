@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Grid, Button, Typography, CircularProgress, Breadcrumbs, Link as MuiLink } from '@mui/material';
-import { Add, ArrowForward, Headset, Home as HomeIcon, CreditCard, AccountBalanceWallet } from '@mui/icons-material';
+import { Add, ArrowForward, Headset, Home as HomeIcon, CreditCard, AccountBalanceWallet, AccountBalance } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
 import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton, AdvertisementWidget } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
