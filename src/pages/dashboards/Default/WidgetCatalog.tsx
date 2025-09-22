@@ -16,7 +16,8 @@ import {
   Assessment as StatsIcon,
   Close as CloseIcon,
   Add,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  LocalOffer
 } from "@mui/icons-material";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -285,6 +286,13 @@ const availableWidgets: WidgetType[] = [
     description: 'Show detailed data in table format',
     icon: <TableIcon />,
     component: 'Table'
+  },
+  {
+    id: 'advertisement-widget',
+    name: 'Advertisement Widget',
+    description: 'Show DHB services and bonuses',
+    icon: <LocalOffer />,
+    component: 'AdvertisementWidget'
   }
 ];
 

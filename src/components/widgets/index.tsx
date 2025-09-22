@@ -14,6 +14,10 @@ import {
   ArrowForward,
   MoreVert,
   AccountBalance,
+  CreditCard,
+  AccountBalanceWallet,
+  Star,
+  LocalOffer,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -679,6 +683,165 @@ export const ChartWidget: React.FC<ChartWidgetProps> = ({
             </Box>
           ))}
         </Box>
+      </Box>
+    </Widget>
+  );
+};
+
+// Advertisement Widget Component
+interface AdvertisementItem {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  bonus?: string;
+  onClick: () => void;
+}
+
+interface AdvertisementWidgetProps {
+  title?: string;
+  subtitle?: string;
+  items: AdvertisementItem[];
+}
+
+const AdvertisementCard = styled(Box)`
+  background: linear-gradient(135deg, #004996 0%, #1976d2 100%);
+  border-radius: 8px;
+  padding: 16px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 73, 150, 0.3);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+`;
+
+const BonusBadge = styled(Box)`
+  background: linear-gradient(45deg, #FF6B35, #FF8A65);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+`;
+
+export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
+  title = "DHB Services",
+  subtitle = "Discover our exclusive offers",
+  items
+}) => {
+  const navigate = useNavigate();
+
+  const handleServiceClick = (item: AdvertisementItem) => {
+    // Navigate to appropriate service page
+    switch (item.id) {
+      case 'credit-card':
+        navigate('/services/credit-cards');
+        break;
+      case 'new-account':
+        navigate('/accounts/open');
+        break;
+      case 'investment':
+        navigate('/services/investments');
+        break;
+      case 'insurance':
+        navigate('/services/insurance');
+        break;
+      default:
+        console.log(`Navigation for ${item.id} not implemented yet`);
+    }
+  };
+
+  return (
+    <Widget
+      title={title}
+      subtitle={subtitle}
+      onMenuClick={() => console.log('Advertisement menu clicked')}
+    >
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {items.map((item, index) => (
+          <AdvertisementCard
+            key={item.id}
+            onClick={() => handleServiceClick(item)}
+            role="button"
+            tabIndex={0}
+            aria-label={`${item.title} - ${item.description}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleServiceClick(item);
+              }
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+              <Box sx={{ 
+                width: 40, 
+                height: 40, 
+                borderRadius: '50%', 
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                {item.icon}
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    color: 'white',
+                    mb: 0.5,
+                    fontSize: '1rem'
+                  }}
+                >
+                  {item.title}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontSize: '0.875rem',
+                    lineHeight: 1.4
+                  }}
+                >
+                  {item.description}
+                </Typography>
+                {item.bonus && (
+                  <BonusBadge>
+                    <Star sx={{ fontSize: 14 }} />
+                    {item.bonus}
+                  </BonusBadge>
+                )}
+              </Box>
+              <ArrowForward sx={{ 
+                color: 'rgba(255, 255, 255, 0.8)', 
+                fontSize: 20,
+                flexShrink: 0
+              }} />
+            </Box>
+          </AdvertisementCard>
+        ))}
       </Box>
     </Widget>
   );

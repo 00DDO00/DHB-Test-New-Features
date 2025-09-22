@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Grid, Button, Typography, CircularProgress, Breadcrumbs, Link as MuiLink } from '@mui/material';
-import { Add, ArrowForward, Headset, Home as HomeIcon } from '@mui/icons-material';
+import { Add, ArrowForward, Headset, Home as HomeIcon, CreditCard, AccountBalanceWallet } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
-import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton } from '../../components/widgets';
+import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton, AdvertisementWidget } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
@@ -44,7 +44,8 @@ const Home: React.FC = () => {
     'accounts-card', 
     'solidextra-card',
     'combispaar-stats',
-    'chart-widget'
+    'chart-widget',
+    'advertisement-widget'
   ]);
   const [isDragActive, setIsDragActive] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
@@ -292,6 +293,64 @@ const Home: React.FC = () => {
                   </Typography>
                 </Box>
               </Widget>
+            )}
+          </Box>
+        );
+      case 'advertisement-widget':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <AdvertisementWidget
+                  title="DHB Services"
+                  subtitle="Discover our exclusive offers"
+                  items={[
+                    {
+                      id: 'credit-card',
+                      title: 'Premium Credit Card',
+                      description: 'Get up to €50 cashback bonus',
+                      icon: <CreditCard sx={{ color: 'white', fontSize: 20 }} />,
+                      bonus: '€50 Bonus',
+                      onClick: () => console.log('Credit card clicked')
+                    },
+                    {
+                      id: 'new-account',
+                      title: 'Open New Account',
+                      description: 'Earn €25 welcome bonus',
+                      icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
+                      bonus: '€25 Welcome',
+                      onClick: () => console.log('New account clicked')
+                    }
+                  ]}
+                />
+              </DraggableWidget>
+            ) : (
+              <AdvertisementWidget
+                title="DHB Services"
+                subtitle="Discover our exclusive offers"
+                items={[
+                  {
+                    id: 'credit-card',
+                    title: 'Premium Credit Card',
+                    description: 'Get up to €50 cashback bonus',
+                    icon: <CreditCard sx={{ color: 'white', fontSize: 20 }} />,
+                    bonus: '€50 Bonus',
+                    onClick: () => console.log('Credit card clicked')
+                  },
+                  {
+                    id: 'new-account',
+                    title: 'Open New Account',
+                    description: 'Earn €25 welcome bonus',
+                    icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
+                    bonus: '€25 Welcome',
+                    onClick: () => console.log('New account clicked')
+                  }
+                ]}
+              />
             )}
           </Box>
         );
