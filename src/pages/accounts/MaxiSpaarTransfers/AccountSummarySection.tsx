@@ -26,7 +26,7 @@ const AccountSummarySection: React.FC<AccountSummarySectionProps> = ({ accountDa
           {/* Left Side - Holder Name and IBAN */}
           <Grid item xs={12} md={4}>
             <Typography variant="h6" sx={{ mb: 1 }}>
-              {accountData?.holder_name || 'Loading...'}
+              {accountData?.holder_name || 'Loading...'} ⏐ MaxiSpaar
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.8 }}>
               {accountIban || 'NL24DHBN2018470591'}
