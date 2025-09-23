@@ -55,7 +55,6 @@ const MaxiSpaarTransfers: React.FC = () => {
   const accountBalance = searchParams.get('balance');
   
   // All the original state variables
-  const [tabValue, setTabValue] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState('dhb-combispaar');
   const [accountSelectorOpen, setAccountSelectorOpen] = useState(false);
@@ -269,9 +268,6 @@ const MaxiSpaarTransfers: React.FC = () => {
   }, [accountIban]);
 
   // Event handlers
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -888,17 +884,11 @@ const MaxiSpaarTransfers: React.FC = () => {
 
       {/* Connected Frame: Transfer Section + Quick Actions */}
       <ConnectedFrameSection
-        tabValue={tabValue}
-        onTabChange={handleTabChange}
         onOpenFilter={() => setFilterPopupOpen(true)}
         onDownloadStatement={handleDownloadStatement}
-        scheduledTransfers={scheduledTransfers}
         filteredTransactions={filteredTransactions}
         mockTransactions={mockTransactions}
         quickActions={quickActions}
-        calculateCompletedPayments={calculateCompletedPayments}
-        getPaymentStatus={getPaymentStatus}
-        toggleScheduledTransfer={toggleScheduledTransfer}
         onTransferClick={handleTransferClick}
       />
 

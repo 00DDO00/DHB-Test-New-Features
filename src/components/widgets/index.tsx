@@ -18,6 +18,7 @@ import {
   AccountBalanceWallet,
   Star,
   LocalOffer,
+  Add,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -880,6 +881,96 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
             )}
           </AdvertisementCard>
         ))}
+      </Box>
+    </Widget>
+  );
+};
+
+// Open Account Widget Component
+interface OpenAccountWidgetProps {
+  title?: string;
+  subtitle?: string;
+}
+
+const OpenAccountButton = styled(Button)`
+  background: linear-gradient(45deg, #FC9F15, #FFB74D);
+  color: white;
+  text-transform: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  width: 100%;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(252, 159, 21, 0.3);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(45deg, #e58a0d, #FFA726);
+    box-shadow: 0 4px 12px rgba(252, 159, 21, 0.4);
+    transform: translateY(-1px);
+  }
+`;
+
+export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
+  title = "Open New Account",
+  subtitle = "Start your banking journey with DHB"
+}) => {
+  const navigate = useNavigate();
+
+  const handleOpenAccount = () => {
+    navigate('/accounts/open');
+  };
+
+  return (
+    <Widget
+      title={title}
+      subtitle={subtitle}
+      onMenuClick={() => console.log('Open Account menu clicked')}
+    >
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100%',
+        gap: 3
+      }}>
+        {/* Icon */}
+        <Box sx={{ 
+          width: 80, 
+          height: 80, 
+          borderRadius: '50%', 
+          bgcolor: 'rgba(252, 159, 21, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '2px solid rgba(252, 159, 21, 0.2)'
+        }}>
+          <Add sx={{ color: '#FC9F15', fontSize: 40 }} />
+        </Box>
+        
+        {/* Description */}
+        <Typography 
+          variant="body1" 
+          sx={{ 
+            color: 'text.secondary',
+            textAlign: 'center',
+            lineHeight: 1.5,
+            maxWidth: '200px'
+          }}
+        >
+          Open a new savings account, term deposit, or investment account with DHB Bank.
+        </Typography>
+        
+        {/* Action Button */}
+        <OpenAccountButton
+          variant="contained"
+          endIcon={<ArrowForward />}
+          onClick={handleOpenAccount}
+          aria-label="Open new account with DHB Bank"
+        >
+          Open Account
+        </OpenAccountButton>
       </Box>
     </Widget>
   );

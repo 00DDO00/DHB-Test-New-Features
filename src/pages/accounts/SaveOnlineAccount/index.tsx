@@ -13,6 +13,7 @@ import {
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
 import { apiService } from '../../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 // Import section components
 import BreadcrumbsSection from './BreadcrumbsSection';
@@ -40,6 +41,7 @@ import {
 } from '@mui/icons-material';
 
 const SaveOnlineAccount: React.FC = () => {
+  const navigate = useNavigate();
   // All the original state variables
   const [tabValue, setTabValue] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
@@ -669,22 +671,12 @@ const SaveOnlineAccount: React.FC = () => {
     {
       label: 'Counteraccount change',
       icon: <PeopleIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Counteraccount change')
+      onClick: () => navigate('/settings/change-counter-account')
     },
     {
       label: 'Download statement',
       icon: <FileUploadIcon sx={{ fontSize: '1rem' }} />,
       onClick: handleDownloadStatement
-    },
-    {
-      label: 'Set savings target',
-      icon: <TrackChangesIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => setSavingsTargetModalOpen(true)
-    },
-    {
-      label: 'Adjustment',
-      icon: <TuneIcon sx={{ fontSize: '1rem' }} />,
-      onClick: () => console.log('Adjustment')
     },
     {
       label: 'Account Closure',

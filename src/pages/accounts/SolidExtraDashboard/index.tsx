@@ -213,6 +213,15 @@ const SolidExtraDashboard: React.FC = () => {
             <CompactCard 
               role="region" 
               aria-label={`${account.name} account summary`}
+              onClick={() => navigate(`/accounts/solidextra/transfers?accountId=${account.id}&iban=${account.iban}&balance=${account.balance}`)}
+              sx={{ cursor: 'pointer' }}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/accounts/solidextra/transfers?accountId=${account.id}&iban=${account.iban}&balance=${account.balance}`);
+                }
+              }}
             >
               <CompactCardContent>
                 {/* Title - matching original Widget component */}
@@ -239,23 +248,6 @@ const SolidExtraDashboard: React.FC = () => {
                       variant="h3" 
                       color="#004996" 
                       fontWeight="bold"
-                      sx={{
-                        cursor: 'pointer',
-                        '&:hover': {
-                          textDecoration: 'underline',
-                          opacity: 0.8
-                        }
-                      }}
-                      onClick={() => navigate(`/accounts/solidextra/transfers?accountId=${account.id}&iban=${account.iban}&balance=${account.balance}`)}
-                      role="button"
-                      aria-label="View details for DHB SolidExtra account"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          navigate(`/accounts/solidextra/transfers?accountId=${account.id}&iban=${account.iban}&balance=${account.balance}`);
-                        }
-                      }}
                     >
                       DHB SolidExtra
                     </Typography>

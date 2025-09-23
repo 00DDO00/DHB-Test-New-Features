@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Grid, Button, Typography, CircularProgress, Breadcrumbs, Link as MuiLink } from '@mui/material';
 import { Add, ArrowForward, Headset, Home as HomeIcon, CreditCard, AccountBalanceWallet, AccountBalance } from '@mui/icons-material';
 import { useNavigate, Link } from 'react-router-dom';
-import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton, AdvertisementWidget } from '../../components/widgets';
+import { AccountWidget, StatsWidget, Widget, SettingsWidget, ChartWidget, SupportButton, AdvertisementWidget, OpenAccountWidget } from '../../components/widgets';
 import { apiService, Account, ChartData } from "../../services/api";
 import { formatCurrency, formatInterestRate } from "../../utils/formatters";
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
@@ -45,7 +45,8 @@ const Home: React.FC = () => {
     'solidextra-card',
     'combispaar-stats',
     'chart-widget',
-    'advertisement-widget'
+    'advertisement-widget',
+    'open-account-widget'
   ]);
   const [isDragActive, setIsDragActive] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
@@ -402,6 +403,22 @@ const Home: React.FC = () => {
             )}
           </Box>
         );
+      case 'open-account-widget':
+        return (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
+            {isEditMode ? (
+              <DraggableWidget
+                widgetId={widgetId}
+                index={index}
+                isEditMode={isEditMode}
+              >
+                <OpenAccountWidget />
+              </DraggableWidget>
+            ) : (
+              <OpenAccountWidget />
+            )}
+          </Box>
+        );
       default:
         return null;
     }
@@ -625,10 +642,10 @@ const Home: React.FC = () => {
                 interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
                 primaryAction={{
                   label: "Make Transfer",
-                  onClick: () => navigate('/accounts'),
+                  onClick: () => navigate('/accounts/saveonline/statement'),
                   color: 'orange'
                 }}
-                onAccountTypeClick={() => navigate('/accounts')}
+                onAccountTypeClick={() => navigate('/accounts/saveonline/statement')}
               />
             </NativeDraggableWidget>
           </Box>

@@ -242,6 +242,18 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     fetchUserProfile();
   }, []);
 
+  // Reset navbar state when location changes
+  React.useEffect(() => {
+    // Reset search bar to hidden state
+    setSearchBarVisible(false);
+    setSearchQuery("");
+    setSearchOpen(false);
+    
+    // Close any open popups
+    setUserPopupOpen(false);
+    setMessagesOpen(false);
+  }, [location.pathname]);
+
   // Save state to localStorage whenever it changes
   const saveStateToStorage = React.useCallback(() => {
     try {
