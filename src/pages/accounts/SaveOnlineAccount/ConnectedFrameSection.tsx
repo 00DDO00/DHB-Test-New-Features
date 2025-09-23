@@ -238,54 +238,8 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
         </TabPanel>
 
         <TabPanel value={tabValue} index={1}>
-          {scheduledTransfers.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
-              No scheduled transfers found.
-            </Typography>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {scheduledTransfers.map((transfer) => {
-                const completedPayments = calculateCompletedPayments(transfer.startDate, transfer.period);
-                const isCompleted = transfer.endDate && new Date(transfer.endDate) <= new Date();
-                const paymentStatus = getPaymentStatus(transfer);
-                
-                return (
-                  <Box
-                    key={transfer.id}
-                    sx={{
-                      border: '1px solid #e0e0e0',
-                      borderRadius: 1,
-                      p: 2,
-                      '&:hover': {
-                        backgroundColor: '#f5f5f5'
-                      }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box>
-                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                          {transfer.description}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {transfer.amount} • {transfer.period} • {transfer.startDate}
-                          {transfer.endDate && ` - ${transfer.endDate}`}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ textAlign: 'right' }}>
-                        <Typography variant="body2" color={isCompleted ? 'success.main' : 'text.secondary'}>
-                          {isCompleted ? 'Completed' : 'Active'}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    
-                  </Box>
-                );
-              })}
-            </Box>
-          )}
-
           {/* Scheduled Transfers Table */}
-          <Box sx={{ mt: 4 }}>
+          <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Scheduled Transfers

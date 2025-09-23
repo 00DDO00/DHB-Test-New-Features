@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Box,
   Typography,
+  Tabs,
+  Tab,
   Button,
   Table,
   TableBody,
@@ -19,9 +21,27 @@ import {
   FilterList as FilterIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { TransferData, Transaction } from './types';
+import { TabPanelProps, TransferData, Transaction } from './types';
+
+// TabPanel component
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`transfer-tabpanel-${index}`}
+      aria-labelledby={`transfer-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 interface ConnectedFrameSectionProps {
+  onOpenModal: () => void;
   onOpenFilter: () => void;
   onDownloadStatement: () => void;
   filteredTransactions: Transaction[];
@@ -35,6 +55,7 @@ interface ConnectedFrameSectionProps {
 }
 
 const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
+  onOpenModal,
   onOpenFilter,
   onDownloadStatement,
   filteredTransactions,
@@ -63,112 +84,96 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
           Then the transfer will be processed the same day. After these times, the transfer will be processed 
           the next working day.
         </Typography>
-        
 
-        {/* Completed Transfers Table */}
-        <Box sx={{ mt: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Completed Transfers
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <IconButton size="small" onClick={onDownloadStatement}>
-                  <DownloadIcon />
-                </IconButton>
-                <Typography variant="caption" color="text.secondary">
-                  Download
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <IconButton size="small" onClick={onOpenFilter}>
-                  <FilterIcon />
-                </IconButton>
-                <Typography variant="caption" color="text.secondary">
-                  Filter
-                </Typography>
-              </Box>
-            </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Recent transfers
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              startIcon={<FilterIcon />}
+              onClick={onOpenFilter}
+              sx={{
+                borderColor: '#1976d2',
+                color: '#1976d2',
+                textTransform: 'none',
+                borderRadius: '8px',
+                px: 2,
+                py: 1
+              }}
+            >
+              Filter
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              onClick={onDownloadStatement}
+              sx={{
+                borderColor: '#1976d2',
+                color: '#1976d2',
+                textTransform: 'none',
+                borderRadius: '8px',
+                px: 2,
+                py: 1
+              }}
+            >
+              Download statement
+            </Button>
           </Box>
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                  <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
-                    EXECUTION DATE
+        </Box>
+
+        <TableContainer component={Paper} sx={{ boxShadow: 'none', border: '1px solid #e0e0e0' }}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Amount</TableCell>
+                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
+                <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.date}</TableCell>
+                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.description}</TableCell>
+                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.amount}</TableCell>
+                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ 
+                        width: 8, 
+                        height: 8, 
+                        borderRadius: '50%', 
+                        backgroundColor: 'green' 
+                      }} />
+                      <Typography variant="body2" sx={{ color: 'green' }}>
+                        {transaction.status}
+                      </Typography>
+                    </Box>
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
-                    RECIPIENT
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
-                    AMOUNT
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
-                    STATUS
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
-                      No completed transfers found.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  (filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
-                    <TableRow 
-                      key={transaction.id || index}
-                      sx={{ 
-                        '&:hover': { backgroundColor: '#f9f9f9' },
-                        cursor: 'pointer'
+                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
+                    <MuiLink
+                      component="button"
+                      onClick={() => onTransferClick(transaction as any)}
+                      sx={{
+                        color: '#1976d2',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        '&:hover': {
+                          textDecoration: 'underline'
+                        }
                       }}
                     >
-                      <TableCell sx={{ color: '#333' }}>
-                        {transaction.date}
-                      </TableCell>
-                      <TableCell>
-                        <Box>
-                          <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
-                            {transaction.description}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {transaction.account}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell 
-                        sx={{ 
-                          color: transaction.type === 'debit' ? '#f44336' : '#4caf50', 
-                          fontWeight: 'bold' 
-                        }}
-                      >
-                        {transaction.balance}
-                      </TableCell>
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: 'inline-block',
-                            px: 1.5,
-                            py: 0.5,
-                            borderRadius: '12px',
-                            backgroundColor: '#e8f5e8',
-                            color: '#2e7d32',
-                            fontSize: '0.75rem',
-                            fontWeight: 500,
-                            textTransform: 'capitalize'
-                          }}
-                        >
-                          Completed
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                      View details
+                    </MuiLink>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
 
       {/* Quick Actions - Right Side */}

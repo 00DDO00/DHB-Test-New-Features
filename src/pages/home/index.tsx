@@ -642,10 +642,10 @@ const Home: React.FC = () => {
                 interestRate={saveOnlineAccount ? formatInterestRate(saveOnlineAccount.interest_rate) : "1.1%"}
                 primaryAction={{
                   label: "Make Transfer",
-                  onClick: () => navigate('/accounts/saveonline/statement'),
+                  onClick: () => navigate('/accounts/saveonline'),
                   color: 'orange'
                 }}
-                onAccountTypeClick={() => navigate('/accounts/saveonline/statement')}
+                onAccountTypeClick={() => navigate('/accounts/saveonline')}
               />
             </NativeDraggableWidget>
           </Box>

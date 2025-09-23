@@ -927,36 +927,61 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
       subtitle={subtitle}
       onMenuClick={() => console.log('Open Account menu clicked')}
     >
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        height: '100%',
-        gap: 3
-      }}>
-        {/* Icon */}
-        <Box sx={{ 
-          width: 80, 
-          height: 80, 
-          borderRadius: '50%', 
-          bgcolor: 'rgba(252, 159, 21, 0.1)',
-          display: 'flex',
-          alignItems: 'center',
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
           justifyContent: 'center',
-          border: '2px solid rgba(252, 159, 21, 0.2)'
-        }}>
-          <Add sx={{ color: '#FC9F15', fontSize: 40 }} />
+          height: '100%',
+          gap: 2,
+          cursor: 'pointer',
+          '&:hover': {
+            '& .open-account-icon': {
+              transform: 'scale(1.05)',
+              transition: 'transform 0.2s ease'
+            }
+          }
+        }}
+        onClick={handleOpenAccount}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleOpenAccount();
+          }
+        }}
+        aria-label="Open new account with DHB Bank"
+      >
+        {/* Icon */}
+        <Box 
+          className="open-account-icon"
+          sx={{ 
+            width: 60, 
+            height: 60, 
+            borderRadius: '50%', 
+            bgcolor: 'rgba(252, 159, 21, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid rgba(252, 159, 21, 0.2)'
+          }}
+        >
+          <Add sx={{ color: '#FC9F15', fontSize: 30 }} />
         </Box>
         
-        {/* Description */}
+        {/* Description - Single Line */}
         <Typography 
-          variant="body1" 
+          variant="body2" 
           sx={{ 
             color: 'text.secondary',
             textAlign: 'center',
-            lineHeight: 1.5,
-            maxWidth: '200px'
+            lineHeight: 1.3,
+            maxWidth: '220px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
           }}
         >
           Open a new savings account, term deposit, or investment account with DHB Bank.
@@ -966,7 +991,10 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
         <OpenAccountButton
           variant="contained"
           endIcon={<ArrowForward />}
-          onClick={handleOpenAccount}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenAccount();
+          }}
           aria-label="Open new account with DHB Bank"
         >
           Open Account
