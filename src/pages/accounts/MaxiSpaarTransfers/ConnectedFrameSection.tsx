@@ -41,7 +41,8 @@ function TabPanel(props: TabPanelProps) {
 }
 
 interface ConnectedFrameSectionProps {
-  onOpenModal: () => void;
+  tabValue: number;
+  onTabChange: (event: React.SyntheticEvent, newValue: number) => void;
   onOpenFilter: () => void;
   onDownloadStatement: () => void;
   filteredTransactions: Transaction[];
@@ -55,7 +56,8 @@ interface ConnectedFrameSectionProps {
 }
 
 const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
-  onOpenModal,
+  tabValue,
+  onTabChange,
   onOpenFilter,
   onDownloadStatement,
   filteredTransactions,
@@ -74,114 +76,143 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
       {/* Transfer Section - Left Side */}
       <Box sx={{ flex: 1, p: 3, borderRight: '1px solid #e0e0e0' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#000000', py: 2 }}>
-            Completed transfers
-          </Typography>
+          <Tabs 
+            value={tabValue} 
+            onChange={onTabChange}
+            sx={{
+              '& .MuiTab-root': {
+                height: '48px',
+                width: '288px',
+                textTransform: 'none',
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#000000'
+              }
+            }}
+          >
+            <Tab label="Completed transfers" />
+          </Tabs>
         </Box>
 
-        <Typography variant="body1" sx={{ mb: 3, color: 'text.primary', fontSize: '17px' }}> 
-          Do you transfer funds to your contra account or savings account before 2.30pm on a working day? 
-          Then the transfer will be processed the same day. After these times, the transfer will be processed 
-          the next working day.
-        </Typography>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Recent transfers
+        <TabPanel value={tabValue} index={0}>
+          <Typography variant="body1" sx={{ mb: 3, color: 'text.primary', fontSize: '17px' }}> 
+            Do you transfer funds to your contra account or savings account before 2.30pm on a working day? 
+            Then the transfer will be processed the same day. After these times, the transfer will be processed 
+            the next working day.
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              startIcon={<FilterIcon />}
-              onClick={onOpenFilter}
-              sx={{
-                borderColor: '#1976d2',
-                color: '#1976d2',
-                textTransform: 'none',
-                borderRadius: '8px',
-                px: 2,
-                py: 1
-              }}
-            >
-              Filter
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={onDownloadStatement}
-              sx={{
-                borderColor: '#1976d2',
-                color: '#1976d2',
-                textTransform: 'none',
-                borderRadius: '8px',
-                px: 2,
-                py: 1
-              }}
-            >
-              Download statement
-            </Button>
+          
+
+          {/* Completed Transfers Table */}
+          <Box sx={{ mt: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Completed Transfers
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onDownloadStatement}>
+                    <DownloadIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Download
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <IconButton size="small" onClick={onOpenFilter}>
+                    <FilterIcon />
+                  </IconButton>
+                  <Typography variant="caption" color="text.secondary">
+                    Filter
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            <TableContainer component={Paper} variant="outlined">
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      EXECUTION DATE
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      RECIPIENT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      AMOUNT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#333' }}>
+                      STATUS
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ textAlign: 'center', py: 4, color: 'text.secondary' }}>
+                        No completed transfers found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    (filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
+                      <TableRow 
+                        key={transaction.id || index}
+                        sx={{ 
+                          '&:hover': { backgroundColor: '#f9f9f9' },
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <TableCell sx={{ color: '#333' }}>
+                          {transaction.date}
+                        </TableCell>
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" sx={{ color: '#333', fontWeight: 500 }}>
+                              {transaction.description}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                              {transaction.account}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell 
+                          sx={{ 
+                            color: transaction.type === 'debit' ? '#f44336' : '#4caf50', 
+                            fontWeight: 'bold' 
+                          }}
+                        >
+                          {transaction.balance}
+                        </TableCell>
+                        <TableCell>
+                          <Box
+                            sx={{
+                              display: 'inline-block',
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: '12px',
+                              backgroundColor: '#e8f5e8',
+                              color: '#2e7d32',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              textTransform: 'capitalize'
+                            }}
+                          >
+                            Completed
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
-        </Box>
+        </TabPanel>
 
-        <TableContainer component={Paper} sx={{ boxShadow: 'none', border: '1px solid #e0e0e0' }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Description</TableCell>
-                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Amount</TableCell>
-                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 600, borderBottom: '1px solid #e0e0e0' }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {(filteredTransactions.length > 0 ? filteredTransactions : mockTransactions).map((transaction, index) => (
-                <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.date}</TableCell>
-                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.description}</TableCell>
-                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>{transaction.amount}</TableCell>
-                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ 
-                        width: 8, 
-                        height: 8, 
-                        borderRadius: '50%', 
-                        backgroundColor: 'green' 
-                      }} />
-                      <Typography variant="body2" sx={{ color: 'green' }}>
-                        {transaction.status}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ borderBottom: '1px solid #e0e0e0' }}>
-                    <MuiLink
-                      component="button"
-                      onClick={() => onTransferClick(transaction as any)}
-                      sx={{
-                        color: '#1976d2',
-                        textDecoration: 'none',
-                        fontWeight: 500,
-                        '&:hover': {
-                          textDecoration: 'underline'
-                        }
-                      }}
-                    >
-                      View details
-                    </MuiLink>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </Box>
 
       {/* Quick Actions - Right Side */}
-      <Box sx={{ width: '300px', p: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
-          Quick actions
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{ width: '300px', p: 3, backgroundColor: '#E6EDF5', borderRadius: '0 0 16px 0' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, pt: 4, alignItems: 'center' }}>
           {quickActions.map((action, index) => (
             <Box
               key={index}
@@ -190,17 +221,23 @@ const ConnectedFrameSection: React.FC<ConnectedFrameSectionProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                p: 2,
-                border: '1px solid #e0e0e0',
+                p: 1.5,
                 borderRadius: 1,
+                textDecoration: 'none',
+                color: 'text.primary',
+                backgroundColor: 'transparent',
+                border: 'none',
+                transition: 'all 0.2s',
+                width: '240px',
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: '#f5f5f5'
+                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                  textDecoration: 'none'
                 }
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ color: '#1976d2' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: '180px' }}>
+                <Box sx={{ width: '24px', display: 'flex', justifyContent: 'center' }}>
                   {action.icon}
                 </Box>
                 <Typography variant="body2">{action.label}</Typography>

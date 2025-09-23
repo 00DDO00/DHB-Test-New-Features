@@ -888,7 +888,8 @@ const SolidExtraTransfers: React.FC = () => {
 
       {/* Connected Frame: Transfer Section + Quick Actions */}
       <ConnectedFrameSection
-        onOpenModal={handleOpenModal}
+        tabValue={tabValue}
+        onTabChange={handleTabChange}
         onOpenFilter={() => setFilterPopupOpen(true)}
         onDownloadStatement={handleDownloadStatement}
         filteredTransactions={filteredTransactions}
