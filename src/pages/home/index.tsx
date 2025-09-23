@@ -297,128 +297,6 @@ const Home: React.FC = () => {
             )}
           </Box>
         );
-      case 'advertisement-widget':
-        return (
-          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId={widgetId}
-                index={index}
-                isEditMode={isEditMode}
-              >
-                <AdvertisementWidget
-                  title="DHB Services"
-                  subtitle="Discover our exclusive offers"
-                  items={[
-                    {
-                      id: 'credit-card',
-                      title: 'Premium Credit Card',
-                      description: 'Get up to €50 cashback bonus',
-                      icon: <CreditCard sx={{ color: 'white', fontSize: 24 }} />,
-                      bonus: '€50 Bonus',
-                      onClick: () => console.log('Credit card clicked')
-                    },
-                    {
-                      id: 'new-account',
-                      title: 'Open New Account',
-                      description: 'Earn €25 welcome bonus',
-                      icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 24 }} />,
-                      bonus: '€25 Welcome',
-                      onClick: () => console.log('New account clicked')
-                    },
-                    {
-                      id: 'investment',
-                      title: 'Investment Portfolio',
-                      description: 'Start with €100 minimum investment',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
-                      bonus: 'No Fees',
-                      onClick: () => console.log('Investment clicked')
-                    },
-                    {
-                      id: 'insurance',
-                      title: 'Life Insurance',
-                      description: 'Get 3 months free premium',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
-                      bonus: '3 Months Free',
-                      onClick: () => console.log('Insurance clicked')
-                    },
-                    {
-                      id: 'mortgage',
-                      title: 'Home Mortgage',
-                      description: 'Special rate: 2.5% APR',
-                      icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
-                      bonus: 'Low Rate',
-                      onClick: () => console.log('Mortgage clicked')
-                    }
-                  ]}
-                />
-              </DraggableWidget>
-            ) : (
-              <AdvertisementWidget
-                title="DHB Services"
-                subtitle="Discover our exclusive offers"
-                items={[
-                  {
-                    id: 'credit-card',
-                    title: 'Premium Credit Card',
-                    description: 'Get up to €50 cashback bonus',
-                    icon: <CreditCard sx={{ color: 'white', fontSize: 20 }} />,
-                    bonus: '€50 Bonus',
-                    onClick: () => console.log('Credit card clicked')
-                  },
-                  {
-                    id: 'new-account',
-                    title: 'Open New Account',
-                    description: 'Earn €25 welcome bonus',
-                    icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 20 }} />,
-                    bonus: '€25 Welcome',
-                    onClick: () => console.log('New account clicked')
-                  },
-                  {
-                    id: 'investment',
-                    title: 'Investment Portfolio',
-                    description: 'Start with €100 minimum investment',
-                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
-                    bonus: 'No Fees',
-                    onClick: () => console.log('Investment clicked')
-                  },
-                  {
-                    id: 'insurance',
-                    title: 'Life Insurance',
-                    description: 'Get 3 months free premium',
-                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
-                    bonus: '3 Months Free',
-                    onClick: () => console.log('Insurance clicked')
-                  },
-                  {
-                    id: 'mortgage',
-                    title: 'Home Mortgage',
-                    description: 'Special rate: 2.5% APR',
-                    icon: <AccountBalance sx={{ color: 'white', fontSize: 20 }} />,
-                    bonus: 'Low Rate',
-                    onClick: () => console.log('Mortgage clicked')
-                  }
-                ]}
-              />
-            )}
-          </Box>
-        );
-      case 'open-account-widget':
-        return (
-          <Box sx={{ flex: '0 0 calc(50% - 8px)' }}>
-            {isEditMode ? (
-              <DraggableWidget
-                widgetId={widgetId}
-                index={index}
-                isEditMode={isEditMode}
-              >
-                <OpenAccountWidget />
-              </DraggableWidget>
-            ) : (
-              <OpenAccountWidget />
-            )}
-          </Box>
-        );
       default:
         return null;
     }
@@ -919,9 +797,82 @@ const Home: React.FC = () => {
           </Box>
         )}
         
+        {/* Advertisement Widget */}
+        {visibleWidgets.includes('advertisement-widget') && (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="DHB Services and offers">
+            <NativeDraggableWidget
+              widgetId="advertisement-widget"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
+              <AdvertisementWidget
+                title="DHB Services"
+                subtitle="Discover our exclusive offers"
+                items={[
+                  {
+                    id: 'credit-card',
+                    title: 'Premium Credit Card',
+                    description: 'Get up to €50 cashback bonus',
+                    icon: <CreditCard sx={{ color: 'white', fontSize: 24 }} />,
+                    bonus: '€50 Bonus',
+                    onClick: () => console.log('Credit card clicked')
+                  },
+                  {
+                    id: 'new-account',
+                    title: 'Open New Account',
+                    description: 'Earn €25 welcome bonus',
+                    icon: <AccountBalanceWallet sx={{ color: 'white', fontSize: 24 }} />,
+                    bonus: '€25 Welcome',
+                    onClick: () => console.log('New account clicked')
+                  },
+                  {
+                    id: 'investment',
+                    title: 'Investment Portfolio',
+                    description: 'Start with €100 minimum investment',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
+                    bonus: 'No Fees',
+                    onClick: () => console.log('Investment clicked')
+                  },
+                  {
+                    id: 'insurance',
+                    title: 'Life Insurance',
+                    description: 'Get 3 months free premium',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
+                    bonus: '3 Months Free',
+                    onClick: () => console.log('Insurance clicked')
+                  },
+                  {
+                    id: 'mortgage',
+                    title: 'Home Mortgage',
+                    description: 'Special rate: 2.5% APR',
+                    icon: <AccountBalance sx={{ color: 'white', fontSize: 24 }} />,
+                    bonus: 'Low Rate',
+                    onClick: () => console.log('Mortgage clicked')
+                  }
+                ]}
+              />
+            </NativeDraggableWidget>
+          </Box>
+        )}
+
+        {/* Open Account Widget */}
+        {visibleWidgets.includes('open-account-widget') && (
+          <Box sx={{ flex: '0 0 calc(50% - 8px)' }} role="complementary" aria-label="Open new account">
+            <NativeDraggableWidget
+              widgetId="open-account-widget"
+              isEditMode={isEditMode}
+              onDragStart={handleNativeDragStart}
+              onDragEnd={handleNativeDragEnd}
+            >
+              <OpenAccountWidget />
+            </NativeDraggableWidget>
+          </Box>
+        )}
+
         {/* Render additional widgets that were added from catalog */}
         {visibleWidgets
-          .filter(widgetId => !['welcome-card', 'accounts-card', 'solidextra-card', 'combispaar-stats', 'chart-widget'].includes(widgetId))
+          .filter(widgetId => !['welcome-card', 'accounts-card', 'solidextra-card', 'combispaar-stats', 'chart-widget', 'advertisement-widget', 'open-account-widget'].includes(widgetId))
           .map((widgetId, index) => {
             const actualIndex = visibleWidgets.indexOf(widgetId);
             return (
