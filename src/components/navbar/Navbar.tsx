@@ -441,11 +441,21 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
 
   // Determine if back button should be visible
   const shouldShowBackButton = () => {
-    const mainNavPages = ["/private", "/accounts", "/settings", "/pages/profile"];
-    return !mainNavPages.some(page => 
-      page === "/private" ? (location.pathname === "/private" || location.pathname === "/") : 
-      location.pathname === page || location.pathname.startsWith(page + "/")
-    );
+    const currentPath = location.pathname;
+    
+    // Main navigation pages where back button should NOT appear
+    const mainNavPages = ["/private", "/", "/accounts", "/settings", "/pages/profile"];
+    
+    // Check if we're on a main nav page
+    const isOnMainNavPage = mainNavPages.some(page => {
+      if (page === "/private" || page === "/") {
+        return currentPath === "/private" || currentPath === "/";
+      }
+      return currentPath === page;
+    });
+    
+    // Show back button if NOT on a main nav page
+    return !isOnMainNavPage;
   };
 
   // Handle back button click

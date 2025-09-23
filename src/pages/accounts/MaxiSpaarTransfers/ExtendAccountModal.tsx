@@ -10,7 +10,6 @@ import {
   Select,
   MenuItem,
   TextField,
-  InputAdornment,
   CircularProgress
 } from '@mui/material';
 import { Close as CloseIcon, ArrowForward } from '@mui/icons-material';
@@ -152,7 +151,7 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
       sx={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         '& .MuiBackdrop-root': {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
@@ -161,14 +160,11 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
       <Box
         sx={{
           width: '500px',
-          backgroundColor: 'white',
-          borderRadius: 2,
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-          position: 'relative',
-          maxHeight: '90vh',
-          overflow: 'hidden',
+          height: '100vh',
+          backgroundColor: '#f3f3f3',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          boxShadow: '-4px 0 8px rgba(0, 0, 0, 0.1)',
         }}
       >
         {/* Header */}
@@ -190,100 +186,109 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
         </Box>
 
         {/* Content */}
-        <Box sx={{ p: 3, flex: 1, overflow: 'auto' }}>
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {/* Close option selection */}
-              <FormControl fullWidth>
-                <InputLabel id="extension-type-label">Close option selection</InputLabel>
-                <Select
-                  labelId="extension-type-label"
-                  value={extensionType}
-                  label="Close option selection"
-                  onChange={(e) => setExtensionType(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                  }}
-                >
-                  {extensionOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        <Box sx={{ flex: 1, p: 3, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ 
+            width: '100%', 
+            maxWidth: '400px',
+            backgroundColor: 'white',
+            borderRadius: 2,
+            p: 3,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Close option selection */}
+                <FormControl fullWidth>
+                  <InputLabel id="extension-type-label">Close option selection</InputLabel>
+                  <Select
+                    labelId="extension-type-label"
+                    value={extensionType}
+                    label="Close option selection"
+                    onChange={(e) => setExtensionType(e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                    }}
+                  >
+                    {extensionOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              {/* Amount entry - only show for "different amount" option */}
-              {extensionType === 'different-amount' && (
-                <Box>
-                  <Typography variant="body2" sx={{ mb: 1, color: '#666' }}>
-                    Amount entry
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <TextField
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      placeholder="000"
-                      variant="outlined"
-                      size="small"
-                      sx={{ flex: 1 }}
-                      inputProps={{ style: { textAlign: 'center' } }}
-                    />
-                    <TextField
-                      placeholder="00"
-                      variant="outlined"
-                      size="small"
-                      sx={{ width: '60px' }}
-                      inputProps={{ style: { textAlign: 'center' } }}
-                    />
-                    <Typography variant="body1" sx={{ color: '#666', ml: 1 }}>
-                      €
+                {/* Amount entry - only show for "different amount" option */}
+                {extensionType === 'different-amount' && (
+                  <Box>
+                    <Typography variant="body2" sx={{ mb: 1, color: '#666' }}>
+                      Amount entry
                     </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <TextField
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="000"
+                        variant="outlined"
+                        size="small"
+                        sx={{ flex: 1 }}
+                        inputProps={{ style: { textAlign: 'center' } }}
+                      />
+                      <TextField
+                        placeholder="00"
+                        variant="outlined"
+                        size="small"
+                        sx={{ width: '60px' }}
+                        inputProps={{ style: { textAlign: 'center' } }}
+                      />
+                      <Typography variant="body1" sx={{ color: '#666', ml: 1 }}>
+                        €
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
 
-              {/* Term selection */}
-              <FormControl fullWidth>
-                <InputLabel id="term-selection-label">Term selection</InputLabel>
-                <Select
-                  labelId="term-selection-label"
-                  value={selectedTerm}
-                  label="Term selection"
-                  onChange={(e) => setSelectedTerm(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#1976d2',
-                    },
-                  }}
-                >
-                  {maxiSpaarOptions.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.term}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-          )}
+                {/* Term selection */}
+                <FormControl fullWidth>
+                  <InputLabel id="term-selection-label">Term selection</InputLabel>
+                  <Select
+                    labelId="term-selection-label"
+                    value={selectedTerm}
+                    label="Term selection"
+                    onChange={(e) => setSelectedTerm(e.target.value)}
+                    sx={{
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1976d2',
+                      },
+                    }}
+                  >
+                    {maxiSpaarOptions.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.term}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
+          </Box>
         </Box>
 
         {/* Footer */}
