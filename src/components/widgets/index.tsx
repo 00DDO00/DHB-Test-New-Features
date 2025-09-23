@@ -888,28 +888,9 @@ interface OpenAccountWidgetProps {
   subtitle?: string;
 }
 
-const OpenAccountButton = styled(Button)`
-  background: linear-gradient(45deg, #FC9F15, #FFB74D);
-  color: white;
-  text-transform: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  width: 100%;
-  font-weight: 500;
-  font-size: 1rem;
-  box-shadow: 0 2px 8px rgba(252, 159, 21, 0.3);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: linear-gradient(45deg, #e58a0d, #FFA726);
-    box-shadow: 0 4px 12px rgba(252, 159, 21, 0.4);
-    transform: translateY(-1px);
-  }
-`;
-
 export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
-  title = "Open New Account",
-  subtitle = "Start your banking journey with DHB"
+  title = "Account opening",
+  subtitle = "DHB MaxiSpaar Account"
 }) => {
   const navigate = useNavigate();
 
@@ -918,84 +899,120 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
   };
 
   return (
-    <Widget
-      title={title}
-      subtitle={subtitle}
+    <Box
+      sx={{
+        backgroundColor: '#EFE9DB',
+        borderRadius: '12px',
+        padding: '24px',
+        height: '100%',
+        display: 'flex',
+        position: 'relative',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.3s ease'
+        }
+      }}
+      onClick={handleOpenAccount}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleOpenAccount();
+        }
+      }}
+      aria-label="Open new account with DHB Bank"
     >
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          height: '100%',
-          gap: 2,
-          cursor: 'pointer',
-          '&:hover': {
-            '& .open-account-icon': {
-              transform: 'scale(1.05)',
-              transition: 'transform 0.2s ease'
-            }
-          }
-        }}
-        onClick={handleOpenAccount}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleOpenAccount();
-          }
-        }}
-        aria-label="Open new account with DHB Bank"
-      >
-        {/* Icon */}
-        <Box 
-          className="open-account-icon"
-          sx={{ 
-            width: 60, 
-            height: 60, 
-            borderRadius: '50%', 
-            bgcolor: 'rgba(252, 159, 21, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px solid rgba(252, 159, 21, 0.2)'
-          }}
-        >
-          <Add sx={{ color: '#FC9F15', fontSize: 30 }} />
+      {/* Left Content */}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Top Section */}
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{
+              color: '#000',
+              fontSize: '14px',
+              fontWeight: 600,
+              mb: 1
+            }}
+          >
+            {title}
+          </Typography>
+          
+          <Typography
+            variant="h5"
+            sx={{
+              color: '#004996',
+              fontSize: '20px',
+              fontWeight: 700,
+              mb: 2,
+              lineHeight: 1.2
+            }}
+          >
+            {subtitle}
+          </Typography>
+          
+          <Typography
+            variant="body2"
+            sx={{
+              color: '#000',
+              fontSize: '14px',
+              lineHeight: 1.4,
+              mb: 3
+            }}
+          >
+            Savings deposit with fixed maturity and fixed high interest rate.
+          </Typography>
         </Box>
         
-        {/* Description - Single Line */}
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            color: 'text.secondary',
-            textAlign: 'center',
-            lineHeight: 1.3,
-            maxWidth: '220px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }}
-        >
-          Open a new savings account, term deposit, or investment account with DHB Bank.
-        </Typography>
-        
-        {/* Action Button */}
-        <OpenAccountButton
-          variant="contained"
-          endIcon={<ArrowForward />}
+        {/* Bottom Button */}
+        <Button
+          variant="outlined"
           onClick={(e) => {
             e.stopPropagation();
             handleOpenAccount();
           }}
-          aria-label="Open new account with DHB Bank"
+          sx={{
+            backgroundColor: '#EFE9DB',
+            border: '1px solid #004996',
+            color: '#004996',
+            textTransform: 'none',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            fontSize: '14px',
+            fontWeight: 500,
+            alignSelf: 'flex-start',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 73, 150, 0.1)',
+              border: '1px solid #004996'
+            }
+          }}
+          endIcon={<Add sx={{ fontSize: 16 }} />}
         >
-          Open Account
-        </OpenAccountButton>
+          Open account
+        </Button>
       </Box>
-    </Widget>
+      
+      {/* Right Image */}
+      <Box
+        sx={{
+          position: 'absolute',
+          right: '-20px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: '120px',
+          height: '120px',
+          backgroundImage: 'url(/image.png)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          zIndex: 1
+        }}
+      />
+    </Box>
   );
 };
 
