@@ -22,6 +22,8 @@ import {
   ClickAwayListener,
   Switch,
   FormControlLabel,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 
 import {
@@ -208,6 +210,8 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchBarVisible, setSearchBarVisible] = React.useState(false);
+  const [accountsMenuOpen, setAccountsMenuOpen] = React.useState(false);
+  const [accountsMenuAnchor, setAccountsMenuAnchor] = React.useState<null | HTMLElement>(null);
   const searchAnchorRef = React.useRef<HTMLDivElement>(null);
 
   // Load saved state from localStorage on component mount
@@ -412,6 +416,26 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     } catch (error) {
       console.error("Logout failed:", error);
     }
+  };
+
+  const handleAccountsMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAccountsMenuAnchor(event.currentTarget);
+    setAccountsMenuOpen(true);
+  };
+
+  const handleAccountsMenuClose = () => {
+    setAccountsMenuOpen(false);
+    setAccountsMenuAnchor(null);
+  };
+
+  const handleMyAccountsClick = () => {
+    navigate('/accounts');
+    handleAccountsMenuClose();
+  };
+
+  const handleOpenNewAccountClick = () => {
+    navigate('/accounts/open');
+    handleAccountsMenuClose();
   };
 
   // Function to handle theme toggle
@@ -775,7 +799,16 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                  <NavButton onClick={() => navigate("/private")} active={isActive("/private")} aria-current={isActive("/private") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('home')}>
   <NavText active={isActive("/private")}>{t('home')}</NavText>
 </NavButton>
-<NavButton onClick={() => navigate("/accounts")} active={isActive("/accounts")} aria-current={isActive("/accounts") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('accounts.title')}>
+<NavButton 
+  onClick={handleAccountsMenuOpen} 
+  active={isActive("/accounts")} 
+  aria-current={isActive("/accounts") ? "page" : undefined} 
+  disableRipple 
+  tabIndex={0} 
+  aria-label={t('accounts.title')}
+  aria-haspopup="true"
+  aria-expanded={accountsMenuOpen}
+>
   <NavText active={isActive("/accounts")}>{t('accounts.title')}</NavText>
 </NavButton>
 <NavButton onClick={() => navigate("/settings")} active={isActive("/settings")} aria-current={isActive("/settings") ? "page" : undefined} disableRipple tabIndex={0} aria-label={t('settings')}>
@@ -797,6 +830,38 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                 </Box>
               )}
             </Grid>
+
+            {/* Accounts Dropdown Menu */}
+            <Menu
+              anchorEl={accountsMenuAnchor}
+              open={accountsMenuOpen}
+              onClose={handleAccountsMenuClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  minWidth: 180,
+                  '& .MuiMenuItem-root': {
+                    px: 2,
+                    py: 1,
+                  },
+                },
+              }}
+            >
+              <MenuItem onClick={handleMyAccountsClick}>
+                My Accounts
+              </MenuItem>
+              <MenuItem onClick={handleOpenNewAccountClick}>
+                Open New Account
+              </MenuItem>
+            </Menu>
 
             {/* RIGHT: Icons / Profile */}
             <Grid item>

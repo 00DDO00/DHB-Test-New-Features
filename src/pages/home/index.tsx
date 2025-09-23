@@ -39,18 +39,37 @@ const Home: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [userName, setUserName] = useState("Holder name");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [visibleWidgets, setVisibleWidgets] = useState([
-    'welcome-card',
-    'accounts-card', 
-    'solidextra-card',
-    'combispaar-stats',
-    'chart-widget',
-    'advertisement-widget',
-    'open-account-widget'
-  ]);
+  const [visibleWidgets, setVisibleWidgets] = useState(() => {
+    // Load saved widget layout from localStorage, fallback to default
+    try {
+      const saved = localStorage.getItem('dhb-widget-layout');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error('Failed to load saved widget layout:', error);
+    }
+    return [
+      'welcome-card',
+      'accounts-card', 
+      'solidextra-card',
+      'combispaar-stats',
+      'chart-widget',
+      'advertisement-widget',
+      'open-account-widget'
+    ];
+  });
   const [isDragActive, setIsDragActive] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
 
+  // Save widget layout to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('dhb-widget-layout', JSON.stringify(visibleWidgets));
+    } catch (error) {
+      console.error('Failed to save widget layout:', error);
+    }
+  }, [visibleWidgets]);
 
   useEffect(() => {
     const fetchData = async () => {
