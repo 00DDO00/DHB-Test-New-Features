@@ -31,7 +31,6 @@ import {
   Person as PersonIcon,
   KeyboardArrowDown as ArrowDownIcon,
   Edit as EditIcon,
-  Logout as LogoutIcon,
   ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
 
@@ -840,18 +839,19 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                 </Grid>
                 
                 <Grid item>
-                  <IconButton
-                    color="inherit"
-                    size="large"
-                    onClick={handleLogout}
-                    sx={{
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      color: "#FFFFFF",
+                      cursor: 'pointer',
                       '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        opacity: 0.8,
                       },
                     }}
+                    onClick={handleLogout}
                   >
-                    <LogoutIcon />
-                  </IconButton>
+                    Log Out
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
