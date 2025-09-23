@@ -899,123 +899,120 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
   };
 
   return (
-    <Box
+    <Widget
+      title={title}
+      subtitle={subtitle}
       sx={{
-        backgroundColor: '#EFE9DB',
-        borderRadius: '12px',
-        padding: '24px',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'hidden',
-        cursor: 'pointer',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease'
+        '& .MuiCard-root': {
+          backgroundColor: '#EFE9DB !important',
+        },
+        '& .MuiCardContent-root': {
+          backgroundColor: '#EFE9DB !important',
         }
       }}
-      onClick={handleOpenAccount}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleOpenAccount();
-        }
-      }}
-      aria-label="Open new account with DHB Bank"
     >
-      {/* Header */}
-      <Box sx={{ mb: 2 }}>
-        <Typography
-          variant="body2"
-          sx={{
-            color: '#000',
-            fontSize: '14px',
-            fontWeight: 600,
-            mb: 1
-          }}
-        >
-          {title}
-        </Typography>
-        
-        <Typography
-          variant="h5"
-          sx={{
-            color: '#004996',
-            fontSize: '18px',
-            fontWeight: 700,
-            mb: 1,
-            lineHeight: 1.2
-          }}
-        >
-          {subtitle}
-        </Typography>
-      </Box>
-      {/* Content */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', pr: 2 }}>
-        {/* Description */}
-        <Typography
-          variant="body2"
-          sx={{
-            color: '#000',
-            fontSize: '13px',
-            lineHeight: 1.4,
-            mb: 2
-          }}
-        >
-          Savings deposit with fixed maturity<br />
-          and fixed high interest rate.
-        </Typography>
-        
-        {/* Bottom Button */}
-        <Button
-          variant="outlined"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleOpenAccount();
-          }}
-          sx={{
-            backgroundColor: '#EFE9DB',
-            border: '1px solid #004996',
-            color: '#004996',
-            textTransform: 'none',
-            borderRadius: '8px',
-            padding: '8px 16px',
-            fontSize: '13px',
-            fontWeight: 500,
-            alignSelf: 'flex-start',
-            '&:hover': {
-              backgroundColor: 'rgba(0, 73, 150, 0.1)',
-              border: '1px solid #004996'
-            }
-          }}
-          endIcon={<Add sx={{ fontSize: 14 }} />}
-        >
-          Open account
-        </Button>
-      </Box>
-      
-      {/* Right Image */}
       <Box
         sx={{
-          position: 'absolute',
-          right: '8px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: '60px',
-          height: '60px',
-          backgroundImage: 'url(/image.png)',
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          zIndex: 1,
-          border: '1px solid transparent' // For debugging - can be removed
+          height: '100%',
+          display: 'flex',
+          position: 'relative',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          '&:hover': {
+            '& .open-account-icon': {
+              transform: 'scale(1.05)',
+              transition: 'transform 0.2s ease'
+            }
+          }
         }}
-      />
-    </Box>
+        onClick={handleOpenAccount}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleOpenAccount();
+          }
+        }}
+        aria-label="Open new account with DHB Bank"
+      >
+        {/* Left Content */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', pr: 2 }}>
+          {/* Top Section */}
+          <Box>
+            <Typography
+              variant="h5"
+              sx={{
+                color: '#004996',
+                fontSize: '18px',
+                fontWeight: 700,
+                mb: 1,
+                lineHeight: 1.2
+              }}
+            >
+              {subtitle}
+            </Typography>
+            
+            <Typography
+              variant="body2"
+              sx={{
+                color: '#000',
+                fontSize: '13px',
+                lineHeight: 1.4,
+                mb: 2
+              }}
+            >
+              Savings deposit with fixed maturity<br />
+              and fixed high interest rate.
+            </Typography>
+          </Box>
+          
+          {/* Bottom Button */}
+          <Button
+            variant="outlined"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenAccount();
+            }}
+            sx={{
+              backgroundColor: '#EFE9DB',
+              border: '1px solid #004996',
+              color: '#004996',
+              textTransform: 'none',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              fontSize: '13px',
+              fontWeight: 500,
+              alignSelf: 'flex-start',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 73, 150, 0.1)',
+                border: '1px solid #004996'
+              }
+            }}
+            endIcon={<Add sx={{ fontSize: 14 }} />}
+          >
+            Open account
+          </Button>
+        </Box>
+        
+        {/* Right Image */}
+        <Box
+          sx={{
+            position: 'absolute',
+            right: '0px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '40%',
+            height: '100%',
+            backgroundImage: 'url(/accountopenimage.png)',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            zIndex: 1
+          }}
+        />
+      </Box>
+    </Widget>
   );
 };
 
