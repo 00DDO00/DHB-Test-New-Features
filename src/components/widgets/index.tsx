@@ -166,7 +166,6 @@ export const AccountWidget: React.FC<AccountWidgetProps> = ({
   return (
     <Widget
       title={accountName}
-      onMenuClick={() => console.log('Menu clicked')}
       onClick={onAccountTypeClick}
       actions={
         primaryAction ? (
@@ -277,7 +276,6 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   return (
     <Widget
       title={title}
-      onMenuClick={() => console.log('Menu clicked')}
       onClick={onClick}
       actions={actions}
     >
@@ -341,7 +339,6 @@ export const SettingsWidget: React.FC<SettingsWidgetProps> = ({
   return (
     <Widget
       title={t('settings') as string}
-      onMenuClick={() => console.log('Menu clicked')}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {/* Settings Grid - 3 rows, 2 columns */}
@@ -780,7 +777,6 @@ export const AdvertisementWidget: React.FC<AdvertisementWidgetProps> = ({
     <Widget
       title={title}
       subtitle={subtitle}
-      onMenuClick={() => console.log('Advertisement menu clicked')}
     >
       <Box 
         sx={{ 
@@ -925,7 +921,6 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
     <Widget
       title={title}
       subtitle={subtitle}
-      onMenuClick={() => console.log('Open Account menu clicked')}
     >
       <Box 
         sx={{ 

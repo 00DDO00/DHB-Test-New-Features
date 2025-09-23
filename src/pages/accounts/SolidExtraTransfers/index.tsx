@@ -31,6 +31,7 @@ import AccountClosurePopup from './AccountClosurePopup';
 import AccountClosureCongratulationsPopup from './AccountClosureCongratulationsPopup';
 import HistoricalRateModal from './HistoricalRateModal';
 import ExtendAccountModal from './ExtendAccountModal';
+import ExtendAccountConfirmationModal from './ExtendAccountConfirmationModal';
 import ExtendAccountCongratulationsModal from './ExtendAccountCongratulationsModal';
 
 // Import types
@@ -106,7 +107,13 @@ const SolidExtraTransfers: React.FC = () => {
   // New state variables for SolidExtra specific modals
   const [historicalRateModalOpen, setHistoricalRateModalOpen] = useState(false);
   const [extendAccountModalOpen, setExtendAccountModalOpen] = useState(false);
+  const [extendAccountConfirmationOpen, setExtendAccountConfirmationOpen] = useState(false);
   const [extendAccountCongratulationsOpen, setExtendAccountCongratulationsOpen] = useState(false);
+  const [extensionData, setExtensionData] = useState<{
+    extensionType: string;
+    amount: string;
+    selectedTerm: string;
+  }>({ extensionType: '', amount: '', selectedTerm: '' });
   const [selectedExtensionPeriod, setSelectedExtensionPeriod] = useState('');
 
   // Mock transactions data
@@ -681,9 +688,20 @@ const SolidExtraTransfers: React.FC = () => {
   };
 
   // New handlers for SolidExtra specific modals
-  const handleExtendAccountConfirm = (selectedPeriod: string) => {
-    setSelectedExtensionPeriod(selectedPeriod);
+  const handleExtendAccountShowConfirmation = (extensionType: string, amount: string, selectedTerm: string) => {
+    setExtensionData({ extensionType, amount, selectedTerm });
     setExtendAccountModalOpen(false);
+    setExtendAccountConfirmationOpen(true);
+  };
+
+  const handleExtendAccountEdit = () => {
+    setExtendAccountConfirmationOpen(false);
+    setExtendAccountModalOpen(true);
+  };
+
+  const handleExtendAccountConfirm = () => {
+    setSelectedExtensionPeriod(extensionData.selectedTerm);
+    setExtendAccountConfirmationOpen(false);
     setExtendAccountCongratulationsOpen(true);
   };
 
@@ -1310,6 +1328,18 @@ const SolidExtraTransfers: React.FC = () => {
         open={extendAccountModalOpen}
         onClose={() => setExtendAccountModalOpen(false)}
         onConfirm={handleExtendAccountConfirm}
+        onShowConfirmation={handleExtendAccountShowConfirmation}
+      />
+
+      {/* Extend Account Confirmation Modal */}
+      <ExtendAccountConfirmationModal
+        open={extendAccountConfirmationOpen}
+        onClose={() => setExtendAccountConfirmationOpen(false)}
+        onEdit={handleExtendAccountEdit}
+        onConfirm={handleExtendAccountConfirm}
+        extensionType={extensionData.extensionType}
+        amount={extensionData.amount}
+        selectedTerm={extensionData.selectedTerm}
       />
 
       {/* Extend Account Congratulations Modal */}

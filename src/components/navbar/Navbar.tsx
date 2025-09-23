@@ -32,6 +32,7 @@ import {
   KeyboardArrowDown as ArrowDownIcon,
   Edit as EditIcon,
   Logout as LogoutIcon,
+  ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
 
 import NavbarNotificationsDropdown from "./NavbarNotificationsDropdown";
@@ -438,6 +439,20 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
     return location.pathname.startsWith(path);
   };
 
+  // Determine if back button should be visible
+  const shouldShowBackButton = () => {
+    const mainNavPages = ["/private", "/accounts", "/settings", "/pages/profile"];
+    return !mainNavPages.some(page => 
+      page === "/private" ? (location.pathname === "/private" || location.pathname === "/") : 
+      location.pathname === page || location.pathname.startsWith(page + "/")
+    );
+  };
+
+  // Handle back button click
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <React.Fragment>
       <MessagesPopup
@@ -567,9 +582,28 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
             justifyContent="space-between"
             wrap="nowrap"
           >
-            {/* LEFT: Toggler + Brand */}
+            {/* LEFT: Back Button + Toggler + Brand */}
             <Grid item>
               <Grid container alignItems="center" spacing={1}>
+                {/* Back Button - only show on non-main pages */}
+                {shouldShowBackButton() && (
+                  <Grid item>
+                    <IconButton
+                      color="inherit"
+                      aria-label="Go back"
+                      onClick={handleBackClick}
+                      size="large"
+                      sx={{
+                        marginRight: 1,
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        },
+                      }}
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                  </Grid>
+                )}
                 <Grid item sx={{ display: { xs: "block", md: "none" } }}>
                   <IconButton
                     color="inherit"

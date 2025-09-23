@@ -5,12 +5,15 @@ import {
   Modal,
   IconButton,
   Button,
-  Card,
-  CardContent,
-  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+  InputAdornment,
   CircularProgress
 } from '@mui/material';
-import { Close as CloseIcon, CheckCircle, RadioButtonUnchecked } from '@mui/icons-material';
+import { Close as CloseIcon, ArrowForward } from '@mui/icons-material';
 import { apiService } from '../../../services/api';
 
 interface SolidExtraOption {
@@ -27,12 +30,22 @@ interface ExtendAccountModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (selectedPeriod: string) => void;
+  onShowConfirmation: (extensionType: string, amount: string, selectedTerm: string) => void;
 }
 
-const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, onConfirm }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState('');
+const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, onConfirm, onShowConfirmation }) => {
+  const [extensionType, setExtensionType] = useState('different-amount');
+  const [amount, setAmount] = useState('');
+  const [selectedTerm, setSelectedTerm] = useState('');
   const [solidExtraOptions, setSolidExtraOptions] = useState<SolidExtraOption[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Extension type options
+  const extensionOptions = [
+    { value: 'different-amount', label: 'Extend with a different amount' },
+    { value: 'principal-only', label: 'Extend principal amount only' },
+    { value: 'principal-interest', label: 'Extend principal amount and interest' }
+  ];
 
   // Fetch SolidExtra options from API
   useEffect(() => {
@@ -93,9 +106,16 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
   };
 
   const handleConfirm = () => {
-    if (selectedPeriod) {
-      onConfirm(selectedPeriod);
+    if (selectedTerm) {
+      onShowConfirmation(extensionType, amount, selectedTerm);
     }
+  };
+
+  const isFormValid = () => {
+    if (extensionType === 'different-amount') {
+      return selectedTerm && amount && parseFloat(amount) > 0;
+    }
+    return selectedTerm;
   };
 
   return (
@@ -105,7 +125,7 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
       sx={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         '& .MuiBackdrop-root': {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
@@ -114,11 +134,14 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
       <Box
         sx={{
           width: '500px',
-          height: '100vh',
-          backgroundColor: '#f3f3f3',
+          backgroundColor: 'white',
+          borderRadius: 2,
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+          position: 'relative',
+          maxHeight: '90vh',
+          overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '-4px 0 8px rgba(0, 0, 0, 0.1)',
+          flexDirection: 'column'
         }}
       >
         {/* Header */}
@@ -132,7 +155,7 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#004996' }}>
-            Extend Account
+            Account extension
           </Typography>
           <IconButton onClick={onClose} size="small">
             <CloseIcon />
@@ -140,109 +163,100 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
         </Box>
 
         {/* Content */}
-        <Box sx={{ flex: 1, p: 3, overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
-          <Box sx={{ 
-            width: '100%', 
-            maxWidth: '400px',
-            backgroundColor: 'white',
-            borderRadius: 2,
-            p: 3,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-          }}>
-            <Typography variant="body2" sx={{ mb: 3, color: '#666', textAlign: 'center' }}>
-              Choose a new period for your SolidExtra account
-            </Typography>
-            
-            {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {solidExtraOptions.map((option) => {
-                  const isSelected = selectedPeriod === option.id;
-                  return (
-                    <Card 
-                      key={option.id}
-                      sx={{ 
-                        borderRadius: 1,
-                        border: isSelected ? '2px solid #004996' : '1px solid #e0e0e0',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease-in-out',
-                        '&:hover': {
-                          borderColor: isSelected ? '#004996' : '#004996',
-                          backgroundColor: isSelected ? 'rgba(0, 73, 150, 0.05)' : 'rgba(0, 73, 150, 0.02)'
-                        },
-                        backgroundColor: isSelected ? 'rgba(0, 73, 150, 0.05)' : 'white'
-                      }}
-                      onClick={() => setSelectedPeriod(option.id)}
-                    >
-                      <CardContent sx={{ p: 2.5 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          {/* Left side - Duration and details */}
-                          <Box sx={{ flex: 1 }}>
-                            <Typography 
-                              variant="h6" 
-                              sx={{ 
-                                fontWeight: 'bold', 
-                                color: '#004996',
-                                mb: 0.5,
-                                fontSize: '1rem'
-                              }}
-                            >
-                              {option.term}
-                            </Typography>
-                            
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
-                                color: '#666',
-                                mb: 1,
-                                fontSize: '0.85rem'
-                              }}
-                            >
-                              Interest on annual basis
-                            </Typography>
+        <Box sx={{ p: 3, flex: 1, overflow: 'auto' }}>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Close option selection */}
+              <FormControl fullWidth>
+                <InputLabel id="extension-type-label">Close option selection</InputLabel>
+                <Select
+                  labelId="extension-type-label"
+                  value={extensionType}
+                  label="Close option selection"
+                  onChange={(e) => setExtensionType(e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                  }}
+                >
+                  {extensionOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
-                                color: '#666',
-                                fontSize: '0.8rem',
-                                lineHeight: 1.3
-                              }}
-                            >
-                              {option.interest} (guaranteed base rate {option.guaranteedRate})
-                            </Typography>
-                          </Box>
+              {/* Amount entry - only show for "different amount" option */}
+              {extensionType === 'different-amount' && (
+                <Box>
+                  <Typography variant="body2" sx={{ mb: 1, color: '#666' }}>
+                    Amount entry
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="000"
+                      variant="outlined"
+                      size="small"
+                      sx={{ flex: 1 }}
+                      inputProps={{ style: { textAlign: 'center' } }}
+                    />
+                    <TextField
+                      placeholder="00"
+                      variant="outlined"
+                      size="small"
+                      sx={{ width: '60px' }}
+                      inputProps={{ style: { textAlign: 'center' } }}
+                    />
+                    <Typography variant="body1" sx={{ color: '#666', ml: 1 }}>
+                      €
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
 
-                          {/* Right side - Interest rate and selection */}
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography 
-                              variant="h5" 
-                              sx={{ 
-                                fontWeight: 'bold', 
-                                color: '#004996',
-                                fontSize: '1.5rem'
-                              }}
-                            >
-                              + 0,05%
-                            </Typography>
-                            
-                            {isSelected ? (
-                              <CheckCircle sx={{ color: '#004996', fontSize: 20 }} />
-                            ) : (
-                              <RadioButtonUnchecked sx={{ color: '#ccc', fontSize: 20 }} />
-                            )}
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </Box>
-            )}
-          </Box>
+              {/* Term selection */}
+              <FormControl fullWidth>
+                <InputLabel id="term-selection-label">Term selection</InputLabel>
+                <Select
+                  labelId="term-selection-label"
+                  value={selectedTerm}
+                  label="Term selection"
+                  onChange={(e) => setSelectedTerm(e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#1976d2',
+                    },
+                  }}
+                >
+                  {solidExtraOptions.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.term}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
         </Box>
 
         {/* Footer */}
@@ -272,7 +286,8 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
           <Button
             variant="contained"
             onClick={handleConfirm}
-            disabled={!selectedPeriod}
+            disabled={!isFormValid()}
+            endIcon={<ArrowForward />}
             sx={{
               backgroundColor: '#FC9F15',
               '&:hover': {
@@ -280,7 +295,7 @@ const ExtendAccountModal: React.FC<ExtendAccountModalProps> = ({ open, onClose, 
               },
             }}
           >
-            Confirm
+            Next
           </Button>
         </Box>
       </Box>

@@ -10,7 +10,7 @@ const BreadcrumbsSection: React.FC = () => {
         <MuiLink component={Link} to="/private" color="inherit" underline="hover">
           Home
         </MuiLink>
-        <MuiLink component={Link} to="/dashboard/analytics" color="inherit" underline="hover">
+        <MuiLink component={Link} to="/accounts" color="inherit" underline="hover">
           Accounts
         </MuiLink>
         <Typography color="text.primary">DHB SaveOnline</Typography>
