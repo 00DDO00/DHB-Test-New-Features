@@ -890,7 +890,7 @@ interface OpenAccountWidgetProps {
 
 export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
   title = "Account opening",
-  subtitle = "DHB MaxiSpaar Account"
+  subtitle = "DHB Accounts"
 }) => {
   const navigate = useNavigate();
 
@@ -903,6 +903,7 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
       title={title}
       subtitle={subtitle}
       sx={{
+        backgroundColor: '#EFE9DB !important',
         '& .MuiCard-root': {
           backgroundColor: '#EFE9DB !important',
         },
@@ -951,19 +952,6 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
               }}
             >
               {subtitle}
-            </Typography>
-            
-            <Typography
-              variant="body2"
-              sx={{
-                color: '#000',
-                fontSize: '13px',
-                lineHeight: 1.4,
-                mb: 2
-              }}
-            >
-              Savings deposit with fixed maturity<br />
-              and fixed high interest rate.
             </Typography>
           </Box>
           
