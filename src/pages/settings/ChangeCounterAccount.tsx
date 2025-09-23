@@ -140,7 +140,7 @@ const ChangeCounterAccount: React.FC = () => {
               fontSize: '18px',
             }}
           >
-            Counter account
+            Holder Account
           </Typography>
           <Box
             sx={{
@@ -165,16 +165,6 @@ const ChangeCounterAccount: React.FC = () => {
               }}
             />
             <Box>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#000',
-                  fontSize: '14px',
-                  mb: 0.5,
-                }}
-              >
-                Holder Name
-              </Typography>
               <Typography
                 variant="body1"
                 sx={{
@@ -225,16 +215,6 @@ const ChangeCounterAccount: React.FC = () => {
               }}
             />
             <Box>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#000',
-                  fontSize: '14px',
-                  mb: 0.5,
-                }}
-              >
-                Beneficiary Name
-              </Typography>
               <Typography
                 variant="body1"
                 sx={{

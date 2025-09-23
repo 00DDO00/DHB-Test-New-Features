@@ -567,10 +567,6 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
               <EditIcon sx={{ fontSize: 16 }} />
               {t('edit_profile')}
             </ActionLink>
-            <ActionLink onClick={handleLogout}>
-              <LogoutIcon sx={{ fontSize: 16 }} />
-              {t('settings.logout')}
-            </ActionLink>
           </PopupFooter>
         </UserPopup>
       )}
@@ -841,6 +837,21 @@ const Navbar: React.FC<NavbarProps> = ({ onDrawerToggle }) => {
                     </Typography>
                     <ArrowDownIcon />
                   </UserSection>
+                </Grid>
+                
+                <Grid item>
+                  <IconButton
+                    color="inherit"
+                    size="large"
+                    onClick={handleLogout}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      },
+                    }}
+                  >
+                    <LogoutIcon />
+                  </IconButton>
                 </Grid>
               </Grid>
             </Grid>

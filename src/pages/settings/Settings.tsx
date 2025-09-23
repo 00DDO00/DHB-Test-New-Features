@@ -20,8 +20,6 @@ import {
   Description,
   Person,
   PhoneAndroid,
-  Security,
-  Save,
   Computer,
   Schedule,
   Help,
@@ -32,7 +30,6 @@ import {
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
-  const [devicesPopupOpen, setDevicesPopupOpen] = React.useState(false);
   
   const settingsCards = [
     {
@@ -58,18 +55,6 @@ const Settings: React.FC = () => {
       title: 'Online identification',
       description: 'Used for remote identity verification via video call or digital documents.',
       icon: <PhoneAndroid sx={{ fontSize: 24, color: '#004996' }} />,
-    },
-    {
-      id: 'login-confirmation',
-      title: 'Login and confirmation',
-      description: 'Allows you to manage login and transaction confirmation methods.',
-      icon: <Security sx={{ fontSize: 24, color: '#004996' }} />,
-    },
-    {
-      id: 'saving-profile',
-      title: 'Saving Profile',
-      description: 'Saves your settings and preferences for faster access on your next login.',
-      icon: <Save sx={{ fontSize: 24, color: '#004996' }} />,
     },
     {
       id: 'devices',
@@ -108,12 +93,7 @@ const Settings: React.FC = () => {
         navigate('/settings/online-identification');
         break;
       case 'devices':
-        setDevicesPopupOpen(true);
-        // Wait 3 seconds then navigate to registered devices page
-        setTimeout(() => {
-          setDevicesPopupOpen(false);
-          navigate('/settings/devices/registered');
-        }, 3000);
+        navigate('/settings/devices/registered');
         break;
       case 'day-limit':
         navigate('/settings/daily-limit');

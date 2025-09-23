@@ -99,16 +99,29 @@ const RegisteredDevices: React.FC = () => {
                 alignItems: 'flex-start',
                 mb: 2
               }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: '#333',
-                    fontSize: '18px',
-                    fontWeight: 600,
-                  }}
-                >
-                  iPhone 12 Mini
-                </Typography>
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: '#333',
+                      fontSize: '18px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    iPhone 12 Mini
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#666',
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      mt: 0.5,
+                    }}
+                  >
+                    Device ID: 84739201
+                  </Typography>
+                </Box>
                 <Typography
                   variant="body2"
                   sx={{
