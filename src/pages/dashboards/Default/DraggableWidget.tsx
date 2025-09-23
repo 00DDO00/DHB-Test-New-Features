@@ -48,11 +48,7 @@ const DragHandle = styled(Box)`
   left: 8px;
   color: ${({ theme }) => theme.palette.primary.main};
   z-index: 10;
-  cursor: grab;
-  
-  &:active {
-    cursor: grabbing;
-  }
+  pointer-events: none; // Make it non-interactive since drag is on the whole card
 `;
 
 const EditModeIndicator = styled(Box)`
@@ -113,6 +109,7 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({
           <DraggableCard
             ref={provided.innerRef}
             {...provided.draggableProps}
+            {...provided.dragHandleProps}
             isEditMode={isEditMode}
             isDragging={snapshot.isDragging}
             style={{
@@ -125,7 +122,7 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({
             {isEditMode && (
               <>
                 <EditModeIndicator />
-                <DragHandle {...provided.dragHandleProps}>
+                <DragHandle>
                   <DragIcon />
                 </DragHandle>
                 <RemoveHint className={snapshot.isDragging ? 'visible' : ''}>
@@ -133,7 +130,7 @@ const DraggableWidget: React.FC<DraggableWidgetProps> = ({
                 </RemoveHint>
               </>
             )}
-            <Box sx={{ position: 'relative', zIndex: 2, ...provided.dragHandleProps }}>
+            <Box sx={{ position: 'relative', zIndex: 2 }}>
               {children}
             </Box>
           </DraggableCard>
