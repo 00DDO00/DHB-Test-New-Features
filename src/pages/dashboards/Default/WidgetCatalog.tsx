@@ -225,25 +225,11 @@ const availableWidgets: WidgetType[] = [
     component: 'SolidExtraCard'
   },
   {
-    id: 'account-opening',
-    name: 'Account Opening',
-    description: 'Quick account opening widget',
-    icon: <Add />,
-    component: 'AccountOpening'
-  },
-  {
     id: 'combispaar-stats',
     name: 'Combispaar Stats',
     description: 'Combispaar account statistics',
     icon: <StatsIcon />,
     component: 'CombispaarStats'
-  },
-  {
-    id: 'settings-widget',
-    name: 'Settings Widget',
-    description: 'Quick settings and actions',
-    icon: <SettingsIcon />,
-    component: 'SettingsWidget'
   },
   {
     id: 'chart-widget',
@@ -253,46 +239,18 @@ const availableWidgets: WidgetType[] = [
     component: 'ChartWidget'
   },
   {
-    id: 'stats',
-    name: 'Stats Cards',
-    description: 'Display key metrics and statistics',
-    icon: <StatsIcon />,
-    component: 'Stats'
-  },
-  {
-    id: 'line-chart',
-    name: 'Line Chart',
-    description: 'Show trends over time',
-    icon: <LineChartIcon />,
-    component: 'LineChart'
-  },
-  {
-    id: 'bar-chart',
-    name: 'Bar Chart',
-    description: 'Compare data across categories',
-    icon: <BarChartIcon />,
-    component: 'BarChart'
-  },
-  {
-    id: 'doughnut-chart',
-    name: 'Doughnut Chart',
-    description: 'Display proportional data',
-    icon: <PieChartIcon />,
-    component: 'DoughnutChart'
-  },
-  {
-    id: 'table',
-    name: 'Data Table',
-    description: 'Show detailed data in table format',
-    icon: <TableIcon />,
-    component: 'Table'
-  },
-  {
     id: 'advertisement-widget',
     name: 'Advertisement Widget',
     description: 'Show DHB services and bonuses',
     icon: <LocalOffer />,
     component: 'AdvertisementWidget'
+  },
+  {
+    id: 'open-account-widget',
+    name: 'Open Account Widget',
+    description: 'Quick account opening widget',
+    icon: <Add />,
+    component: 'OpenAccountWidget'
   }
 ];
 

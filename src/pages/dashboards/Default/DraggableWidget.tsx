@@ -48,7 +48,7 @@ const DragHandle = styled(Box)`
   left: 8px;
   color: ${({ theme }) => theme.palette.primary.main};
   z-index: 10;
-  pointer-events: none; // Make it non-interactive since drag is on the whole card
+  pointer-events: none; // Visual indicator only
 `;
 
 const EditModeIndicator = styled(Box)`
