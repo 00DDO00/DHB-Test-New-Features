@@ -31,6 +31,7 @@ interface WidgetProps {
   actions?: React.ReactNode;
   onMenuClick?: () => void;
   onClick?: () => void;
+  sx?: any;
 }
 
 const StyledCard = styled(Card)`
@@ -52,7 +53,8 @@ export const Widget: React.FC<WidgetProps> = ({
   children, 
   actions, 
   onMenuClick,
-  onClick
+  onClick,
+  sx
 }) => {
   const widgetId = `widget-${title?.toLowerCase().replace(/\s+/g, '-') || 'untitled'}`;
   
@@ -69,7 +71,7 @@ export const Widget: React.FC<WidgetProps> = ({
           onClick();
         }
       } : undefined}
-      sx={{ cursor: onClick ? 'pointer' : 'default' }}
+      sx={{ cursor: onClick ? 'pointer' : 'default', ...sx }}
     >
       <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 3 }}>
         {(title || onMenuClick) && (
@@ -889,8 +891,7 @@ interface OpenAccountWidgetProps {
 }
 
 export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
-  title = "Account opening",
-  subtitle = "DHB Accounts"
+  title = "Account opening"
 }) => {
   const navigate = useNavigate();
 
@@ -901,13 +902,15 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
   return (
     <Widget
       title={title}
-      subtitle={subtitle}
       sx={{
         backgroundColor: '#EFE9DB !important',
         '& .MuiCard-root': {
           backgroundColor: '#EFE9DB !important',
         },
         '& .MuiCardContent-root': {
+          backgroundColor: '#EFE9DB !important',
+        },
+        '&': {
           backgroundColor: '#EFE9DB !important',
         }
       }}
@@ -951,7 +954,20 @@ export const OpenAccountWidget: React.FC<OpenAccountWidgetProps> = ({
                 lineHeight: 1.2
               }}
             >
-              {subtitle}
+              DHB Accounts
+            </Typography>
+            
+            <Typography
+              variant="body2"
+              sx={{
+                color: '#000',
+                fontSize: '13px',
+                lineHeight: 1.4,
+                mb: 2
+              }}
+            >
+              Savings deposit with fixed maturity<br />
+              and fixed high interest rate.
             </Typography>
           </Box>
           
