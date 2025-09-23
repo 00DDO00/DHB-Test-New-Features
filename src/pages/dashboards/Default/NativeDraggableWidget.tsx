@@ -53,7 +53,11 @@ const DragHandle = styled(Box)`
   left: 8px;
   color: ${({ theme }) => theme.palette.primary.main};
   z-index: 10;
-  pointer-events: none; // Visual indicator only
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 const EditModeIndicator = styled(Box)`
@@ -181,7 +185,12 @@ const NativeDraggableWidget: React.FC<NativeDraggableWidgetProps> = ({
       onMouseMove={handleMouseMove}
     >
       <EditModeIndicator />
-      <DragHandle>
+      <DragHandle
+        draggable={true}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onMouseDown={handleMouseDown}
+      >
         <DragIcon />
       </DragHandle>
       <RemoveHint className={isDragging ? 'visible' : ''}>
